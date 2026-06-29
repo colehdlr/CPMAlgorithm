@@ -1,6 +1,10 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-/* Dev 3: raylib window, node/edge drawing, critical path highlighting. */
+#include "parse.h"
 
-#endif /* RENDER_H */
+/* Open a window, lay nodes out by topological rank, draw edges and CPM cards.
+ * Critical path is highlighted. Drag to pan, wheel to zoom, R to reset, ESC to quit. */
+void render_run(const Graph *g);
+
+#endif

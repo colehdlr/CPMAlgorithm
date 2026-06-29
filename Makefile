@@ -91,3 +91,20 @@ lldb: debug
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+# ======================
+# Tests
+# ======================
+# Build a small test binary that exercises parse + cpm without raylib or main.
+
+TEST_SRC = tests/test_cpm.c
+TEST_BIN = $(BUILD_DIR)/test_cpm
+TEST_OBJ = $(BUILD_DIR)/parse.o $(BUILD_DIR)/cpm.o $(VENDOR_OBJ)
+
+$(TEST_BIN): $(TEST_SRC) $(TEST_OBJ) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -Isrc $(TEST_SRC) $(TEST_OBJ) -o $@
+
+test: $(TEST_BIN)
+	./$(TEST_BIN)
+
+.PHONY: all run debug lldb clean test

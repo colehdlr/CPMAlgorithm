@@ -1,6 +1,6 @@
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef PARSE_H
+#define PARSE_H
 
 /* Dev 1: graph data structures, JSON loading, validation, topological sort. */
 
-#endif /* GRAPH_H */
+#endif /* PARSE_H */

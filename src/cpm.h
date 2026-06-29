@@ -5,11 +5,19 @@
 
 #include "parse.h"
 
-/* Run forward + backward passes over a topologically sorted graph,
- * populating es/ef/ls/lf/slack/is_critical and graph->project_duration. */
-bool cpm_compute(Graph *graph);
+typedef struct {
+    int earliest_start;
+    int earliest_finish;
+    int latest_start;
+    int latest_finish;
+    int free_float;
+    int total_float;
+} CPMResult;
 
-/* Print id, name, duration, ES, EF, LS, LF, slack, and a critical marker. */
-void cpm_print_table(const Graph *graph);
+bool cpm_compute(const Activity *items, int count, const int *topo_order,
+                 CPMResult *results, int *project_duration);
+
+void cpm_print_table(const Activity *items, const CPMResult *results,
+                     int count, const int *topo_order, int project_duration);
 
 #endif

@@ -2,9 +2,9 @@
 #define RENDER_H
 
 #include "parse.h"
+#include "cpm.h"
 
-/* Open a window, lay nodes out by topological rank, draw edges and CPM cards.
- * Critical path is highlighted. Drag to pan, wheel to zoom, R to reset, ESC to quit. */
-void render_run(const Graph *graph);
+void render_run(const Activity *items, const CPMResult *results,
+                int count, const int *topo_order, int project_duration);
 
 #endif

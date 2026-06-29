@@ -43,19 +43,30 @@ int main(int argc, char **argv) {
         }
     }
 
-    Graph graph;
-    graph_init(&graph);
-
+    Activity *activities = NULL;
+    int count = 0;
+    int *topo_order = NULL;
+    CPMResult *results = NULL;
+    int project_duration = 0;
     int exit_code = 1;
-    if (!graph_load_from_json(path, &graph)) goto done;
-    if (!graph_topological_sort(&graph)) goto done;
-    if (!cpm_compute(&graph)) { fprintf(stderr, "cpm: failed to compute schedule\n"); goto done; }
 
-    cpm_print_table(&graph);
-    if (show_window) render_run(&graph);
+    if (!load_activities(path, &activities, &count)) goto done;
+    if (!topological_sort(activities, count, &topo_order)) goto done;
+
+    results = calloc((size_t)count, sizeof(CPMResult));
+    if (!results) { fprintf(stderr, "out of memory\n"); goto done; }
+
+    if (!cpm_compute(activities, count, topo_order, results, &project_duration)) {
+        fprintf(stderr, "cpm: failed to compute schedule\n");
+        goto done;
+    }
+
+    cpm_print_table(activities, results, count, topo_order, project_duration);
+    if (show_window) render_run(activities, results, count, topo_order, project_duration);
     exit_code = 0;
 
 done:
-    graph_free(&graph);
+    free(results);
+    free_activities(activities, topo_order);
     return exit_code;
 }

@@ -15,19 +15,19 @@
 
 typedef struct { float x, y; } Pos;
 
-static Pos *compute_layout(const Graph *graph, int *out_max_rank) {
-    Pos *positions = calloc((size_t)graph->count, sizeof(Pos));
-    int *rank      = calloc((size_t)graph->count, sizeof(int));
+static Pos *compute_layout(const Activity *items, const int *topo_order,
+                           int count, int *out_max_rank) {
+    Pos *positions = calloc((size_t)count, sizeof(Pos));
+    int *rank      = calloc((size_t)count, sizeof(int));
     if (!positions || !rank) { free(positions); free(rank); return NULL; }
 
-    /* Rank = longest path from any source. topo_order guarantees
-     * predecessors are ranked before successors. */
     int max_rank = 0;
-    for (int i = 0; i < graph->count; ++i) {
-        int idx = graph->topo_order[i];
+    for (int i = 0; i < count; ++i) {
+        int idx = topo_order[i];
         int r = 0;
-        for (int k = 0; k < graph->items[idx].num_deps; ++k) {
-            int pr = rank[graph->items[idx].deps[k]] + 1;
+        for (int k = 0; k < items[idx].dep_count; ++k) {
+            int p = find_activity(items, count, items[idx].deps_on_ids[k]);
+            int pr = rank[p] + 1;
             if (pr > r) r = pr;
         }
         rank[idx] = r;
@@ -38,9 +38,8 @@ static Pos *compute_layout(const Graph *graph, int *out_max_rank) {
     int *slot = calloc((size_t)(max_rank + 1), sizeof(int));
     if (!slot) { free(positions); free(rank); return NULL; }
 
-    /* Walk in topo order so predecessors place above successors. */
-    for (int i = 0; i < graph->count; ++i) {
-        int idx = graph->topo_order[i];
+    for (int i = 0; i < count; ++i) {
+        int idx = topo_order[i];
         int r = rank[idx];
         positions[idx].x = MARGIN + r * COL_SPACING + NODE_W * 0.5f;
         positions[idx].y = MARGIN + NODE_H * 0.5f + slot[r] * ROW_SPACING;
@@ -60,34 +59,36 @@ static void draw_edge(Vector2 from, Vector2 to, bool critical) {
     DrawLineEx(start, end, thickness, color);
 }
 
-static void draw_node(const Activity *a, Vector2 center) {
+static void draw_node(const Activity *a, const CPMResult *r, Vector2 center) {
+    bool is_critical = (r->total_float == 0);
     Rectangle rect = { center.x - NODE_W * 0.5f, center.y - NODE_H * 0.5f, NODE_W, NODE_H };
-    Color fill   = a->is_critical ? (Color){ 255, 224, 224, 255 } : (Color){ 245, 247, 250, 255 };
-    Color border = a->is_critical ? (Color){ 200,  40,  40, 255 } : (Color){  60,  72,  88, 255 };
+    Color fill   = is_critical ? (Color){ 255, 224, 224, 255 } : (Color){ 245, 247, 250, 255 };
+    Color border = is_critical ? (Color){ 200,  40,  40, 255 } : (Color){  60,  72,  88, 255 };
     Color text   = (Color){ 20, 24, 32, 255 };
 
     DrawRectangleRounded(rect, 0.12f, 6, fill);
-    DrawRectangleRoundedLinesEx(rect, 0.12f, 6, a->is_critical ? 2.5f : 1.5f, border);
+    DrawRectangleRoundedLinesEx(rect, 0.12f, 6, is_critical ? 2.5f : 1.5f, border);
 
     char buf[64];
     int x = (int)(rect.x + 10);
-    snprintf(buf, sizeof(buf), "%s  (%dd)", a->id, a->duration);
+    snprintf(buf, sizeof(buf), "%c  (%dd)", a->id, a->duration);
     DrawText(buf, x, (int)(rect.y +  8), 18, text);
     DrawText(a->name, x, (int)(rect.y + 30), 14, text);
-    snprintf(buf, sizeof(buf), "ES %-3d  EF %-3d", a->es, a->ef);
+    snprintf(buf, sizeof(buf), "ES %-3d  EF %-3d", r->earliest_start, r->earliest_finish);
     DrawText(buf, x, (int)(rect.y + 52), 13, text);
-    snprintf(buf, sizeof(buf), "LS %-3d  LF %-3d", a->ls, a->lf);
+    snprintf(buf, sizeof(buf), "LS %-3d  LF %-3d", r->latest_start, r->latest_finish);
     DrawText(buf, x, (int)(rect.y + 68), 13, text);
-    snprintf(buf, sizeof(buf), "Slack %d%s", a->slack, a->is_critical ? "  *" : "");
+    snprintf(buf, sizeof(buf), "Slack %d%s", r->total_float, is_critical ? "  *" : "");
     DrawText(buf, x, (int)(rect.y + 86), 13,
-             a->is_critical ? (Color){ 180, 30, 30, 255 } : text);
+             is_critical ? (Color){ 180, 30, 30, 255 } : text);
 }
 
-void render_run(const Graph *graph) {
-    if (graph->count <= 0) return;
+void render_run(const Activity *items, const CPMResult *results,
+                int count, const int *topo_order, int project_duration) {
+    if (count <= 0) return;
 
     int max_rank = 0;
-    Pos *positions = compute_layout(graph, &max_rank);
+    Pos *positions = compute_layout(items, topo_order, count, &max_rank);
     if (!positions) { fprintf(stderr, "render: out of memory\n"); return; }
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
@@ -123,23 +124,23 @@ void render_run(const Graph *graph) {
         ClearBackground((Color){ 18, 22, 30, 255 });
 
         BeginMode2D(camera);
-        for (int i = 0; i < graph->count; ++i) {
-            const Activity *succ = &graph->items[i];
-            for (int k = 0; k < succ->num_deps; ++k) {
-                int p = succ->deps[k];
-                bool crit = graph->items[p].is_critical && succ->is_critical
-                            && graph->items[p].ef == succ->es;
+        for (int i = 0; i < count; ++i) {
+            const Activity *succ = &items[i];
+            for (int k = 0; k < succ->dep_count; ++k) {
+                int p = find_activity(items, count, succ->deps_on_ids[k]);
+                bool crit = (results[p].total_float == 0) && (results[i].total_float == 0)
+                            && results[p].earliest_finish == results[i].earliest_start;
                 draw_edge((Vector2){ positions[p].x, positions[p].y },
                           (Vector2){ positions[i].x, positions[i].y }, crit);
             }
         }
-        for (int i = 0; i < graph->count; ++i) {
-            draw_node(&graph->items[i], (Vector2){ positions[i].x, positions[i].y });
+        for (int i = 0; i < count; ++i) {
+            draw_node(&items[i], &results[i], (Vector2){ positions[i].x, positions[i].y });
         }
         EndMode2D();
 
         char hud[64];
-        snprintf(hud, sizeof(hud), "Project duration: %d", graph->project_duration);
+        snprintf(hud, sizeof(hud), "Project duration: %d", project_duration);
         DrawRectangle(0, 0, GetScreenWidth(), 34, (Color){ 30, 36, 48, 230 });
         DrawText(hud, 12, 8, 20, RAYWHITE);
 

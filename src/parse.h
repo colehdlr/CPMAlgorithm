@@ -3,42 +3,21 @@
 
 #include <stdbool.h>
 
-#define CPM_MAX_ID_LEN    32
-#define CPM_MAX_NAME_LEN  128
-#define CPM_MAX_DEPS      32
+#include "types.h"
 
-/* One struct holds input fields and CPM results so every module shares
- * the same representation without conversions. */
-typedef struct {
-    char id[CPM_MAX_ID_LEN];
-    char name[CPM_MAX_NAME_LEN];
-    int  duration;
+/* Load and validate activities from a JSON file.
+ *
+ * On success, *out_activities is a malloc'd array of *out_count Activity
+ * structs (caller frees), with dependency IDs already resolved to indices.
+ *
+ * Validates: non-empty single-char unique ids, non-negative durations,
+ * resolvable non-self dependencies. On failure, prints an error to stderr
+ * and leaves the out-params untouched (caller should zero-init). */
+bool parse_load_from_json(const char *path,
+                          Activity **out_activities, int *out_count);
 
-    int  deps[CPM_MAX_DEPS];
-    int  num_deps;
+/* Kahn's algorithm. On success, *out_order is a malloc'd array of `count`
+ * indices in topological order (caller frees). Returns false on cycle. */
+bool topological_sort(const Activity *activities, int count, int **out_order);
 
-    int  es, ef, ls, lf, slack;
-    bool is_critical;
-} Activity;
-
-typedef struct {
-    Activity *items;
-    int       count;
-    int      *topo_order;
-    int       project_duration;
-} Graph;
-
-void graph_init(Graph *graph);
-void graph_free(Graph *graph);
-
-/* Loads, validates (non-empty unique ids, non-negative durations, resolvable
- * deps) and stores the graph. On failure, prints an error to stderr and leaves
- * *graph empty. */
-bool graph_load_from_json(const char *path, Graph *graph);
-
-/* Kahn's algorithm. Returns false on cycle. Populates graph->topo_order. */
-bool graph_topological_sort(Graph *graph);
-
-int graph_find_id(const Graph *graph, const char *id);
-
-#endif
+#endif /* PARSE_H */

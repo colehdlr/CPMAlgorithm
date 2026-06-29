@@ -2,51 +2,71 @@
 
 #include <stdio.h>
 
-bool cpm_compute(Graph *graph) {
-    if (graph->count <= 0 || !graph->topo_order) return false;
-    int count = graph->count;
+bool cpm_compute(const Activity *activities, int count,
+                 const int *topo_order,
+                 CPMResult *results, int *out_project_duration) {
+    if (count <= 0 || !topo_order || !results) return false;
 
     /* Forward pass: ES/EF in topological order. */
     int project_duration = 0;
-    for (int i = 0; i < count; ++i) {
-        Activity *a = &graph->items[graph->topo_order[i]];
-        int es = 0;
-        for (int k = 0; k < a->num_deps; ++k) {
-            int pf = graph->items[a->deps[k]].ef;
-            if (pf > es) es = pf;
-        }
-        a->es = es;
-        a->ef = es + a->duration;
-        if (a->ef > project_duration) project_duration = a->ef;
-    }
-    graph->project_duration = project_duration;
+    for (int topo_pos = 0; topo_pos < count; ++topo_pos) {
+        int activity_index = topo_order[topo_pos];
+        const Activity *activity = &activities[activity_index];
+        CPMResult *result = &results[activity_index];
 
-    /* Backward pass: walk reverse topo order, pushing each node's ls
-     * into its predecessors' lf as a min. */
-    for (int i = 0; i < count; ++i) graph->items[i].lf = project_duration;
-    for (int i = count - 1; i >= 0; --i) {
-        Activity *a = &graph->items[graph->topo_order[i]];
-        a->ls = a->lf - a->duration;
-        a->slack = a->ls - a->es;
-        a->is_critical = (a->slack == 0);
-        for (int k = 0; k < a->num_deps; ++k) {
-            Activity *p = &graph->items[a->deps[k]];
-            if (a->ls < p->lf) p->lf = a->ls;
+        int earliest_start = 0;
+        for (int dep_slot = 0; dep_slot < activity->dep_count; ++dep_slot) {
+            int predecessor_finish = results[activity->deps[dep_slot]].earliest_finish;
+            if (predecessor_finish > earliest_start) earliest_start = predecessor_finish;
+        }
+        result->earliest_start  = earliest_start;
+        result->earliest_finish = earliest_start + activity->duration;
+
+        if (result->earliest_finish > project_duration) {
+            project_duration = result->earliest_finish;
+        }
+    }
+    *out_project_duration = project_duration;
+
+    /* Backward pass: walk reverse topo order, pushing each node's LS
+     * into its predecessors' LF as a min. */
+    for (int index = 0; index < count; ++index) {
+        results[index].latest_finish = project_duration;
+    }
+    for (int topo_pos = count - 1; topo_pos >= 0; --topo_pos) {
+        int activity_index = topo_order[topo_pos];
+        const Activity *activity = &activities[activity_index];
+        CPMResult *result = &results[activity_index];
+
+        result->latest_start = result->latest_finish - activity->duration;
+        result->total_float  = result->latest_start - result->earliest_start;
+
+        for (int dep_slot = 0; dep_slot < activity->dep_count; ++dep_slot) {
+            CPMResult *predecessor_result = &results[activity->deps[dep_slot]];
+            if (result->latest_start < predecessor_result->latest_finish) {
+                predecessor_result->latest_finish = result->latest_start;
+            }
         }
     }
     return true;
 }
 
-void cpm_print_table(const Graph *graph) {
-    printf("\n%-4s  %-22s  %4s  %4s  %4s  %4s  %4s  %5s  %s\n",
+void cpm_print_table(const Activity *activities, int count,
+                     const int *topo_order,
+                     const CPMResult *results, int project_duration) {
+    printf("\n%-3s  %-22s  %4s  %4s  %4s  %4s  %4s  %5s  %s\n",
            "ID", "Name", "Dur", "ES", "EF", "LS", "LF", "Slack", "Crit");
     printf("------------------------------------------------------------------\n");
-    for (int i = 0; i < graph->count; ++i) {
-        int idx = graph->topo_order ? graph->topo_order[i] : i;
-        const Activity *a = &graph->items[idx];
-        printf("%-4s  %-22s  %4d  %4d  %4d  %4d  %4d  %5d  %s\n",
-               a->id, a->name, a->duration, a->es, a->ef, a->ls, a->lf, a->slack,
-               a->is_critical ? "*" : "");
+    for (int topo_pos = 0; topo_pos < count; ++topo_pos) {
+        int activity_index = topo_order ? topo_order[topo_pos] : topo_pos;
+        const Activity  *activity = &activities[activity_index];
+        const CPMResult *result   = &results[activity_index];
+        bool critical = (result->total_float == 0);
+        printf("%-3c  %-22s  %4d  %4d  %4d  %4d  %4d  %5d  %s\n",
+               activity->id, activity->name, activity->duration,
+               result->earliest_start, result->earliest_finish,
+               result->latest_start, result->latest_finish, result->total_float,
+               critical ? "*" : "");
     }
-    printf("\nProject duration: %d\n\n", graph->project_duration);
+    printf("\nProject duration: %d\n\n", project_duration);
 }

@@ -1,102 +1,126 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "types.h"
 #include "parse.h"
 #include "cpm.h"
 
 /*
  * Minimal self-contained test driver for parse + cpm.
  *
- * Builds a small graph in memory (no JSON), runs topological sort / CPM,
- * and asserts the expected ES/EF/LS/LF/slack/critical values.
+ * Builds a small activity array in memory (no JSON), runs topological sort
+ * and CPM, and asserts the expected ES/EF/LS/LF/slack/critical values.
  *
  * Run with `make test`.
  */
 
 #define MAX_TEST_ACTIVITIES 32
 
-static int add_activity(Graph *g, const char *id, const char *name, int duration,
-                        const int *deps, int num_deps) {
-    if (!g->items) {
-        g->items = (Activity *)calloc(MAX_TEST_ACTIVITIES, sizeof(Activity));
-        if (!g->items) { fprintf(stderr, "oom\n"); exit(1); }
-    }
-    assert(g->count < MAX_TEST_ACTIVITIES);
-    Activity *a = &g->items[g->count];
+typedef struct {
+    Activity items[MAX_TEST_ACTIVITIES];
+    int count;
+} ActivityList;
+
+static int add_activity(ActivityList *list, char id, const char *name, int duration,
+                        const int *deps, int dep_count) {
+    assert(list->count < MAX_TEST_ACTIVITIES);
+    Activity *a = &list->items[list->count];
     memset(a, 0, sizeof(*a));
-    snprintf(a->id, sizeof(a->id), "%s", id);
+    a->id = id;
     snprintf(a->name, sizeof(a->name), "%s", name);
     a->duration = duration;
-    a->num_deps = num_deps;
-    for (int i = 0; i < num_deps; ++i) a->deps[i] = deps[i];
-    return g->count++;
+    a->dep_count = dep_count;
+    for (int i = 0; i < dep_count; ++i) a->deps[i] = deps[i];
+    return list->count++;
+}
+
+static int find_idx(const ActivityList *list, char id) {
+    for (int i = 0; i < list->count; ++i) {
+        if (list->items[i].id == id) return i;
+    }
+    return -1;
 }
 
 static void test_textbook_network(void) {
     /* Same shape as data/activities.json so the test mirrors the demo. */
-    Graph g; graph_init(&g);
-    int A = add_activity(&g, "A", "Requirements",   3, NULL, 0);
+    ActivityList list = {0};
+    int A = add_activity(&list, 'A', "Requirements",   3, NULL, 0);
     (void)A;
-    int B = add_activity(&g, "B", "Design",         4, (int[]){0}, 1);
-    int C = add_activity(&g, "C", "Database",       5, (int[]){0}, 1);
-    int D = add_activity(&g, "D", "Frontend",       6, (int[]){B}, 1);
-    int E = add_activity(&g, "E", "Backend",        7, (int[]){C}, 1);
-    int F = add_activity(&g, "F", "Integration",    3, (int[]){D, E}, 2);
-    int G = add_activity(&g, "G", "Testing",        4, (int[]){F}, 1);
+    int B = add_activity(&list, 'B', "Design",         4, (int[]){0}, 1);
+    int C = add_activity(&list, 'C', "Database",       5, (int[]){0}, 1);
+    int D = add_activity(&list, 'D', "Frontend",       6, (int[]){B}, 1);
+    int E = add_activity(&list, 'E', "Backend",        7, (int[]){C}, 1);
+    int F = add_activity(&list, 'F', "Integration",    3, (int[]){D, E}, 2);
+    int G = add_activity(&list, 'G', "Testing",        4, (int[]){F}, 1);
     (void)G;
 
-    assert(graph_topological_sort(&g));
-    assert(cpm_compute(&g));
+    int *topo = NULL;
+    assert(topological_sort(list.items, list.count, &topo));
 
-    assert(g.project_duration == 22);
+    CPMResult *results = calloc((size_t)list.count, sizeof(CPMResult));
+    int project_duration = 0;
+    assert(cpm_compute(list.items, list.count, topo, results, &project_duration));
+
+    assert(project_duration == 22);
 
     /* Spot-check each activity */
-    struct { const char *id; int es, ef, ls, lf, slack; int crit; } expected[] = {
-        { "A", 0,  3,  0,  3, 0, 1 },
-        { "B", 3,  7,  5,  9, 2, 0 },
-        { "C", 3,  8,  3,  8, 0, 1 },
-        { "D", 7, 13,  9, 15, 2, 0 },
-        { "E", 8, 15,  8, 15, 0, 1 },
-        { "F",15, 18, 15, 18, 0, 1 },
-        { "G",18, 22, 18, 22, 0, 1 },
+    struct { char id; int es, ef, ls, lf, slack; int crit; } expected[] = {
+        { 'A', 0,  3,  0,  3, 0, 1 },
+        { 'B', 3,  7,  5,  9, 2, 0 },
+        { 'C', 3,  8,  3,  8, 0, 1 },
+        { 'D', 7, 13,  9, 15, 2, 0 },
+        { 'E', 8, 15,  8, 15, 0, 1 },
+        { 'F',15, 18, 15, 18, 0, 1 },
+        { 'G',18, 22, 18, 22, 0, 1 },
     };
     for (size_t i = 0; i < sizeof(expected)/sizeof(expected[0]); ++i) {
-        int idx = graph_find_id(&g, expected[i].id);
+        int idx = find_idx(&list, expected[i].id);
         assert(idx >= 0);
-        const Activity *a = &g.items[idx];
-        if (a->es != expected[i].es || a->ef != expected[i].ef
-            || a->ls != expected[i].ls || a->lf != expected[i].lf
-            || a->slack != expected[i].slack
-            || a->is_critical != (bool)expected[i].crit) {
+        const CPMResult *r = &results[idx];
+        bool crit = (r->total_float == 0);
+        if (r->earliest_start != expected[i].es || r->earliest_finish != expected[i].ef
+            || r->latest_start != expected[i].ls || r->latest_finish != expected[i].lf
+            || r->total_float != expected[i].slack
+            || crit != (bool)expected[i].crit) {
             fprintf(stderr,
-                "mismatch on %s: got ES=%d EF=%d LS=%d LF=%d slack=%d crit=%d\n"
+                "mismatch on %c: got ES=%d EF=%d LS=%d LF=%d slack=%d crit=%d\n"
                 "           want ES=%d EF=%d LS=%d LF=%d slack=%d crit=%d\n",
-                a->id, a->es, a->ef, a->ls, a->lf, a->slack, (int)a->is_critical,
+                expected[i].id,
+                r->earliest_start, r->earliest_finish,
+                r->latest_start, r->latest_finish,
+                r->total_float, (int)crit,
                 expected[i].es, expected[i].ef, expected[i].ls, expected[i].lf,
                 expected[i].slack, expected[i].crit);
             abort();
         }
     }
-    graph_free(&g);
+
+    free(topo);
+    free(results);
     printf("  ok  textbook_network\n");
 }
 
 static void test_single_activity(void) {
-    Graph g; graph_init(&g);
-    add_activity(&g, "X", "Only",  5, NULL, 0);
+    ActivityList list = {0};
+    add_activity(&list, 'X', "Only", 5, NULL, 0);
 
-    assert(graph_topological_sort(&g));
-    assert(cpm_compute(&g));
+    int *topo = NULL;
+    assert(topological_sort(list.items, list.count, &topo));
 
-    assert(g.project_duration == 5);
-    assert(g.items[0].es == 0 && g.items[0].ef == 5);
-    assert(g.items[0].ls == 0 && g.items[0].lf == 5);
-    assert(g.items[0].slack == 0);
-    assert(g.items[0].is_critical);
+    CPMResult *results = calloc((size_t)list.count, sizeof(CPMResult));
+    int project_duration = 0;
+    assert(cpm_compute(list.items, list.count, topo, results, &project_duration));
 
-    graph_free(&g);
+    assert(project_duration == 5);
+    assert(results[0].earliest_start == 0 && results[0].earliest_finish == 5);
+    assert(results[0].latest_start   == 0 && results[0].latest_finish   == 5);
+    assert(results[0].total_float == 0);
+
+    free(topo);
+    free(results);
     printf("  ok  single_activity\n");
 }
 
@@ -107,35 +131,39 @@ static void test_parallel_paths(void) {
      *
      * A is critical, B is not (slack 2).
      */
-    Graph g; graph_init(&g);
-    int S = add_activity(&g, "S", "Start", 2, NULL, 0);
-    int A = add_activity(&g, "A", "A",     5, (int[]){S}, 1);
-    int B = add_activity(&g, "B", "B",     3, (int[]){S}, 1);
-    int T = add_activity(&g, "T", "End",   1, (int[]){A, B}, 2);
+    ActivityList list = {0};
+    int S = add_activity(&list, 'S', "Start", 2, NULL, 0);
+    int A = add_activity(&list, 'A', "A",     5, (int[]){S}, 1);
+    int B = add_activity(&list, 'B', "B",     3, (int[]){S}, 1);
+    int T = add_activity(&list, 'T', "End",   1, (int[]){A, B}, 2);
     (void)T;
 
-    assert(graph_topological_sort(&g));
-    assert(cpm_compute(&g));
+    int *topo = NULL;
+    assert(topological_sort(list.items, list.count, &topo));
 
-    assert(g.project_duration == 8);
-    assert(g.items[graph_find_id(&g, "A")].is_critical);
-    assert(!g.items[graph_find_id(&g, "B")].is_critical);
-    assert(g.items[graph_find_id(&g, "B")].slack == 2);
+    CPMResult *results = calloc((size_t)list.count, sizeof(CPMResult));
+    int project_duration = 0;
+    assert(cpm_compute(list.items, list.count, topo, results, &project_duration));
 
-    graph_free(&g);
+    assert(project_duration == 8);
+    assert(results[find_idx(&list, 'A')].total_float == 0);
+    assert(results[find_idx(&list, 'B')].total_float == 2);
+
+    free(topo);
+    free(results);
     printf("  ok  parallel_paths\n");
 }
 
 static void test_cycle_rejected(void) {
     /* A -> B -> A is a cycle; topological sort must fail. */
-    Graph g; graph_init(&g);
-    int A = add_activity(&g, "A", "A", 1, (int[]){1}, 1);   /* will reference B */
-    int B = add_activity(&g, "B", "B", 1, (int[]){A}, 1);
+    ActivityList list = {0};
+    int A = add_activity(&list, 'A', "A", 1, (int[]){1}, 1);   /* will reference B */
+    int B = add_activity(&list, 'B', "B", 1, (int[]){A}, 1);
     (void)B;
 
-    assert(!graph_topological_sort(&g));
+    int *topo = NULL;
+    assert(!topological_sort(list.items, list.count, &topo));
 
-    graph_free(&g);
     printf("  ok  cycle_rejected\n");
 }
 

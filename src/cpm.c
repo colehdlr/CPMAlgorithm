@@ -9,34 +9,43 @@ bool cpm_compute(const Activity *activities, int count,
 
     /* Forward pass: ES/EF in topological order. */
     int project_duration = 0;
-    for (int i = 0; i < count; ++i) {
-        int idx = topo_order[i];
-        const Activity *a = &activities[idx];
-        int es = 0;
-        for (int k = 0; k < a->dep_count; ++k) {
-            int pf = results[a->deps[k]].earliest_finish;
-            if (pf > es) es = pf;
+    for (int topo_pos = 0; topo_pos < count; ++topo_pos) {
+        int activity_index = topo_order[topo_pos];
+        const Activity *activity = &activities[activity_index];
+        CPMResult *result = &results[activity_index];
+
+        int earliest_start = 0;
+        for (int dep_slot = 0; dep_slot < activity->dep_count; ++dep_slot) {
+            int predecessor_finish = results[activity->deps[dep_slot]].earliest_finish;
+            if (predecessor_finish > earliest_start) earliest_start = predecessor_finish;
         }
-        results[idx].earliest_start  = es;
-        results[idx].earliest_finish = es + a->duration;
-        if (results[idx].earliest_finish > project_duration) {
-            project_duration = results[idx].earliest_finish;
+        result->earliest_start  = earliest_start;
+        result->earliest_finish = earliest_start + activity->duration;
+
+        if (result->earliest_finish > project_duration) {
+            project_duration = result->earliest_finish;
         }
     }
     *out_project_duration = project_duration;
 
     /* Backward pass: walk reverse topo order, pushing each node's LS
      * into its predecessors' LF as a min. */
-    for (int i = 0; i < count; ++i) results[i].latest_finish = project_duration;
-    for (int i = count - 1; i >= 0; --i) {
-        int idx = topo_order[i];
-        const Activity *a = &activities[idx];
-        CPMResult *r = &results[idx];
-        r->latest_start = r->latest_finish - a->duration;
-        r->total_float  = r->latest_start - r->earliest_start;
-        for (int k = 0; k < a->dep_count; ++k) {
-            CPMResult *p = &results[a->deps[k]];
-            if (r->latest_start < p->latest_finish) p->latest_finish = r->latest_start;
+    for (int index = 0; index < count; ++index) {
+        results[index].latest_finish = project_duration;
+    }
+    for (int topo_pos = count - 1; topo_pos >= 0; --topo_pos) {
+        int activity_index = topo_order[topo_pos];
+        const Activity *activity = &activities[activity_index];
+        CPMResult *result = &results[activity_index];
+
+        result->latest_start = result->latest_finish - activity->duration;
+        result->total_float  = result->latest_start - result->earliest_start;
+
+        for (int dep_slot = 0; dep_slot < activity->dep_count; ++dep_slot) {
+            CPMResult *predecessor_result = &results[activity->deps[dep_slot]];
+            if (result->latest_start < predecessor_result->latest_finish) {
+                predecessor_result->latest_finish = result->latest_start;
+            }
         }
     }
     return true;
@@ -48,15 +57,15 @@ void cpm_print_table(const Activity *activities, int count,
     printf("\n%-3s  %-22s  %4s  %4s  %4s  %4s  %4s  %5s  %s\n",
            "ID", "Name", "Dur", "ES", "EF", "LS", "LF", "Slack", "Crit");
     printf("------------------------------------------------------------------\n");
-    for (int i = 0; i < count; ++i) {
-        int idx = topo_order ? topo_order[i] : i;
-        const Activity  *a = &activities[idx];
-        const CPMResult *r = &results[idx];
-        bool critical = (r->total_float == 0);
+    for (int topo_pos = 0; topo_pos < count; ++topo_pos) {
+        int activity_index = topo_order ? topo_order[topo_pos] : topo_pos;
+        const Activity  *activity = &activities[activity_index];
+        const CPMResult *result   = &results[activity_index];
+        bool critical = (result->total_float == 0);
         printf("%-3c  %-22s  %4d  %4d  %4d  %4d  %4d  %5d  %s\n",
-               a->id, a->name, a->duration,
-               r->earliest_start, r->earliest_finish,
-               r->latest_start, r->latest_finish, r->total_float,
+               activity->id, activity->name, activity->duration,
+               result->earliest_start, result->earliest_finish,
+               result->latest_start, result->latest_finish, result->total_float,
                critical ? "*" : "");
     }
     printf("\nProject duration: %d\n\n", project_duration);

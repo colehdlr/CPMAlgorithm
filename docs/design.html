@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPM Timeline Visualizer — Design Document</title>
+<style>
+  :root{
+    --bg:#0f1117; --panel:#181b24; --panel2:#1f2330; --ink:#e6e9ef; --muted:#9aa3b2;
+    --line:#2c313f; --accent:#5b9dff; --crit:#ff5d5d; --crit2:#ff8a3d; --ok:#43d39e;
+    --dev1:#5b9dff; --dev2:#43d39e; --dev3:#c08bff; --dev4:#ffb347;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;}
+  header{padding:48px 24px 32px;background:linear-gradient(160deg,#1b2030,#0f1117);
+    border-bottom:1px solid var(--line);}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px;}
+  h1{font-size:2.1rem;margin:0 0 6px;letter-spacing:-.5px;}
+  h2{font-size:1.45rem;margin:48px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+  h3{font-size:1.12rem;margin:28px 0 10px;color:var(--ink);}
+  .sub{color:var(--muted);font-size:1.05rem;}
+  .pill{display:inline-block;font-size:.78rem;padding:3px 10px;border-radius:999px;
+    background:var(--panel2);border:1px solid var(--line);color:var(--muted);margin-right:6px;}
+  p{color:#cdd3de;}
+  code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:.88em;
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;color:#d9e1ee;}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+    overflow:auto;font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;
+    color:#d9e1ee;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;
+    margin:16px 0;}
+  .grid{display:grid;gap:16px;}
+  .grid.cols2{grid-template-columns:1fr 1fr;}
+  .grid.cols4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:820px){.grid.cols2,.grid.cols4{grid-template-columns:1fr;}}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:.92rem;}
+  th,td{border:1px solid var(--line);padding:8px 11px;text-align:center;}
+  th{background:var(--panel2);color:var(--ink);font-weight:600;}
+  td.l,th.l{text-align:left;}
+  tr.crit td{background:rgba(255,93,93,.10);font-weight:600;}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin:10px 0;font-size:.85rem;color:var(--muted);}
+  .legend span{display:inline-flex;align-items:center;gap:7px;}
+  .sw{width:14px;height:14px;border-radius:3px;display:inline-block;}
+  .fig{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0;}
+  .figcap{color:var(--muted);font-size:.85rem;margin-top:8px;text-align:center;}
+  .owner{font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  ul{color:#cdd3de;} li{margin:4px 0;}
+  .kpi{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;}
+  .kpi .box{flex:1;min-width:150px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:10px;padding:14px 16px;}
+  .kpi .n{font-size:1.8rem;font-weight:700;}
+  .kpi .lbl{color:var(--muted);font-size:.82rem;}
+  svg{width:100%;height:auto;display:block;}
+  .toc a{color:var(--accent);text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div><span class="pill">Design Document</span><span class="pill">C99 · raylib</span><span class="pill">v1.0</span></div>
+    <h1>CPM Timeline Visualizer</h1>
+    <p class="sub">Critical Path Method engine and interactive network/Gantt renderer for a website-development project schedule.</p>
+    <div class="kpi">
+      <div class="box"><div class="n">7</div><div class="lbl">Activities</div></div>
+      <div class="box"><div class="n" style="color:var(--crit)">22</div><div class="lbl">Project duration (days)</div></div>
+      <div class="box"><div class="n" style="color:var(--crit)">5</div><div class="lbl">Critical activities</div></div>
+      <div class="box"><div class="n">A→C→E→F→G</div><div class="lbl">Critical path</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<h2 id="overview">1. Overview</h2>
+<p>This project computes and visualizes the <strong>Critical Path Method (CPM)</strong> schedule for a fixed
+website-development plan. Activity durations are <strong>deterministic integers</strong> — there is no PERT
+variance, no probabilistic estimation, and no optimistic/pessimistic fields. The tool loads the schedule from
+JSON, runs the forward/backward CPM passes, prints a report, and draws an interactive network diagram (with an
+optional Gantt view) using raylib.</p>
+
+<div class="card">
+  <strong>Goals</strong>
+  <ul>
+    <li>Deterministic, unit-testable CPM core with zero I/O dependencies.</li>
+    <li>Clean module boundaries so four developers can work in parallel.</li>
+    <li>Headless mode for CI and scripted use; raylib rendering for interactive exploration.</li>
+    <li>Known-answer regression test: project duration = <code>22</code>, critical path = <code>A→C→E→F→G</code>.</li>
+  </ul>
+  <strong>Non-goals</strong>
+  <ul>
+    <li>Variable/stochastic durations, resource leveling, or cost analysis.</li>
+    <li>Editing the schedule in the UI (read-only visualization).</li>
+  </ul>
+</div>
+
+<h2 id="scenario">2. Scenario &amp; Input Data</h2>
+<p>The schedule is defined in <code>data/activities.json</code>. Each activity has an id, name, integer duration
+(days), and a list of predecessor ids.</p>
+<div class="grid cols2">
+  <div>
+    <table>
+      <thead><tr><th>ID</th><th class="l">Activity</th><th>Duration</th><th>Depends on</th></tr></thead>
+      <tbody>
+        <tr class="crit"><td>A</td><td class="l">Requirements</td><td>3</td><td>—</td></tr>
+        <tr><td>B</td><td class="l">Design</td><td>4</td><td>A</td></tr>
+        <tr class="crit"><td>C</td><td class="l">Database Setup</td><td>5</td><td>A</td></tr>
+        <tr><td>D</td><td class="l">Frontend Development</td><td>6</td><td>B</td></tr>
+        <tr class="crit"><td>E</td><td class="l">Backend Development</td><td>7</td><td>C</td></tr>
+        <tr class="crit"><td>F</td><td class="l">Integration</td><td>3</td><td>D, E</td></tr>
+        <tr class="crit"><td>G</td><td class="l">Testing</td><td>4</td><td>F</td></tr>
+      </tbody>
+    </table>
+    <div class="legend"><span><span class="sw" style="background:rgba(255,93,93,.35);border:1px solid var(--crit)"></span>Critical activity (slack = 0)</span></div>
+  </div>
+  <div>
+<pre>{
+  "activities": [
+    { "id":"A","name":"Requirements",
+      "duration":3,"dependencies":[] },
+    { "id":"B","name":"Design",
+      "duration":4,"dependencies":["A"] },
+    { "id":"C","name":"Database Setup",
+      "duration":5,"dependencies":["A"] },
+    { "id":"D","name":"Frontend Development",
+      "duration":6,"dependencies":["B"] },
+    { "id":"E","name":"Backend Development",
+      "duration":7,"dependencies":["C"] },
+    { "id":"F","name":"Integration",
+      "duration":3,"dependencies":["D","E"] },
+    { "id":"G","name":"Testing",
+      "duration":4,"dependencies":["F"] }
+  ]
+}</pre>
+  </div>
+</div>
+
+<h3>Path enumeration</h3>
+<table>
+  <thead><tr><th class="l">Path</th><th class="l">Sum</th><th>Duration</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td class="l">A → B → D → F → G</td><td class="l">3+4+6+3+4</td><td>20</td><td>slack 2</td></tr>
+    <tr class="crit"><td class="l">A → C → E → F → G</td><td class="l">3+5+7+3+4</td><td>22</td><td><strong>Critical</strong></td></tr>
+  </tbody>
+</table>
+
+<h2 id="network">3. Activity Network Diagram</h2>
+<p>Activity-on-Node (AON) representation. Nodes are placed by topological depth (left→right). The critical path is
+highlighted; the upper path (B, D) carries 2 days of slack.</p>
+<div class="fig">
+<svg viewBox="0 0 980 420" role="img" aria-label="Activity network diagram">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 z" fill="#7c89a0"/>
+    </marker>
+    <marker id="arrC" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 z" fill="#ff5d5d"/>
+    </marker>
+  </defs>
+
+  <!-- edges (drawn first) -->
+  <!-- A->B -->
+  <line x1="150" y1="190" x2="290" y2="110" stroke="#7c89a0" stroke-width="2" marker-end="url(#arr)"/>
+  <!-- A->C (critical) -->
+  <line x1="150" y1="210" x2="290" y2="300" stroke="#ff5d5d" stroke-width="3" marker-end="url(#arrC)"/>
+  <!-- B->D -->
+  <line x1="410" y1="100" x2="510" y2="100" stroke="#7c89a0" stroke-width="2" marker-end="url(#arr)"/>
+  <!-- C->E (critical) -->
+  <line x1="410" y1="310" x2="510" y2="310" stroke="#ff5d5d" stroke-width="3" marker-end="url(#arrC)"/>
+  <!-- D->F -->
+  <line x1="630" y1="110" x2="730" y2="190" stroke="#7c89a0" stroke-width="2" marker-end="url(#arr)"/>
+  <!-- E->F (critical) -->
+  <line x1="630" y1="300" x2="730" y2="210" stroke="#ff5d5d" stroke-width="3" marker-end="url(#arrC)"/>
+  <!-- F->G (critical) -->
+  <line x1="850" y1="200" x2="888" y2="200" stroke="#ff5d5d" stroke-width="3" marker-end="url(#arrC)"/>
+
+  <!-- node template helper rendered inline -->
+  <!-- A -->
+  <g>
+    <rect x="70" y="168" width="80" height="64" rx="9" fill="#1f2330" stroke="#ff5d5d" stroke-width="2.5"/>
+    <text x="110" y="190" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">A</text>
+    <text x="110" y="206" text-anchor="middle" fill="#9aa3b2" font-size="9">Requirements</text>
+    <text x="110" y="222" text-anchor="middle" fill="#43d39e" font-size="10">3d · slk 0</text>
+  </g>
+  <!-- B -->
+  <g>
+    <rect x="290" y="70" width="120" height="64" rx="9" fill="#1f2330" stroke="#5b9dff" stroke-width="1.6"/>
+    <text x="350" y="92" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">B</text>
+    <text x="350" y="108" text-anchor="middle" fill="#9aa3b2" font-size="9">Design</text>
+    <text x="350" y="124" text-anchor="middle" fill="#ffb347" font-size="10">4d · slk 2</text>
+  </g>
+  <!-- C -->
+  <g>
+    <rect x="290" y="278" width="120" height="64" rx="9" fill="#1f2330" stroke="#ff5d5d" stroke-width="2.5"/>
+    <text x="350" y="300" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">C</text>
+    <text x="350" y="316" text-anchor="middle" fill="#9aa3b2" font-size="9">Database Setup</text>
+    <text x="350" y="332" text-anchor="middle" fill="#43d39e" font-size="10">5d · slk 0</text>
+  </g>
+  <!-- D -->
+  <g>
+    <rect x="510" y="68" width="120" height="64" rx="9" fill="#1f2330" stroke="#5b9dff" stroke-width="1.6"/>
+    <text x="570" y="90" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">D</text>
+    <text x="570" y="106" text-anchor="middle" fill="#9aa3b2" font-size="9">Frontend Dev</text>
+    <text x="570" y="122" text-anchor="middle" fill="#ffb347" font-size="10">6d · slk 2</text>
+  </g>
+  <!-- E -->
+  <g>
+    <rect x="510" y="278" width="120" height="64" rx="9" fill="#1f2330" stroke="#ff5d5d" stroke-width="2.5"/>
+    <text x="570" y="300" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">E</text>
+    <text x="570" y="316" text-anchor="middle" fill="#9aa3b2" font-size="9">Backend Dev</text>
+    <text x="570" y="332" text-anchor="middle" fill="#43d39e" font-size="10">7d · slk 0</text>
+  </g>
+  <!-- F -->
+  <g>
+    <rect x="730" y="168" width="120" height="64" rx="9" fill="#1f2330" stroke="#ff5d5d" stroke-width="2.5"/>
+    <text x="790" y="190" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">F</text>
+    <text x="790" y="206" text-anchor="middle" fill="#9aa3b2" font-size="9">Integration</text>
+    <text x="790" y="222" text-anchor="middle" fill="#43d39e" font-size="10">3d · slk 0</text>
+  </g>
+  <!-- G -->
+  <g>
+    <rect x="888" y="168" width="84" height="64" rx="9" fill="#1f2330" stroke="#ff5d5d" stroke-width="2.5"/>
+    <text x="930" y="190" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">G</text>
+    <text x="930" y="206" text-anchor="middle" fill="#9aa3b2" font-size="9">Testing</text>
+    <text x="930" y="222" text-anchor="middle" fill="#43d39e" font-size="10">4d · slk 0</text>
+  </g>
+</svg>
+<div class="legend">
+  <span><span class="sw" style="background:#ff5d5d"></span>Critical path (slack 0)</span>
+  <span><span class="sw" style="background:#5b9dff"></span>Non-critical activity</span>
+  <span><span class="sw" style="background:#7c89a0"></span>Dependency edge</span>
+</div>
+<div class="figcap">Figure 1 — Activity-on-Node network, nodes laid out by topological depth.</div>
+</div>
+
+<h2 id="gantt">4. Gantt / Timeline View</h2>
+<p>Each bar starts at the activity's Earliest Start (ES) and spans its duration. Non-critical activities show their
+slack as a faded trailing bar (the room they can float before delaying the project).</p>
+<div class="fig">
+<svg viewBox="0 0 980 360" role="img" aria-label="Gantt chart">
+  <!-- gridlines every 2 days: x = 160 + d*34 -->
+  <g font-size="10" fill="#7c89a0" text-anchor="middle">
+    <!-- vertical gridlines -->
+    <g stroke="#2c313f" stroke-width="1">
+      <line x1="160" y1="50" x2="160" y2="330"/>
+      <line x1="228" y1="50" x2="228" y2="330"/>
+      <line x1="296" y1="50" x2="296" y2="330"/>
+      <line x1="364" y1="50" x2="364" y2="330"/>
+      <line x1="432" y1="50" x2="432" y2="330"/>
+      <line x1="500" y1="50" x2="500" y2="330"/>
+      <line x1="568" y1="50" x2="568" y2="330"/>
+      <line x1="636" y1="50" x2="636" y2="330"/>
+      <line x1="704" y1="50" x2="704" y2="330"/>
+      <line x1="772" y1="50" x2="772" y2="330"/>
+      <line x1="840" y1="50" x2="840" y2="330"/>
+      <line x1="908" y1="50" x2="908" y2="330"/>
+    </g>
+    <text x="160" y="44">0</text><text x="228" y="44">2</text><text x="296" y="44">4</text>
+    <text x="364" y="44">6</text><text x="432" y="44">8</text><text x="500" y="44">10</text>
+    <text x="568" y="44">12</text><text x="636" y="44">14</text><text x="704" y="44">16</text>
+    <text x="772" y="44">18</text><text x="840" y="44">20</text><text x="908" y="44">22</text>
+    <text x="534" y="20" font-size="12" fill="#9aa3b2">Project timeline (days)</text>
+  </g>
+
+  <!-- rows -->
+  <g font-size="11" fill="#cdd3de" text-anchor="end">
+    <text x="150" y="86">A Requirements</text>
+    <text x="150" y="128">B Design</text>
+    <text x="150" y="170">C Database Setup</text>
+    <text x="150" y="212">D Frontend Dev</text>
+    <text x="150" y="254">E Backend Dev</text>
+    <text x="150" y="296">F Integration</text>
+    <text x="150" y="338">G Testing</text>
+  </g>
+
+  <!-- bars: x=160+ES*34, w=dur*34 ; height 24 ; row top = 70 + i*42 -->
+  <!-- A crit: ES0 d3 -->
+  <rect x="160" y="70" width="102" height="24" rx="5" fill="#ff5d5d"/>
+  <!-- B: ES3 d4 slack2 -->
+  <rect x="262" y="112" width="136" height="24" rx="5" fill="#5b9dff"/>
+  <rect x="398" y="112" width="68" height="24" rx="5" fill="#5b9dff" opacity="0.25"/>
+  <!-- C crit: ES3 d5 -->
+  <rect x="262" y="154" width="170" height="24" rx="5" fill="#ff5d5d"/>
+  <!-- D: ES7 d6 slack2 -->
+  <rect x="398" y="196" width="204" height="24" rx="5" fill="#5b9dff"/>
+  <rect x="602" y="196" width="68" height="24" rx="5" fill="#5b9dff" opacity="0.25"/>
+  <!-- E crit: ES8 d7 -->
+  <rect x="432" y="238" width="238" height="24" rx="5" fill="#ff5d5d"/>
+  <!-- F crit: ES15 d3 -->
+  <rect x="670" y="280" width="102" height="24" rx="5" fill="#ff5d5d"/>
+  <!-- G crit: ES18 d4 -->
+  <rect x="772" y="322" width="136" height="24" rx="5" fill="#ff5d5d"/>
+
+  <!-- duration labels -->
+  <g font-size="10" fill="#0f1117" text-anchor="middle" font-weight="700">
+    <text x="211" y="87">3d</text>
+    <text x="330" y="129" fill="#fff">4d</text>
+    <text x="347" y="171">5d</text>
+    <text x="500" y="213" fill="#fff">6d</text>
+    <text x="551" y="255">7d</text>
+    <text x="721" y="297">3d</text>
+    <text x="840" y="339">4d</text>
+  </g>
+</svg>
+<div class="legend">
+  <span><span class="sw" style="background:#ff5d5d"></span>Critical (no float)</span>
+  <span><span class="sw" style="background:#5b9dff"></span>Activity bar</span>
+  <span><span class="sw" style="background:#5b9dff;opacity:.25"></span>Slack / float</span>
+</div>
+<div class="figcap">Figure 2 — Gantt view. Bars positioned at ES; faded extensions show available slack.</div>
+</div>
+
+<h2 id="architecture">5. Module Architecture</h2>
+<p>Five translation units with strict, one-directional dependencies. The CPM core depends only on the graph types;
+rendering and I/O are leaves that consume immutable results. This keeps the algorithm pure and testable.</p>
+<div class="fig">
+<svg viewBox="0 0 980 430" role="img" aria-label="Module architecture diagram">
+  <defs>
+    <marker id="darr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 z" fill="#7c89a0"/>
+    </marker>
+  </defs>
+  <!-- main at top -->
+  <rect x="400" y="30" width="180" height="60" rx="10" fill="#241d12" stroke="#ffb347" stroke-width="2"/>
+  <text x="490" y="56" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">main.c</text>
+  <text x="490" y="74" text-anchor="middle" fill="#ffb347" font-size="10" class="owner">Dev 4 · app shell</text>
+
+  <!-- io -->
+  <rect x="120" y="160" width="180" height="64" rx="10" fill="#241d12" stroke="#ffb347" stroke-width="2"/>
+  <text x="210" y="186" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">io.h / io.c</text>
+  <text x="210" y="204" text-anchor="middle" fill="#ffb347" font-size="10">CLI · report · export</text>
+
+  <!-- render -->
+  <rect x="680" y="160" width="180" height="64" rx="10" fill="#1f1726" stroke="#c08bff" stroke-width="2"/>
+  <text x="770" y="186" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">render.h/.c</text>
+  <text x="770" y="204" text-anchor="middle" fill="#c08bff" font-size="10">Dev 3 · raylib draw</text>
+
+  <!-- cpm -->
+  <rect x="400" y="160" width="180" height="64" rx="10" fill="#14241d" stroke="#43d39e" stroke-width="2"/>
+  <text x="490" y="186" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">cpm.h / cpm.c</text>
+  <text x="490" y="204" text-anchor="middle" fill="#43d39e" font-size="10">Dev 2 · CPM engine</text>
+
+  <!-- graph -->
+  <rect x="400" y="300" width="180" height="64" rx="10" fill="#141a26" stroke="#5b9dff" stroke-width="2"/>
+  <text x="490" y="326" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">graph.h/.c</text>
+  <text x="490" y="344" text-anchor="middle" fill="#5b9dff" font-size="10">Dev 1 · types · JSON · topo</text>
+
+  <!-- data -->
+  <rect x="120" y="300" width="180" height="64" rx="10" fill="#181b24" stroke="#2c313f" stroke-width="2"/>
+  <text x="210" y="326" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">data/activities.json</text>
+  <text x="210" y="344" text-anchor="middle" fill="#9aa3b2" font-size="10">input schedule</text>
+
+  <!-- edges: main -> io, cpm, render -->
+  <line x1="430" y1="90" x2="240" y2="158" stroke="#7c89a0" stroke-width="1.8" marker-end="url(#darr)"/>
+  <line x1="490" y1="90" x2="490" y2="158" stroke="#7c89a0" stroke-width="1.8" marker-end="url(#darr)"/>
+  <line x1="550" y1="90" x2="740" y2="158" stroke="#7c89a0" stroke-width="1.8" marker-end="url(#darr)"/>
+  <!-- cpm -> graph -->
+  <line x1="490" y1="224" x2="490" y2="298" stroke="#7c89a0" stroke-width="1.8" marker-end="url(#darr)"/>
+  <!-- render -> cpm & graph (consumes results) -->
+  <line x1="700" y1="224" x2="570" y2="250" stroke="#7c89a0" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#darr)"/>
+  <!-- io -> graph (load) & cpm (report) -->
+  <line x1="240" y1="224" x2="410" y2="305" stroke="#7c89a0" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#darr)"/>
+  <!-- graph -> data (reads) -->
+  <line x1="400" y1="332" x2="302" y2="332" stroke="#7c89a0" stroke-width="1.8" marker-end="url(#darr)"/>
+</svg>
+<div class="legend">
+  <span><span class="sw" style="background:#5b9dff"></span>Dev 1 graph</span>
+  <span><span class="sw" style="background:#43d39e"></span>Dev 2 cpm</span>
+  <span><span class="sw" style="background:#c08bff"></span>Dev 3 render</span>
+  <span><span class="sw" style="background:#ffb347"></span>Dev 4 shell/io</span>
+  <span>— solid: compile dependency · – – consumes data</span>
+</div>
+<div class="figcap">Figure 3 — Module ownership and dependency direction. The CPM core depends only downward on graph.</div>
+</div>
+
+<h3>5.1 Data-flow pipeline</h3>
+<div class="fig">
+<svg viewBox="0 0 980 120" role="img" aria-label="Data flow pipeline">
+  <defs>
+    <marker id="parr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 z" fill="#5b9dff"/>
+    </marker>
+  </defs>
+  <g font-size="12" text-anchor="middle">
+    <rect x="20"  y="40" width="150" height="48" rx="8" fill="#181b24" stroke="#2c313f"/>
+    <text x="95" y="60" fill="#fff">activities.json</text><text x="95" y="76" fill="#9aa3b2" font-size="10">input</text>
+
+    <rect x="220" y="40" width="150" height="48" rx="8" fill="#141a26" stroke="#5b9dff"/>
+    <text x="295" y="60" fill="#fff">load_graph()</text><text x="295" y="76" fill="#5b9dff" font-size="10">→ Graph</text>
+
+    <rect x="420" y="40" width="150" height="48" rx="8" fill="#14241d" stroke="#43d39e"/>
+    <text x="495" y="60" fill="#fff">run_cpm()</text><text x="495" y="76" fill="#43d39e" font-size="10">→ CpmResult</text>
+
+    <rect x="620" y="14" width="160" height="44" rx="8" fill="#241d12" stroke="#ffb347"/>
+    <text x="700" y="40" fill="#fff">print_report()</text>
+    <rect x="620" y="70" width="160" height="44" rx="8" fill="#1f1726" stroke="#c08bff"/>
+    <text x="700" y="96" fill="#fff">render_window()</text>
+
+    <rect x="830" y="40" width="130" height="48" rx="8" fill="#181b24" stroke="#2c313f"/>
+    <text x="895" y="60" fill="#fff">stdout /</text><text x="895" y="76" fill="#9aa3b2">window</text>
+  </g>
+  <g stroke="#5b9dff" stroke-width="2" fill="none">
+    <line x1="170" y1="64" x2="218" y2="64" marker-end="url(#parr)"/>
+    <line x1="370" y1="64" x2="418" y2="64" marker-end="url(#parr)"/>
+    <line x1="570" y1="64" x2="618" y2="36" marker-end="url(#parr)"/>
+    <line x1="570" y1="64" x2="618" y2="92" marker-end="url(#parr)"/>
+    <line x1="780" y1="36" x2="828" y2="60" marker-end="url(#parr)"/>
+    <line x1="780" y1="92" x2="828" y2="68" marker-end="url(#parr)"/>
+  </g>
+</svg>
+<div class="figcap">Figure 4 — Runtime pipeline: parse → compute → present.</div>
+</div>
+
+<h2 id="responsibilities">6. Developer Responsibilities</h2>
+<div class="grid cols2">
+  <div class="card"><div class="owner" style="color:var(--dev1)">Dev 1 — Data &amp; Graph</div>
+    <code>graph.h</code> · <code>graph.c</code>
+    <ul>
+      <li>Core types <code>Activity { id, name, duration, deps[] }</code> and <code>Graph { activities[], n }</code>.</li>
+      <li>Parse <code>activities.json</code> (hand-rolled or cJSON) into a <code>Graph</code>.</li>
+      <li>Build predecessor + successor adjacency lists.</li>
+      <li>Validate: missing dep ids, duplicate ids, cycle detection.</li>
+      <li>Provide topological sort (Dev 2 depends on it).</li>
+      <li>Durations stored as <code>int</code> — no variance/PERT fields.</li>
+    </ul>
+  </div>
+  <div class="card"><div class="owner" style="color:var(--dev2)">Dev 2 — CPM Algorithm</div>
+    <code>cpm.h</code> · <code>cpm.c</code>
+    <ul>
+      <li>Pure computation over a <code>Graph</code> → <code>CpmResult</code>.</li>
+      <li>Forward pass (topo order) → ES/EF.</li>
+      <li>Backward pass (reverse topo) → LS/LF.</li>
+      <li><code>slack = LS − ES</code>; critical when slack == 0.</li>
+      <li>Emits critical-path id list + total duration.</li>
+      <li>No I/O, no raylib — trivially unit-testable.</li>
+    </ul>
+  </div>
+  <div class="card"><div class="owner" style="color:var(--dev3)">Dev 3 — raylib Rendering</div>
+    <code>render.h</code> · <code>render.c</code>
+    <ul>
+      <li>Owns window, draw loop, all raylib calls; links <code>-lraylib</code> (+ macOS frameworks).</li>
+      <li>Layered layout: x from topo depth/ES, y by lane.</li>
+      <li>Draw nodes (id, name, duration, 4 CPM values) and edges with arrowheads.</li>
+      <li>Highlight critical nodes/edges in a distinct color.</li>
+      <li>Stretch: pan/zoom, Gantt toggle, hover tooltips.</li>
+      <li>Consumes <code>Graph</code> + <code>CpmResult</code>; never mutates them.</li>
+    </ul>
+  </div>
+  <div class="card"><div class="owner" style="color:var(--dev4)">Dev 4 — Shell, I/O, Build &amp; Tests</div>
+    <code>main.c</code> · <code>io.h/.c</code> · <code>tests/</code> · <code>Makefile</code>
+    <ul>
+      <li>Wires <code>load_graph → run_cpm → print_report / render_window</code>.</li>
+      <li>CLI: input path, <code>--headless</code>, <code>--export csv|dot</code>.</li>
+      <li>Pretty-print CPM table to stdout.</li>
+      <li>Known-answer tests (duration 22, path A→C→E→F→G).</li>
+      <li>Maintains Makefile, CI, and README.</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="interfaces">7. Module Interfaces</h2>
+<h3>graph.h (Dev 1)</h3>
+<pre>#define MAX_ID    8
+#define MAX_NAME  64
+#define MAX_DEPS  16
+#define MAX_ACTS  64
+
+typedef struct {
+    char id[MAX_ID];
+    char name[MAX_NAME];
+    int  duration;                 /* fixed integer days */
+    char deps[MAX_DEPS][MAX_ID];   /* predecessor ids    */
+    int  ndeps;
+} Activity;
+
+typedef struct {
+    Activity acts[MAX_ACTS];
+    int n;
+    /* adjacency by index, filled during load */
+    int  succ[MAX_ACTS][MAX_ACTS]; int nsucc[MAX_ACTS];
+    int  pred[MAX_ACTS][MAX_ACTS]; int npred[MAX_ACTS];
+} Graph;
+
+typedef enum { GRAPH_OK, GRAPH_ERR_IO, GRAPH_ERR_PARSE,
+               GRAPH_ERR_DUP_ID, GRAPH_ERR_MISSING_DEP,
+               GRAPH_ERR_CYCLE } GraphStatus;
+
+GraphStatus load_graph(const char *path, Graph *out);
+int         graph_index_of(const Graph *g, const char *id);   /* -1 if absent */
+GraphStatus graph_validate(const Graph *g);
+/* writes topo order (indices) into order[]; returns count or -1 on cycle */
+int         graph_toposort(const Graph *g, int order[]);</pre>
+
+<h3>cpm.h (Dev 2)</h3>
+<pre>typedef struct {
+    int es, ef, ls, lf, slack;   /* per activity (by index) */
+    int critical;                /* 1 if slack == 0         */
+} ActivityTimes;
+
+typedef struct {
+    ActivityTimes t[MAX_ACTS];
+    int  n;
+    int  project_duration;
+    int  critical_path[MAX_ACTS];   /* ordered indices */
+    int  ncritical;
+} CpmResult;
+
+/* Pure: no I/O. Returns 0 on success, -1 on cycle/invalid graph. */
+int run_cpm(const Graph *g, CpmResult *out);</pre>
+
+<h3>io.h (Dev 4) &amp; render.h (Dev 3)</h3>
+<div class="grid cols2">
+<pre>/* io.h */
+typedef struct {
+    const char *input_path;
+    int  headless;          /* skip window  */
+    enum { EXP_NONE, EXP_CSV,
+           EXP_DOT } export; /* --export     */
+} CliOptions;
+
+int  parse_args(int argc, char **argv,
+                CliOptions *o);
+void print_report(const Graph *g,
+                  const CpmResult *r);
+int  export_csv(const Graph *g,
+                const CpmResult *r, FILE *f);
+int  export_dot(const Graph *g,
+                const CpmResult *r, FILE *f);</pre>
+<pre>/* render.h */
+/* Blocks running the raylib draw loop until
+   the user closes the window. Read-only on
+   both inputs. No-op in headless mode. */
+void render_window(const Graph *g,
+                   const CpmResult *r);</pre>
+</div>
+
+<h2 id="results">8. Computed CPM Results</h2>
+<p>Reference output the implementation must reproduce. <code>ES</code>/<code>EF</code> from the forward pass,
+<code>LS</code>/<code>LF</code> from the backward pass, <code>slack = LS − ES</code>.</p>
+<table>
+  <thead><tr><th>ID</th><th class="l">Activity</th><th>Dur</th><th>ES</th><th>EF</th><th>LS</th><th>LF</th><th>Slack</th><th>Critical</th></tr></thead>
+  <tbody>
+    <tr class="crit"><td>A</td><td class="l">Requirements</td><td>3</td><td>0</td><td>3</td><td>0</td><td>3</td><td>0</td><td>✓</td></tr>
+    <tr><td>B</td><td class="l">Design</td><td>4</td><td>3</td><td>7</td><td>5</td><td>9</td><td>2</td><td>—</td></tr>
+    <tr class="crit"><td>C</td><td class="l">Database Setup</td><td>5</td><td>3</td><td>8</td><td>3</td><td>8</td><td>0</td><td>✓</td></tr>
+    <tr><td>D</td><td class="l">Frontend Development</td><td>6</td><td>7</td><td>13</td><td>9</td><td>15</td><td>2</td><td>—</td></tr>
+    <tr class="crit"><td>E</td><td class="l">Backend Development</td><td>7</td><td>8</td><td>15</td><td>8</td><td>15</td><td>0</td><td>✓</td></tr>
+    <tr class="crit"><td>F</td><td class="l">Integration</td><td>3</td><td>15</td><td>18</td><td>15</td><td>18</td><td>0</td><td>✓</td></tr>
+    <tr class="crit"><td>G</td><td class="l">Testing</td><td>4</td><td>18</td><td>22</td><td>18</td><td>22</td><td>0</td><td>✓</td></tr>
+  </tbody>
+</table>
+<p><strong>Project duration:</strong> 22 days &nbsp;·&nbsp; <strong>Critical path:</strong> A → C → E → F → G</p>
+
+<h2 id="build">9. Build, Run &amp; Test</h2>
+<div class="grid cols2">
+  <div>
+    <h3>Targets</h3>
+    <pre>make            # build build/cpm
+make run        # build + run
+make debug      # -g -O0
+make lldb       # debug under lldb
+make clean      # remove build/</pre>
+    <h3>CLI</h3>
+    <pre>./build/cpm data/activities.json
+./build/cpm data/activities.json --headless
+./build/cpm data/activities.json \
+            --headless --export csv > out.csv</pre>
+  </div>
+  <div>
+    <h3>raylib linkage (macOS)</h3>
+    <pre>LDFLAGS = -lraylib -framework OpenGL \
+          -framework Cocoa -framework IOKit \
+          -framework CoreVideo</pre>
+    <p class="sub" style="font-size:.9rem">The current <code>Makefile</code> has empty <code>LDFLAGS</code>;
+    Dev 3 adds raylib flags. Keep a <code>HEADLESS</code> build path so CI compiles without raylib.</p>
+    <h3>Tests (Dev 4)</h3>
+    <pre>// tests/test_cpm.c — known-answer
+assert(r.project_duration == 22);
+assert_path(r, "A,C,E,F,G");
+assert(times(B).slack == 2);
+assert(times(D).slack == 2);</pre>
+  </div>
+</div>
+
+<h3>Test matrix</h3>
+<table>
+  <thead><tr><th class="l">Case</th><th class="l">Input</th><th class="l">Expected</th></tr></thead>
+  <tbody>
+    <tr><td class="l">Sample (regression)</td><td class="l">activities.json</td><td class="l">dur=22, path A→C→E→F→G</td></tr>
+    <tr><td class="l">Single activity</td><td class="l">one node, no deps</td><td class="l">dur=node, that node critical</td></tr>
+    <tr><td class="l">Parallel tie</td><td class="l">two equal-length paths</td><td class="l">both critical, slack 0</td></tr>
+    <tr><td class="l">Cycle</td><td class="l">A→B→A</td><td class="l">GRAPH_ERR_CYCLE / run_cpm = −1</td></tr>
+    <tr><td class="l">Missing dep</td><td class="l">dep id not present</td><td class="l">GRAPH_ERR_MISSING_DEP</td></tr>
+    <tr><td class="l">Duplicate id</td><td class="l">two activities id "A"</td><td class="l">GRAPH_ERR_DUP_ID</td></tr>
+  </tbody>
+</table>
+
+<h2 id="risks">10. Risks &amp; Decisions</h2>
+<div class="card">
+  <ul>
+    <li><strong>Fixed durations only.</strong> No PERT/variance fields — keeps the model and JSON schema simple, per requirements.</li>
+    <li><strong>raylib as a hard dep.</strong> Mitigated by <code>--headless</code> and a no-raylib CI build so the CPM core and tests never need a display.</li>
+    <li><strong>Purity of the core.</strong> <code>cpm.c</code> takes <code>const Graph*</code> and writes only <code>CpmResult</code> — enables deterministic unit tests and decouples Dev 2 from Dev 3.</li>
+    <li><strong>Fixed-size arrays.</strong> <code>MAX_ACTS=64</code> is ample for this scenario; revisit with dynamic allocation only if larger schedules are needed.</li>
+    <li><strong>JSON parsing.</strong> Hand-rolled parser is acceptable for the fixed schema; cJSON is the drop-in upgrade if the schema grows.</li>
+  </ul>
+</div>
+
+<p style="color:var(--muted);margin:40px 0 60px;font-size:.85rem;border-top:1px solid var(--line);padding-top:16px;">
+CPM Timeline Visualizer · Design v1.0 · Generated 2026-06-29 · durations are deterministic integers.</p>
+
+</div>
+</body>
+</html>

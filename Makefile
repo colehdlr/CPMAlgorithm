@@ -11,13 +11,38 @@ OBJ = $(SRC:src/%.c=$(BUILD_DIR)/%.o)
 DEP = $(OBJ:.o=.d)
 
 # ======================
+# Vendored raylib
+# ======================
+# Static lib + headers live in vendor/raylib/. Pick the right .a per platform.
+
+RAYLIB_DIR     = vendor/raylib
+RAYLIB_INCLUDE = $(RAYLIB_DIR)/include
+
+UNAME_S := $(shell uname -s)
+UNAME_M := $(shell uname -m)
+
+ifeq ($(UNAME_S),Darwin)
+    RAYLIB_LIB     = $(RAYLIB_DIR)/lib/macos/libraylib.a
+    PLATFORM_LIBS  = -framework Cocoa -framework IOKit -framework CoreVideo -framework OpenGL
+else ifeq ($(UNAME_S),Linux)
+    ifeq ($(UNAME_M),x86_64)
+        RAYLIB_LIB = $(RAYLIB_DIR)/lib/linux-amd64/libraylib.a
+    else
+        $(error No vendored raylib for Linux $(UNAME_M). See vendor/raylib/README.md)
+    endif
+    PLATFORM_LIBS  = -lGL -lm -lpthread -ldl -lrt -lX11
+else
+    $(error Unsupported platform $(UNAME_S). See vendor/raylib/README.md)
+endif
+
+# ======================
 # Compiler flags
 # ======================
 
-CFLAGS = -Wall -std=c99 -O2 -Iinclude -MMD -MP
-DEBUG_CFLAGS = -Wall -std=c99 -g -O0 -Iinclude -MMD -MP
+CFLAGS = -Wall -std=c99 -O2 -Iinclude -I$(RAYLIB_INCLUDE) -MMD -MP
+DEBUG_CFLAGS = -Wall -std=c99 -g -O0 -Iinclude -I$(RAYLIB_INCLUDE) -MMD -MP
 
-LDFLAGS =
+LDFLAGS = $(RAYLIB_LIB) $(PLATFORM_LIBS)
 
 # ======================
 # Build rules

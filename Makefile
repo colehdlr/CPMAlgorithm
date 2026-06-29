@@ -8,7 +8,11 @@ BUILD_DIR = build
 
 SRC = $(wildcard src/*.c)
 OBJ = $(SRC:src/%.c=$(BUILD_DIR)/%.o)
-DEP = $(OBJ:.o=.d)
+
+# Vendored single-file sources compiled into the same build dir.
+VENDOR_OBJ = $(BUILD_DIR)/cJSON.o
+
+DEP = $(OBJ:.o=.d) $(VENDOR_OBJ:.o=.d)
 
 # ======================
 # Vendored raylib
@@ -17,6 +21,14 @@ DEP = $(OBJ:.o=.d)
 
 RAYLIB_DIR     = vendor/raylib
 RAYLIB_INCLUDE = $(RAYLIB_DIR)/include
+
+# ======================
+# Vendored cJSON
+# ======================
+# Single-file library: compiled from source, no prebuilt lib needed.
+
+CJSON_DIR     = vendor/cjson
+CJSON_INCLUDE = $(CJSON_DIR)
 
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
@@ -39,8 +51,8 @@ endif
 # Compiler flags
 # ======================
 
-CFLAGS = -Wall -std=c99 -O2 -Iinclude -I$(RAYLIB_INCLUDE) -MMD -MP
-DEBUG_CFLAGS = -Wall -std=c99 -g -O0 -Iinclude -I$(RAYLIB_INCLUDE) -MMD -MP
+CFLAGS = -Wall -std=c99 -O2 -Iinclude -I$(RAYLIB_INCLUDE) -I$(CJSON_INCLUDE) -MMD -MP
+DEBUG_CFLAGS = -Wall -std=c99 -g -O0 -Iinclude -I$(RAYLIB_INCLUDE) -I$(CJSON_INCLUDE) -MMD -MP
 
 LDFLAGS = $(RAYLIB_LIB) $(PLATFORM_LIBS)
 
@@ -50,10 +62,13 @@ LDFLAGS = $(RAYLIB_LIB) $(PLATFORM_LIBS)
 
 all: $(BUILD_DIR)/$(TARGET)
 
-$(BUILD_DIR)/$(TARGET): $(OBJ) | $(BUILD_DIR)
-	$(CC) $(OBJ) -o $@ $(LDFLAGS)
+$(BUILD_DIR)/$(TARGET): $(OBJ) $(VENDOR_OBJ) | $(BUILD_DIR)
+	$(CC) $(OBJ) $(VENDOR_OBJ) -o $@ $(LDFLAGS)
 
 $(BUILD_DIR)/%.o: src/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/cJSON.o: $(CJSON_DIR)/cJSON.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR):

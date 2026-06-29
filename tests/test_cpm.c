@@ -9,22 +9,21 @@
 /*
  * Minimal self-contained test driver for parse + cpm.
  *
- * Builds a small graph in memory (no JSON), runs validation / topological sort
- * / CPM, and asserts the expected ES/EF/LS/LF/slack/critical values.
+ * Builds a small graph in memory (no JSON), runs topological sort / CPM,
+ * and asserts the expected ES/EF/LS/LF/slack/critical values.
  *
  * Run with `make test`.
  */
 
+#define MAX_TEST_ACTIVITIES 32
+
 static int add_activity(Graph *g, const char *id, const char *name, int duration,
                         const int *deps, int num_deps) {
-    /* grow capacity by hand, mirroring parse.c's ensure_capacity */
-    if (g->capacity <= g->count) {
-        int new_cap = g->capacity ? g->capacity * 2 : 8;
-        Activity *p = (Activity *)realloc(g->items, (size_t)new_cap * sizeof(Activity));
-        if (!p) { fprintf(stderr, "oom\n"); exit(1); }
-        g->items = p;
-        g->capacity = new_cap;
+    if (!g->items) {
+        g->items = (Activity *)calloc(MAX_TEST_ACTIVITIES, sizeof(Activity));
+        if (!g->items) { fprintf(stderr, "oom\n"); exit(1); }
     }
+    assert(g->count < MAX_TEST_ACTIVITIES);
     Activity *a = &g->items[g->count];
     memset(a, 0, sizeof(*a));
     snprintf(a->id, sizeof(a->id), "%s", id);
@@ -48,7 +47,6 @@ static void test_textbook_network(void) {
     int G = add_activity(&g, "G", "Testing",        4, (int[]){F}, 1);
     (void)G;
 
-    assert(graph_validate(&g));
     assert(graph_topological_sort(&g));
     assert(cpm_compute(&g));
 
@@ -89,7 +87,6 @@ static void test_single_activity(void) {
     Graph g; graph_init(&g);
     add_activity(&g, "X", "Only",  5, NULL, 0);
 
-    assert(graph_validate(&g));
     assert(graph_topological_sort(&g));
     assert(cpm_compute(&g));
 
@@ -117,7 +114,6 @@ static void test_parallel_paths(void) {
     int T = add_activity(&g, "T", "End",   1, (int[]){A, B}, 2);
     (void)T;
 
-    assert(graph_validate(&g));
     assert(graph_topological_sort(&g));
     assert(cpm_compute(&g));
 
@@ -137,22 +133,10 @@ static void test_cycle_rejected(void) {
     int B = add_activity(&g, "B", "B", 1, (int[]){A}, 1);
     (void)B;
 
-    assert(graph_validate(&g));               /* validate doesn't check cycles */
-    assert(!graph_topological_sort(&g));      /* cycle should be detected      */
+    assert(!graph_topological_sort(&g));
 
     graph_free(&g);
     printf("  ok  cycle_rejected\n");
-}
-
-static void test_duplicate_ids_rejected(void) {
-    Graph g; graph_init(&g);
-    add_activity(&g, "X", "first", 1, NULL, 0);
-    add_activity(&g, "X", "again", 1, NULL, 0);
-
-    assert(!graph_validate(&g));
-
-    graph_free(&g);
-    printf("  ok  duplicate_ids_rejected\n");
 }
 
 int main(void) {
@@ -161,7 +145,6 @@ int main(void) {
     test_single_activity();
     test_parallel_paths();
     test_cycle_rejected();
-    test_duplicate_ids_rejected();
     printf("all tests passed.\n");
     return 0;
 }

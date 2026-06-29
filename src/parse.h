@@ -19,14 +19,11 @@ typedef struct {
 
     int  es, ef, ls, lf, slack;
     bool is_critical;
-
-    int  topo_rank;
 } Activity;
 
 typedef struct {
     Activity *items;
     int       count;
-    int       capacity;
     int      *topo_order;
     int       project_duration;
 } Graph;
@@ -34,14 +31,12 @@ typedef struct {
 void graph_init(Graph *graph);
 void graph_free(Graph *graph);
 
-/* On failure, prints an error to stderr and leaves *graph empty. */
+/* Loads, validates (non-empty unique ids, non-negative durations, resolvable
+ * deps) and stores the graph. On failure, prints an error to stderr and leaves
+ * *graph empty. */
 bool graph_load_from_json(const char *path, Graph *graph);
 
-/* Unique ids, non-negative durations, resolvable dependency ids. */
-bool graph_validate(const Graph *graph);
-
-/* Kahn's algorithm. Returns false on cycle.
- * Populates graph->topo_order and Activity.topo_rank (longest path from a source). */
+/* Kahn's algorithm. Returns false on cycle. Populates graph->topo_order. */
 bool graph_topological_sort(Graph *graph);
 
 int graph_find_id(const Graph *graph, const char *id);

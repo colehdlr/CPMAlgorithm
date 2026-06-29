@@ -48,7 +48,6 @@ int main(int argc, char **argv) {
 
     int exit_code = 1;
     if (!graph_load_from_json(path, &graph)) goto done;
-    if (!graph_validate(&graph)) goto done;
     if (!graph_topological_sort(&graph)) goto done;
     if (!cpm_compute(&graph)) { fprintf(stderr, "cpm: failed to compute schedule\n"); goto done; }
 

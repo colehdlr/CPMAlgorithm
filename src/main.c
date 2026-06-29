@@ -45,28 +45,26 @@ int main(int argc, char **argv) {
 
     Activity *activities = NULL;
     int count = 0;
-    int *topo_order = NULL;
     CPMResult *results = NULL;
     int project_duration = 0;
     int exit_code = 1;
 
     if (!load_activities(path, &activities, &count)) goto done;
-    if (!topological_sort(activities, count, &topo_order)) goto done;
 
     results = calloc((size_t)count, sizeof(CPMResult));
     if (!results) { fprintf(stderr, "out of memory\n"); goto done; }
 
-    if (!cpm_compute(activities, count, topo_order, results, &project_duration)) {
+    if (!cpm_compute(activities, count, results, &project_duration)) {
         fprintf(stderr, "cpm: failed to compute schedule\n");
         goto done;
     }
 
-    cpm_print_table(activities, results, count, topo_order, project_duration);
-    if (show_window) render_run(activities, results, count, topo_order, project_duration);
+    cpm_print_table(activities, results, count, project_duration);
+    if (show_window) render_run(activities, results, count, project_duration);
     exit_code = 0;
 
 done:
     free(results);
-    free_activities(activities, topo_order);
+    free(activities);
     return exit_code;
 }

@@ -5,6 +5,6 @@
 #include "cpm.h"
 
 void render_run(const Activity *items, const CPMResult *results,
-                int count, const int *topo_order, int project_duration);
+                int count, int project_duration);
 
 #endif

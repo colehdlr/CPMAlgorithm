@@ -14,10 +14,10 @@ typedef struct {
     int total_float;
 } CPMResult;
 
-bool cpm_compute(const Activity *items, int count, const int *topo_order,
+bool cpm_compute(const Activity *items, int count,
                  CPMResult *results, int *project_duration);
 
 void cpm_print_table(const Activity *items, const CPMResult *results,
-                     int count, const int *topo_order, int project_duration);
+                     int count, int project_duration);
 
 #endif

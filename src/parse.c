@@ -21,11 +21,6 @@ static char *read_file(const char *path) {
     return buf;
 }
 
-void free_activities(Activity *items, int *topo_order) {
-    free(items);
-    free(topo_order);
-}
-
 int find_activity(const Activity *items, int count, char id) {
     for (int i = 0; i < count; ++i) {
         if (items[i].id == id) return i;
@@ -128,39 +123,4 @@ fail:
 done:
     cJSON_Delete(root);
     return ok;
-}
-
-bool topological_sort(Activity *items, int count, int **out_order) {
-    if (count <= 0) return false;
-
-    int *in_degree = malloc((size_t)count * sizeof(int));
-    int *order     = malloc((size_t)count * sizeof(int));
-    if (!in_degree || !order) { free(in_degree); free(order); return false; }
-
-    for (int i = 0; i < count; ++i) in_degree[i] = items[i].dep_count;
-
-    int produced = 0;
-    while (produced < count) {
-        int picked = -1;
-        for (int i = 0; i < count; ++i) {
-            if (in_degree[i] == 0) { picked = i; break; }
-        }
-        if (picked < 0) {
-            fprintf(stderr, "parse: cycle detected\n");
-            free(in_degree); free(order);
-            return false;
-        }
-        in_degree[picked] = -1;
-        order[produced++] = picked;
-        for (int j = 0; j < count; ++j) {
-            for (int k = 0; k < items[j].dep_count; ++k) {
-                int dep_idx = find_activity(items, count, items[j].deps_on_ids[k]);
-                if (dep_idx == picked) { in_degree[j]--; break; }
-            }
-        }
-    }
-
-    *out_order = order;
-    free(in_degree);
-    return true;
 }

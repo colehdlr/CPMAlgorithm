@@ -15,23 +15,28 @@
 
 typedef struct { float x, y; } Pos;
 
-static Pos *compute_layout(const Activity *items, const int *topo_order,
-                           int count, int *out_max_rank) {
+static Pos *compute_layout(const Activity *items, int count, int *out_max_rank) {
     Pos *positions = calloc((size_t)count, sizeof(Pos));
     int *rank      = calloc((size_t)count, sizeof(int));
     if (!positions || !rank) { free(positions); free(rank); return NULL; }
 
+    /* Compute rank = longest path from any source.
+     * Iterate until stable (converges in at most count passes for a DAG). */
+    for (int pass = 0; pass < count; ++pass) {
+        for (int i = 0; i < count; ++i) {
+            int r = 0;
+            for (int k = 0; k < items[i].dep_count; ++k) {
+                int p = find_activity(items, count, items[i].deps_on_ids[k]);
+                int pr = rank[p] + 1;
+                if (pr > r) r = pr;
+            }
+            rank[i] = r;
+        }
+    }
+
     int max_rank = 0;
     for (int i = 0; i < count; ++i) {
-        int idx = topo_order[i];
-        int r = 0;
-        for (int k = 0; k < items[idx].dep_count; ++k) {
-            int p = find_activity(items, count, items[idx].deps_on_ids[k]);
-            int pr = rank[p] + 1;
-            if (pr > r) r = pr;
-        }
-        rank[idx] = r;
-        if (r > max_rank) max_rank = r;
+        if (rank[i] > max_rank) max_rank = rank[i];
     }
     *out_max_rank = max_rank;
 
@@ -39,10 +44,9 @@ static Pos *compute_layout(const Activity *items, const int *topo_order,
     if (!slot) { free(positions); free(rank); return NULL; }
 
     for (int i = 0; i < count; ++i) {
-        int idx = topo_order[i];
-        int r = rank[idx];
-        positions[idx].x = MARGIN + r * COL_SPACING + NODE_W * 0.5f;
-        positions[idx].y = MARGIN + NODE_H * 0.5f + slot[r] * ROW_SPACING;
+        int r = rank[i];
+        positions[i].x = MARGIN + r * COL_SPACING + NODE_W * 0.5f;
+        positions[i].y = MARGIN + NODE_H * 0.5f + slot[r] * ROW_SPACING;
         slot[r]++;
     }
 
@@ -84,11 +88,11 @@ static void draw_node(const Activity *a, const CPMResult *r, Vector2 center) {
 }
 
 void render_run(const Activity *items, const CPMResult *results,
-                int count, const int *topo_order, int project_duration) {
+                int count, int project_duration) {
     if (count <= 0) return;
 
     int max_rank = 0;
-    Pos *positions = compute_layout(items, topo_order, count, &max_rank);
+    Pos *positions = compute_layout(items, count, &max_rank);
     if (!positions) { fprintf(stderr, "render: out of memory\n"); return; }
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);

@@ -1,6 +1,8 @@
-#include <stdio.h>
+#include "graph.h"
+#include "cpm.h"
+#include "render.h"
+#include "io.h"
 
 int main(void) {
-    printf("Hello, World!\n");
     return 0;
 }

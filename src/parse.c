@@ -21,30 +21,15 @@ static char *read_file(const char *path) {
     return buf;
 }
 
-void graph_init(Graph *graph) {
-    graph->items = NULL;
-    graph->count = 0;
-    graph->topo_order = NULL;
-    graph->project_duration = 0;
-}
-
-void graph_free(Graph *graph) {
-    if (!graph) return;
-    free(graph->items);
-    free(graph->topo_order);
-    graph_init(graph);
-}
-
-int graph_find_id(const Graph *graph, const char *id) {
-    for (int i = 0; i < graph->count; ++i) {
-        if (strcmp(graph->items[i].id, id) == 0) return i;
+static int find_id(const Activity *activities, int count, char id) {
+    for (int i = 0; i < count; ++i) {
+        if (activities[i].id == id) return i;
     }
     return -1;
 }
 
-bool graph_load_from_json(const char *path, Graph *graph) {
-    graph_init(graph);
-
+bool parse_load_from_json(const char *path,
+                          Activity **out_activities, int *out_count) {
     char *text = read_file(path);
     if (!text) return false;
 
@@ -55,74 +40,81 @@ bool graph_load_from_json(const char *path, Graph *graph) {
         return false;
     }
 
+    Activity *activities = NULL;
+    int count = 0;
     bool ok = false;
-    cJSON *activities = cJSON_GetObjectItemCaseSensitive(root, "activities");
-    if (!cJSON_IsArray(activities) || cJSON_GetArraySize(activities) <= 0) {
+
+    cJSON *array = cJSON_GetObjectItemCaseSensitive(root, "activities");
+    if (!cJSON_IsArray(array) || cJSON_GetArraySize(array) <= 0) {
         fprintf(stderr, "parse: missing or empty 'activities' array\n");
         goto done;
     }
 
-    int count = cJSON_GetArraySize(activities);
-    graph->items = calloc((size_t)count, sizeof(Activity));
-    if (!graph->items) goto done;
+    count = cJSON_GetArraySize(array);
+    activities = calloc((size_t)count, sizeof(Activity));
+    if (!activities) goto done;
 
     /* First pass: copy fields, validate id/duration/uniqueness. */
     for (int i = 0; i < count; ++i) {
-        cJSON *item = cJSON_GetArrayItem(activities, i);
-        cJSON *id_node       = cJSON_GetObjectItemCaseSensitive(item, "id");
-        cJSON *name_node     = cJSON_GetObjectItemCaseSensitive(item, "name");
-        cJSON *duration_node = cJSON_GetObjectItemCaseSensitive(item, "duration");
+        cJSON *item     = cJSON_GetArrayItem(array, i);
+        cJSON *id_node  = cJSON_GetObjectItemCaseSensitive(item, "id");
+        cJSON *name     = cJSON_GetObjectItemCaseSensitive(item, "name");
+        cJSON *duration = cJSON_GetObjectItemCaseSensitive(item, "duration");
 
-        if (!cJSON_IsString(id_node) || !id_node->valuestring || !id_node->valuestring[0]) {
-            fprintf(stderr, "parse: activity[%d] missing non-empty string 'id'\n", i);
+        if (!cJSON_IsString(id_node) || !id_node->valuestring
+            || strlen(id_node->valuestring) != 1) {
+            fprintf(stderr, "parse: activity[%d] 'id' must be a single character\n", i);
             goto done;
         }
-        if (!cJSON_IsNumber(duration_node) || duration_node->valuedouble < 0) {
-            fprintf(stderr, "parse: activity '%s' missing non-negative numeric 'duration'\n",
-                    id_node->valuestring);
+        if (!cJSON_IsNumber(duration) || duration->valuedouble < 0) {
+            fprintf(stderr, "parse: activity '%c' missing non-negative numeric 'duration'\n",
+                    id_node->valuestring[0]);
             goto done;
         }
-        for (int j = 0; j < i; ++j) {
-            if (strcmp(graph->items[j].id, id_node->valuestring) == 0) {
-                fprintf(stderr, "parse: duplicate activity id '%s'\n", id_node->valuestring);
-                goto done;
-            }
+        char id = id_node->valuestring[0];
+        if (find_id(activities, i, id) >= 0) {
+            fprintf(stderr, "parse: duplicate activity id '%c'\n", id);
+            goto done;
         }
 
-        Activity *a = &graph->items[i];
-        snprintf(a->id, sizeof(a->id), "%s", id_node->valuestring);
+        Activity *a = &activities[i];
+        a->id = id;
         snprintf(a->name, sizeof(a->name), "%s",
-                 cJSON_IsString(name_node) ? name_node->valuestring : a->id);
-        a->duration = (int)duration_node->valuedouble;
+                 cJSON_IsString(name) ? name->valuestring : id_node->valuestring);
+        a->duration = (int)duration->valuedouble;
     }
-    graph->count = count;
 
     /* Second pass: resolve dependency ids to indices. */
     for (int i = 0; i < count; ++i) {
-        cJSON *item = cJSON_GetArrayItem(activities, i);
+        cJSON *item = cJSON_GetArrayItem(array, i);
         cJSON *deps_node = cJSON_GetObjectItemCaseSensitive(item, "dependencies");
         if (!deps_node) continue;
         if (!cJSON_IsArray(deps_node)) {
-            fprintf(stderr, "parse: activity '%s' 'dependencies' must be an array\n",
-                    graph->items[i].id);
+            fprintf(stderr, "parse: activity '%c' 'dependencies' must be an array\n",
+                    activities[i].id);
             goto done;
         }
-        int num_deps = cJSON_GetArraySize(deps_node);
-        if (num_deps > CPM_MAX_DEPS) {
-            fprintf(stderr, "parse: activity '%s' has too many deps (max %d)\n",
-                    graph->items[i].id, CPM_MAX_DEPS);
+        int n = cJSON_GetArraySize(deps_node);
+        if (n > MAX_DEPS) {
+            fprintf(stderr, "parse: activity '%c' has too many deps (max %d)\n",
+                    activities[i].id, MAX_DEPS);
             goto done;
         }
-        for (int k = 0; k < num_deps; ++k) {
+        for (int k = 0; k < n; ++k) {
             cJSON *dep_node = cJSON_GetArrayItem(deps_node, k);
-            if (!cJSON_IsString(dep_node)) goto done;
-            int dep = graph_find_id(graph, dep_node->valuestring);
-            if (dep < 0 || dep == i) {
-                fprintf(stderr, "parse: activity '%s' has bad dependency '%s'\n",
-                        graph->items[i].id, dep_node->valuestring);
+            if (!cJSON_IsString(dep_node) || !dep_node->valuestring
+                || strlen(dep_node->valuestring) != 1) {
+                fprintf(stderr, "parse: activity '%c' has non-single-char dependency\n",
+                        activities[i].id);
                 goto done;
             }
-            graph->items[i].deps[graph->items[i].num_deps++] = dep;
+            int dep = find_id(activities, count, dep_node->valuestring[0]);
+            if (dep < 0 || dep == i) {
+                fprintf(stderr, "parse: activity '%c' has bad dependency '%c'\n",
+                        activities[i].id, dep_node->valuestring[0]);
+                goto done;
+            }
+            activities[i].deps[activities[i].dep_count++] = dep;
         }
     }
 
@@ -130,19 +122,23 @@ bool graph_load_from_json(const char *path, Graph *graph) {
 
 done:
     cJSON_Delete(root);
-    if (!ok) graph_free(graph);
-    return ok;
+    if (!ok) {
+        free(activities);
+        return false;
+    }
+    *out_activities = activities;
+    *out_count = count;
+    return true;
 }
 
-bool graph_topological_sort(Graph *graph) {
-    int count = graph->count;
+bool topological_sort(const Activity *activities, int count, int **out_order) {
     if (count <= 0) return false;
 
     int *in_degree = malloc((size_t)count * sizeof(int));
     int *order     = malloc((size_t)count * sizeof(int));
     if (!in_degree || !order) { free(in_degree); free(order); return false; }
 
-    for (int i = 0; i < count; ++i) in_degree[i] = graph->items[i].num_deps;
+    for (int i = 0; i < count; ++i) in_degree[i] = activities[i].dep_count;
 
     /* Kahn's algorithm. Successors are found by scanning the array. */
     int produced = 0;
@@ -159,14 +155,13 @@ bool graph_topological_sort(Graph *graph) {
         in_degree[picked] = -1;
         order[produced++] = picked;
         for (int j = 0; j < count; ++j) {
-            for (int k = 0; k < graph->items[j].num_deps; ++k) {
-                if (graph->items[j].deps[k] == picked) { in_degree[j]--; break; }
+            for (int k = 0; k < activities[j].dep_count; ++k) {
+                if (activities[j].deps[k] == picked) { in_degree[j]--; break; }
             }
         }
     }
 
-    free(graph->topo_order);
-    graph->topo_order = order;
     free(in_degree);
+    *out_order = order;
     return true;
 }

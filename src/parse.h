@@ -31,19 +31,19 @@ typedef struct {
     int       project_duration;
 } Graph;
 
-void graph_init(Graph *g);
-void graph_free(Graph *g);
+void graph_init(Graph *graph);
+void graph_free(Graph *graph);
 
-/* On failure, prints an error to stderr and leaves *g empty. */
-bool graph_load_from_json(const char *path, Graph *g);
+/* On failure, prints an error to stderr and leaves *graph empty. */
+bool graph_load_from_json(const char *path, Graph *graph);
 
 /* Unique ids, non-negative durations, resolvable dependency ids. */
-bool graph_validate(const Graph *g);
+bool graph_validate(const Graph *graph);
 
 /* Kahn's algorithm. Returns false on cycle.
- * Populates g->topo_order and Activity.topo_rank (longest path from a source). */
-bool graph_topological_sort(Graph *g);
+ * Populates graph->topo_order and Activity.topo_rank (longest path from a source). */
+bool graph_topological_sort(Graph *graph);
 
-int graph_find_id(const Graph *g, const char *id);
+int graph_find_id(const Graph *graph, const char *id);
 
 #endif

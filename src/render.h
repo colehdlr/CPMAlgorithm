@@ -5,6 +5,6 @@
 
 /* Open a window, lay nodes out by topological rank, draw edges and CPM cards.
  * Critical path is highlighted. Drag to pan, wheel to zoom, R to reset, ESC to quit. */
-void render_run(const Graph *g);
+void render_run(const Graph *graph);
 
 #endif

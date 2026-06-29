@@ -27,36 +27,36 @@ int main(int argc, char **argv) {
     bool show_window = true;
 
     for (int i = 1; i < argc; ++i) {
-        const char *a = argv[i];
-        if (strcmp(a, "-h") == 0 || strcmp(a, "--help") == 0) {
+        const char *arg = argv[i];
+        if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0) {
             print_usage(argv[0]);
             return 0;
         }
-        if (strcmp(a, "--no-render") == 0) {
+        if (strcmp(arg, "--no-render") == 0) {
             show_window = false;
-        } else if (a[0] == '-') {
-            fprintf(stderr, "unknown option: %s\n", a);
+        } else if (arg[0] == '-') {
+            fprintf(stderr, "unknown option: %s\n", arg);
             print_usage(argv[0]);
             return 2;
         } else {
-            path = a;
+            path = arg;
         }
     }
 
-    Graph g;
-    graph_init(&g);
+    Graph graph;
+    graph_init(&graph);
 
-    int rc = 1;
-    if (!graph_load_from_json(path, &g)) goto done;
-    if (!graph_validate(&g)) goto done;
-    if (!graph_topological_sort(&g)) goto done;
-    if (!cpm_compute(&g)) { fprintf(stderr, "cpm: failed to compute schedule\n"); goto done; }
+    int exit_code = 1;
+    if (!graph_load_from_json(path, &graph)) goto done;
+    if (!graph_validate(&graph)) goto done;
+    if (!graph_topological_sort(&graph)) goto done;
+    if (!cpm_compute(&graph)) { fprintf(stderr, "cpm: failed to compute schedule\n"); goto done; }
 
-    cpm_print_table(&g);
-    if (show_window) render_run(&g);
-    rc = 0;
+    cpm_print_table(&graph);
+    if (show_window) render_run(&graph);
+    exit_code = 0;
 
 done:
-    graph_free(&g);
-    return rc;
+    graph_free(&graph);
+    return exit_code;
 }

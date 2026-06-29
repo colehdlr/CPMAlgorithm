@@ -43,57 +43,57 @@ static void font_unload(void) {
     g_font_loaded = false;
 }
 
-static void text_draw(const char *s, int x, int y, int size, Color color) {
-    DrawTextEx(g_font, s, (Vector2){ (float)x, (float)y }, (float)size, FONT_SPACING, color);
+static void text_draw(const char *text, int x, int y, int size, Color color) {
+    DrawTextEx(g_font, text, (Vector2){ (float)x, (float)y }, (float)size, FONT_SPACING, color);
 }
 
-static int text_width(const char *s, int size) {
-    return (int)MeasureTextEx(g_font, s, (float)size, FONT_SPACING).x;
+static int text_width(const char *text, int size) {
+    return (int)MeasureTextEx(g_font, text, (float)size, FONT_SPACING).x;
 }
 
 typedef struct { float x, y; } Pos;
 
-static Pos *compute_layout(const Graph *g, int *out_max_rank) {
-    Pos *pos = calloc((size_t)g->count, sizeof(Pos));
-    if (!pos) return NULL;
+static Pos *compute_layout(const Graph *graph, int *out_max_rank) {
+    Pos *positions = calloc((size_t)graph->count, sizeof(Pos));
+    if (!positions) return NULL;
 
     int max_rank = 0;
-    for (int i = 0; i < g->count; ++i) {
-        if (g->items[i].topo_rank > max_rank) max_rank = g->items[i].topo_rank;
+    for (int i = 0; i < graph->count; ++i) {
+        if (graph->items[i].topo_rank > max_rank) max_rank = graph->items[i].topo_rank;
     }
     if (out_max_rank) *out_max_rank = max_rank;
 
-    int *count_per_rank = calloc((size_t)(max_rank + 1), sizeof(int));
+    int *count_per_rank  = calloc((size_t)(max_rank + 1), sizeof(int));
     int *placed_per_rank = calloc((size_t)(max_rank + 1), sizeof(int));
     if (!count_per_rank || !placed_per_rank) {
-        free(count_per_rank); free(placed_per_rank); free(pos);
+        free(count_per_rank); free(placed_per_rank); free(positions);
         return NULL;
     }
-    for (int i = 0; i < g->count; ++i) count_per_rank[g->items[i].topo_rank] += 1;
+    for (int i = 0; i < graph->count; ++i) count_per_rank[graph->items[i].topo_rank] += 1;
 
     /* Walk in topo order so predecessors place before successors,
      * which tends to reduce edge crossings. */
-    for (int p = 0; p < g->count; ++p) {
-        int i = g->topo_order ? g->topo_order[p] : p;
-        int r = g->items[i].topo_rank;
-        int slot = placed_per_rank[r]++;
-        float col_height = (count_per_rank[r] - 1) * ROW_SPACING;
-        pos[i].x = MARGIN_X + r * COL_SPACING + NODE_W * 0.5f;
-        pos[i].y = MARGIN_Y + NODE_H * 0.5f + slot * ROW_SPACING - col_height * 0.5f
-                   + max_rank * ROW_SPACING * 0.5f;
+    for (int i = 0; i < graph->count; ++i) {
+        int index = graph->topo_order ? graph->topo_order[i] : i;
+        int rank = graph->items[index].topo_rank;
+        int slot = placed_per_rank[rank]++;
+        float col_height = (count_per_rank[rank] - 1) * ROW_SPACING;
+        positions[index].x = MARGIN_X + rank * COL_SPACING + NODE_W * 0.5f;
+        positions[index].y = MARGIN_Y + NODE_H * 0.5f + slot * ROW_SPACING - col_height * 0.5f
+                             + max_rank * ROW_SPACING * 0.5f;
     }
 
     free(count_per_rank);
     free(placed_per_rank);
-    return pos;
+    return positions;
 }
 
 static void draw_arrow_head(Vector2 tip, Vector2 dir, float size, Color color) {
     Vector2 back = { tip.x - dir.x * size, tip.y - dir.y * size };
     Vector2 perp = { -dir.y, dir.x };
-    Vector2 a = { back.x + perp.x * size * 0.5f, back.y + perp.y * size * 0.5f };
-    Vector2 b = { back.x - perp.x * size * 0.5f, back.y - perp.y * size * 0.5f };
-    DrawTriangle(tip, b, a, color);
+    Vector2 left  = { back.x + perp.x * size * 0.5f, back.y + perp.y * size * 0.5f };
+    Vector2 right = { back.x - perp.x * size * 0.5f, back.y - perp.y * size * 0.5f };
+    DrawTriangle(tip, right, left, color);
 }
 
 static void draw_edge(Vector2 from, Vector2 to, bool critical) {
@@ -105,43 +105,43 @@ static void draw_edge(Vector2 from, Vector2 to, bool critical) {
     DrawLineEx(start, end, thickness, color);
 
     Vector2 dir = Vector2Subtract(end, start);
-    float len = Vector2Length(dir);
-    if (len > 0.001f) {
-        dir.x /= len; dir.y /= len;
+    float length = Vector2Length(dir);
+    if (length > 0.001f) {
+        dir.x /= length; dir.y /= length;
         draw_arrow_head(end, dir, 12.0f, color);
     }
 }
 
-static void draw_node(const Activity *a, Vector2 center) {
-    Rectangle rec = { center.x - NODE_W * 0.5f, center.y - NODE_H * 0.5f, NODE_W, NODE_H };
+static void draw_node(const Activity *activity, Vector2 center) {
+    Rectangle rect = { center.x - NODE_W * 0.5f, center.y - NODE_H * 0.5f, NODE_W, NODE_H };
 
-    Color fill   = a->is_critical ? (Color){ 255, 224, 224, 255 } : (Color){ 245, 247, 250, 255 };
-    Color border = a->is_critical ? (Color){ 200,  40,  40, 255 } : (Color){  60,  72,  88, 255 };
+    Color fill   = activity->is_critical ? (Color){ 255, 224, 224, 255 } : (Color){ 245, 247, 250, 255 };
+    Color border = activity->is_critical ? (Color){ 200,  40,  40, 255 } : (Color){  60,  72,  88, 255 };
     Color text   = (Color){ 20, 24, 32, 255 };
 
-    DrawRectangleRounded(rec, 0.12f, 6, fill);
-    DrawRectangleRoundedLinesEx(rec, 0.12f, 6, a->is_critical ? 2.5f : 1.5f, border);
+    DrawRectangleRounded(rect, 0.12f, 6, fill);
+    DrawRectangleRoundedLinesEx(rect, 0.12f, 6, activity->is_critical ? 2.5f : 1.5f, border);
 
-    char header[64], line1[64], line2[64], line3[64];
-    snprintf(header, sizeof(header), "%s  (%dd)", a->id, a->duration);
-    snprintf(line1, sizeof(line1), "ES %-3d  EF %-3d", a->es, a->ef);
-    snprintf(line2, sizeof(line2), "LS %-3d  LF %-3d", a->ls, a->lf);
-    snprintf(line3, sizeof(line3), "Slack %d%s", a->slack, a->is_critical ? "  *" : "");
+    char header[64], early_line[64], late_line[64], slack_line[64];
+    snprintf(header,     sizeof(header),     "%s  (%dd)", activity->id, activity->duration);
+    snprintf(early_line, sizeof(early_line), "ES %-3d  EF %-3d", activity->es, activity->ef);
+    snprintf(late_line,  sizeof(late_line),  "LS %-3d  LF %-3d", activity->ls, activity->lf);
+    snprintf(slack_line, sizeof(slack_line), "Slack %d%s", activity->slack, activity->is_critical ? "  *" : "");
 
-    int x = (int)(rec.x + 10);
-    text_draw(header, x, (int)(rec.y +  8), 18, text);
-    text_draw(a->name, x, (int)(rec.y + 32), 14, text);
-    text_draw(line1, x, (int)(rec.y + 54), 13, text);
-    text_draw(line2, x, (int)(rec.y + 70), 13, text);
-    text_draw(line3, x, (int)(rec.y + 88), 13,
-              a->is_critical ? (Color){ 180, 30, 30, 255 } : text);
+    int x = (int)(rect.x + 10);
+    text_draw(header,         x, (int)(rect.y +  8), 18, text);
+    text_draw(activity->name, x, (int)(rect.y + 32), 14, text);
+    text_draw(early_line,     x, (int)(rect.y + 54), 13, text);
+    text_draw(late_line,      x, (int)(rect.y + 70), 13, text);
+    text_draw(slack_line,     x, (int)(rect.y + 88), 13,
+              activity->is_critical ? (Color){ 180, 30, 30, 255 } : text);
 }
 
-static void draw_hud(const Graph *g) {
-    char buf[128];
-    snprintf(buf, sizeof(buf), "Project duration: %d", g->project_duration);
+static void draw_hud(const Graph *graph) {
+    char buffer[128];
+    snprintf(buffer, sizeof(buffer), "Project duration: %d", graph->project_duration);
     DrawRectangle(0, 0, GetScreenWidth(), 34, (Color){ 30, 36, 48, 230 });
-    text_draw(buf, 12, 8, 20, RAYWHITE);
+    text_draw(buffer, 12, 8, 20, RAYWHITE);
 
     const char *hint = "drag: pan   wheel: zoom   R: reset view   ESC: quit";
     text_draw(hint, GetScreenWidth() - text_width(hint, 14) - 12, 12, 14,
@@ -161,15 +161,15 @@ static void draw_legend(void) {
     text_draw("Critical activity", x + 24, y + 28, 13, RAYWHITE);
 }
 
-void render_run(const Graph *g) {
-    if (!g || g->count <= 0) {
+void render_run(const Graph *graph) {
+    if (!graph || graph->count <= 0) {
         fprintf(stderr, "render: nothing to draw (empty graph)\n");
         return;
     }
 
     int max_rank = 0;
-    Pos *pos = compute_layout(g, &max_rank);
-    if (!pos) {
+    Pos *positions = compute_layout(graph, &max_rank);
+    if (!positions) {
         fprintf(stderr, "render: out of memory laying out graph\n");
         return;
     }
@@ -182,7 +182,7 @@ void render_run(const Graph *g) {
     float graph_w = (max_rank + 1) * COL_SPACING + MARGIN_X;
     float graph_h = (float)WINDOW_H;
 
-    Camera2D cam = {
+    Camera2D camera = {
         .zoom = 1.0f,
         .offset = { WINDOW_W * 0.5f, WINDOW_H * 0.5f },
         .target = { graph_w * 0.5f, graph_h * 0.5f },
@@ -190,54 +190,55 @@ void render_run(const Graph *g) {
 
     while (!WindowShouldClose()) {
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-            Vector2 d = GetMouseDelta();
-            cam.target.x -= d.x / cam.zoom;
-            cam.target.y -= d.y / cam.zoom;
+            Vector2 mouse_delta = GetMouseDelta();
+            camera.target.x -= mouse_delta.x / camera.zoom;
+            camera.target.y -= mouse_delta.y / camera.zoom;
         }
 
         float wheel = GetMouseWheelMove();
         if (wheel != 0.0f) {
             /* Zoom toward the cursor: keep the world point under the mouse fixed. */
-            Vector2 before = GetScreenToWorld2D(GetMousePosition(), cam);
-            cam.zoom *= 1.0f + wheel * 0.1f;
-            if (cam.zoom < 0.2f) cam.zoom = 0.2f;
-            if (cam.zoom > 4.0f) cam.zoom = 4.0f;
-            Vector2 after = GetScreenToWorld2D(GetMousePosition(), cam);
-            cam.target.x += before.x - after.x;
-            cam.target.y += before.y - after.y;
+            Vector2 before = GetScreenToWorld2D(GetMousePosition(), camera);
+            camera.zoom *= 1.0f + wheel * 0.1f;
+            if (camera.zoom < 0.2f) camera.zoom = 0.2f;
+            if (camera.zoom > 4.0f) camera.zoom = 4.0f;
+            Vector2 after = GetScreenToWorld2D(GetMousePosition(), camera);
+            camera.target.x += before.x - after.x;
+            camera.target.y += before.y - after.y;
         }
 
         if (IsKeyPressed(KEY_R)) {
-            cam.zoom = 1.0f;
-            cam.target = (Vector2){ graph_w * 0.5f, graph_h * 0.5f };
+            camera.zoom = 1.0f;
+            camera.target = (Vector2){ graph_w * 0.5f, graph_h * 0.5f };
         }
-        cam.offset = (Vector2){ GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f };
+        camera.offset = (Vector2){ GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f };
 
         BeginDrawing();
         ClearBackground((Color){ 18, 22, 30, 255 });
 
-        BeginMode2D(cam);
-        for (int v = 0; v < g->count; ++v) {
-            const Activity *succ = &g->items[v];
-            for (int k = 0; k < succ->num_deps; ++k) {
-                const Activity *pred = &g->items[succ->deps[k]];
-                bool critical = pred->is_critical && succ->is_critical
-                                && pred->ef == succ->es;
-                draw_edge((Vector2){ pos[succ->deps[k]].x, pos[succ->deps[k]].y },
-                          (Vector2){ pos[v].x, pos[v].y }, critical);
+        BeginMode2D(camera);
+        for (int i = 0; i < graph->count; ++i) {
+            const Activity *successor = &graph->items[i];
+            for (int k = 0; k < successor->num_deps; ++k) {
+                int pred_index = successor->deps[k];
+                const Activity *predecessor = &graph->items[pred_index];
+                bool critical = predecessor->is_critical && successor->is_critical
+                                && predecessor->ef == successor->es;
+                draw_edge((Vector2){ positions[pred_index].x, positions[pred_index].y },
+                          (Vector2){ positions[i].x, positions[i].y }, critical);
             }
         }
-        for (int i = 0; i < g->count; ++i) {
-            draw_node(&g->items[i], (Vector2){ pos[i].x, pos[i].y });
+        for (int i = 0; i < graph->count; ++i) {
+            draw_node(&graph->items[i], (Vector2){ positions[i].x, positions[i].y });
         }
         EndMode2D();
 
-        draw_hud(g);
+        draw_hud(graph);
         draw_legend();
         EndDrawing();
     }
 
     font_unload();
     CloseWindow();
-    free(pos);
+    free(positions);
 }

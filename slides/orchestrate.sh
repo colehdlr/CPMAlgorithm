@@ -22,7 +22,7 @@ ITERATIONS_DIR="$PROJECT/iterations"
 LOG_FILE="$PROJECT/feedback_loop.log"
 
 TARGET_SCORE=95
-MAX_ITERATIONS=${1:-10}
+MAX_ITERATIONS=${1:-100}
 MODEL="opus"
 
 # ---------------------------------------------------------------------------

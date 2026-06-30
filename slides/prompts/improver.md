@@ -139,8 +139,12 @@ The slides must demonstrate ALL of these for A+:
 ### Format preservation
 - **Preserve the slide format:** Every slide must keep its existing structure: `# Slide N: Title`, `**Speaker:** Name | **Time:** X`, `## On the Slide`, `## Speaker Notes`, `## KSBs Signalled`
 - **Do not change speakers:** Keep the same person assigned to each slide
-- **Do not change time allocations:** Keep the existing time splits
 - **Do not change the slide numbering or add/remove slides**
+
+### TIMING — HARD CONSTRAINT
+- **The presentation MUST NOT exceed 10 minutes.** The Q&A is a separate 5 minutes and does not count.
+- Add up every slide's time allocation. If the total exceeds 10 minutes, you MUST reduce time on slides to fit within 10 minutes. Cut speaker note content to match the reduced time — do not leave 2 minutes of content in a 1-minute slot.
+- When reducing time, prioritise keeping the highest-scoring content (PM theory, critical reflections) and trimming descriptive/transitional content.
 
 ### Authenticity guardrails
 - **Keep content authentic:** The team built a CPM (Critical Path Method) application in C. The team members are Samuel, Jamie, Cole, and Hamza. All project details, reflections, and examples must be plausible and consistent with this real project.

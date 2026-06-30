@@ -30,21 +30,22 @@ static void test_textbook(void) {
     assert(r);
     assert(max_ef(r, count) == 22);
 
-    struct { int es, ef, ls, lf, slack; } want[] = {
-        { 0,  3,  0,  3, 0 },
-        { 3,  7,  5,  9, 2 },
-        { 3,  8,  3,  8, 0 },
-        { 7, 13,  9, 15, 2 },
-        { 8, 15,  8, 15, 0 },
-        {15, 18, 15, 18, 0 },
-        {18, 22, 18, 22, 0 },
+    struct { int es, ef, ls, lf, tf, ff; } want[] = {
+        { 0,  3,  0,  3, 0, 0 },
+        { 3,  7,  5,  9, 2, 0 },
+        { 3,  8,  3,  8, 0, 0 },
+        { 7, 13,  9, 15, 2, 2 },
+        { 8, 15,  8, 15, 0, 0 },
+        {15, 18, 15, 18, 0, 0 },
+        {18, 22, 18, 22, 0, 0 },
     };
     for (int i = 0; i < count; ++i) {
         assert(r[i].earliest_start  == want[i].es);
         assert(r[i].earliest_finish == want[i].ef);
         assert(r[i].latest_start    == want[i].ls);
         assert(r[i].latest_finish   == want[i].lf);
-        assert(r[i].total_float     == want[i].slack);
+        assert(r[i].total_float     == want[i].tf);
+        assert(r[i].free_float      == want[i].ff);
     }
 
     free(r);
@@ -58,12 +59,13 @@ static void test_single(void) {
     assert(r[0].earliest_start == 0 && r[0].earliest_finish == 5);
     assert(r[0].latest_start   == 0 && r[0].latest_finish   == 5);
     assert(r[0].total_float == 0);
+    assert(r[0].free_float  == 0);
     free(r);
     printf("  ok  single\n");
 }
 
 static void test_parallel(void) {
-    /* Two parallel chains: S->A->T = 8 (critical), S->B->T = 6 (B has slack 2). */
+    /* Two parallel chains: S->A->T = 8 (critical), S->B->T = 6. */
     Activity activities[] = {
         { .id='S', .name="Start", .duration=2 },
         { .id='A', .name="A",     .duration=5, .dep_count=1, .deps={0} },
@@ -76,7 +78,8 @@ static void test_parallel(void) {
     assert(r);
     assert(max_ef(r, count) == 8);
     assert(r[1].total_float == 0);  /* A on critical path */
-    assert(r[2].total_float == 2);  /* B has slack */
+    assert(r[2].total_float == 2);
+    assert(r[2].free_float  == 2);
 
     free(r);
     printf("  ok  parallel\n");

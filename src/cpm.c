@@ -77,6 +77,22 @@ CPMResult *cpm_compute(const Activity *activities, int count) {
         }
     }
 
+    /* Free float: min(ES of successors) - EF. Tail activities default to
+     * project_duration - EF, which equals their total float. */
+    for (int i = 0; i < count; ++i) {
+        results[i].free_float = project_duration - results[i].earliest_finish;
+    }
+    for (int i = 0; i < count; ++i) {
+        const Activity *a = &activities[i];
+        for (int k = 0; k < a->dep_count; ++k) {
+            int p = a->deps[k];
+            int candidate = results[i].earliest_start - results[p].earliest_finish;
+            if (candidate < results[p].free_float) {
+                results[p].free_float = candidate;
+            }
+        }
+    }
+
     free(order);
     return results;
 }

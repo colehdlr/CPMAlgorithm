@@ -18,6 +18,7 @@ typedef struct {
     int latest_start;
     int latest_finish;
     int total_float;
+    int free_float;
 } CPMResult;
 
 /* Topologically sort the graph, then run forward + backward CPM passes.

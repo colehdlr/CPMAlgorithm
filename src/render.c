@@ -40,7 +40,7 @@ static void draw_node(const Activity *a, const CPMResult *r, Vector2 center) {
     DrawText(buf, x, (int)(rect.y + 52), 13, text);
     snprintf(buf, sizeof(buf), "LS %-3d  LF %-3d", r->latest_start, r->latest_finish);
     DrawText(buf, x, (int)(rect.y + 68), 13, text);
-    snprintf(buf, sizeof(buf), "Slack %d%s", r->total_float, critical ? "  *" : "");
+    snprintf(buf, sizeof(buf), "TF %-3d FF %-3d%s", r->total_float, r->free_float, critical ? "  *" : "");
     DrawText(buf, x, (int)(rect.y + 86), 13,
              critical ? (Color){ 180, 30, 30, 255 } : text);
 }

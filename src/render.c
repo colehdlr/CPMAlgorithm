@@ -64,10 +64,7 @@ void render_run(const Activity *activities, int count, const CPMResult *results)
             }
         }
     }
-    int max_rank = 0;
-    for (int i = 0; i < count; ++i) if (rank[i] > max_rank) max_rank = rank[i];
-
-    int *slot = calloc((size_t)(max_rank + 1), sizeof(int));
+    int *slot = calloc((size_t)count, sizeof(int));
     if (!slot) {
         free(positions); free(rank);
         fprintf(stderr, "render: out of memory\n");

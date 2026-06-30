@@ -62,7 +62,6 @@ static Activity *parse_load(const char *path, int *out_count) {
         i++;
     }
     fclose(f);
-    f = NULL;
 
     for (int j = 0; j < count; ++j) {
         for (int k = 0; k < activities[j].dep_count; ++k) {
@@ -83,7 +82,7 @@ parse_err:
     fprintf(stderr, "parse: error at line %d in '%s'\n", line_num, path);
 fail:
     free(activities);
-    if (f) fclose(f);
+    fclose(f);
     return NULL;
 }
 

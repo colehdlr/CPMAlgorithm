@@ -8,10 +8,11 @@
 
 | Decision | What We Did | PM Justification |
 |----------|-------------|------------------|
-| Struct split | Activity → Activity + CPMResult (separate input from output) | Modular decomposition — isolate parsing from calculation |
+| Struct split | Activity → Activity + CPMResult (separate input from output) | Modular decomposition — isolate parsing from calculation (WBS principle) |
 | Data format | JSON over CSV and TXT | JSON naturally represents activity-dependency relationships |
 | Language | C over Python & JS (after debate) | Iron Triangle: accepted higher time cost for deeper understanding |
-| Estimation | PERT formula for future extension | Three-point estimation accounts for duration uncertainty |
+| Estimation approach | Expert judgement + bottom-up | Each person estimated their own WBS package; combined for project total |
+| PERT readiness | Architecture supports three-point estimation | Duration field extensible to O/M/P inputs |
 
 ---
 
@@ -37,11 +38,16 @@
 - "We decided to stick with C and delegate refactors to team members who were struggling — that was our move from storming to performing."
 - This transitions into slide 7 (Challenges).
 
-### 4. PERT / Three-Point Estimation
+### 4. Estimation Approach
 
-- "Our CPM uses fixed durations. If we were extending this, we'd use:"
+- "We used expert judgement and bottom-up estimation from Week 4. We broke work into four packages — parser, algorithm, tests, visualisation — and each person estimated their own package based on their experience. That's bottom-up: estimate the parts, sum for the whole."
+- "In hindsight, our estimates were optimistic. The parser took roughly 3x longer than Samuel's single-point estimate. Three-point estimation would have captured that uncertainty."
+
+### 5. PERT Readiness
+
+- "Our CPM uses fixed durations, but the architecture supports extension to PERT:"
 - **Expected time = (O + 4M + P) / 6**
-- "This accounts for uncertainty in task durations — something our own sprint demonstrated when parsing took 3x longer than estimated."
+- "The duration field could take three inputs instead of one — giving a probabilistic range rather than a false certainty."
 
 ---
 
@@ -50,7 +56,8 @@
 - Struct split = **modular decomposition** (WBS principle — break into smallest manageable components)
 - JSON choice = **data model maps to WBS** (each activity = work package with dependencies)
 - C choice = **Iron Triangle trade-off** (time vs scope/quality)
-- PERT = **K15 estimation principles** (three-point estimation from Week 4)
+- Estimation = **expert judgement + bottom-up** (Week 4 estimation methods)
+- PERT readiness = **K15 estimation principles** (three-point estimation from Week 4)
 
 ---
 

@@ -196,6 +196,10 @@ for i in $(seq 1 "$MAX_ITERATIONS"); do
     log "  ITERATION $i / $MAX_ITERATIONS"
     log "============================================="
 
+    # Clean feedback from previous iteration so marker starts fresh
+    rm -rf "$PROJECT/feedback"
+    mkdir -p "$PROJECT/feedback"
+
     # ---- PHASE 1: MARK ----
     if [ "$i" -eq 1 ]; then
         log "PHASE 1: Initial marking of slides..."

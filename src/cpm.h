@@ -1,9 +1,16 @@
 #ifndef CPM_H
 #define CPM_H
 
-#include <stdbool.h>
+#define MAX_DEPS     16
+#define MAX_NAME_LEN 64
 
-#include "types.h"
+typedef struct {
+    char id;                  /* single-char identifier ('A', 'B', ...) */
+    char name[MAX_NAME_LEN];
+    int  duration;
+    int  dep_count;
+    int  deps[MAX_DEPS];      /* indices into the activities array */
+} Activity;
 
 typedef struct {
     int earliest_start;
@@ -13,16 +20,9 @@ typedef struct {
     int total_float;
 } CPMResult;
 
-/* Run forward + backward passes over a topologically sorted graph.
- * Caller supplies a `results` array of length `count`. On success,
- * fills `results` and writes the project duration to *out_project_duration. */
-bool cpm_compute(const Activity *activities, int count,
-                 const int *topo_order,
-                 CPMResult *results, int *out_project_duration);
-
-/* Print id, name, duration, ES, EF, LS, LF, slack, and a critical marker. */
-void cpm_print_table(const Activity *activities, int count,
-                     const int *topo_order,
-                     const CPMResult *results, int project_duration);
+/* Topologically sort the graph, then run forward + backward CPM passes.
+ * Returns a malloc'd array of `count` CPMResult (caller frees) on success,
+ * NULL on cycle or out of memory (prints a message to stderr in both cases). */
+CPMResult *cpm_compute(const Activity *activities, int count);
 
 #endif /* CPM_H */

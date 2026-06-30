@@ -1,178 +1,103 @@
 #include <assert.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "types.h"
-#include "parse.h"
 #include "cpm.h"
 
-/*
- * Minimal self-contained test driver for parse + cpm.
- *
- * Builds a small activity array in memory (no JSON), runs topological sort
- * and CPM, and asserts the expected ES/EF/LS/LF/slack/critical values.
- *
- * Run with `make test`.
- */
+#define COUNT(a) ((int)(sizeof(a) / sizeof((a)[0])))
 
-#define MAX_TEST_ACTIVITIES 32
-
-typedef struct {
-    Activity items[MAX_TEST_ACTIVITIES];
-    int count;
-} ActivityList;
-
-static int add_activity(ActivityList *list, char id, const char *name, int duration,
-                        const int *deps, int dep_count) {
-    assert(list->count < MAX_TEST_ACTIVITIES);
-    Activity *a = &list->items[list->count];
-    memset(a, 0, sizeof(*a));
-    a->id = id;
-    snprintf(a->name, sizeof(a->name), "%s", name);
-    a->duration = duration;
-    a->dep_count = dep_count;
-    for (int i = 0; i < dep_count; ++i) a->deps[i] = deps[i];
-    return list->count++;
-}
-
-static int find_idx(const ActivityList *list, char id) {
-    for (int i = 0; i < list->count; ++i) {
-        if (list->items[i].id == id) return i;
+static int max_ef(const CPMResult *r, int count) {
+    int m = 0;
+    for (int i = 0; i < count; ++i) {
+        if (r[i].earliest_finish > m) m = r[i].earliest_finish;
     }
-    return -1;
+    return m;
 }
 
-static void test_textbook_network(void) {
-    /* Same shape as data/activities.json so the test mirrors the demo. */
-    ActivityList list = {0};
-    int A = add_activity(&list, 'A', "Requirements",   3, NULL, 0);
-    (void)A;
-    int B = add_activity(&list, 'B', "Design",         4, (int[]){0}, 1);
-    int C = add_activity(&list, 'C', "Database",       5, (int[]){0}, 1);
-    int D = add_activity(&list, 'D', "Frontend",       6, (int[]){B}, 1);
-    int E = add_activity(&list, 'E', "Backend",        7, (int[]){C}, 1);
-    int F = add_activity(&list, 'F', "Integration",    3, (int[]){D, E}, 2);
-    int G = add_activity(&list, 'G', "Testing",        4, (int[]){F}, 1);
-    (void)G;
-
-    int *topo = NULL;
-    assert(topological_sort(list.items, list.count, &topo));
-
-    CPMResult *results = calloc((size_t)list.count, sizeof(CPMResult));
-    int project_duration = 0;
-    assert(cpm_compute(list.items, list.count, topo, results, &project_duration));
-
-    assert(project_duration == 22);
-
-    /* Spot-check each activity */
-    struct { char id; int es, ef, ls, lf, slack; int crit; } expected[] = {
-        { 'A', 0,  3,  0,  3, 0, 1 },
-        { 'B', 3,  7,  5,  9, 2, 0 },
-        { 'C', 3,  8,  3,  8, 0, 1 },
-        { 'D', 7, 13,  9, 15, 2, 0 },
-        { 'E', 8, 15,  8, 15, 0, 1 },
-        { 'F',15, 18, 15, 18, 0, 1 },
-        { 'G',18, 22, 18, 22, 0, 1 },
+static void test_textbook(void) {
+    Activity activities[] = {
+        { .id='A', .name="Requirements", .duration=3 },
+        { .id='B', .name="Design",       .duration=4, .dep_count=1, .deps={0} },
+        { .id='C', .name="Database",     .duration=5, .dep_count=1, .deps={0} },
+        { .id='D', .name="Frontend",     .duration=6, .dep_count=1, .deps={1} },
+        { .id='E', .name="Backend",      .duration=7, .dep_count=1, .deps={2} },
+        { .id='F', .name="Integration",  .duration=3, .dep_count=2, .deps={3,4} },
+        { .id='G', .name="Testing",      .duration=4, .dep_count=1, .deps={5} },
     };
-    for (size_t i = 0; i < sizeof(expected)/sizeof(expected[0]); ++i) {
-        int idx = find_idx(&list, expected[i].id);
-        assert(idx >= 0);
-        const CPMResult *r = &results[idx];
-        bool crit = (r->total_float == 0);
-        if (r->earliest_start != expected[i].es || r->earliest_finish != expected[i].ef
-            || r->latest_start != expected[i].ls || r->latest_finish != expected[i].lf
-            || r->total_float != expected[i].slack
-            || crit != (bool)expected[i].crit) {
-            fprintf(stderr,
-                "mismatch on %c: got ES=%d EF=%d LS=%d LF=%d slack=%d crit=%d\n"
-                "           want ES=%d EF=%d LS=%d LF=%d slack=%d crit=%d\n",
-                expected[i].id,
-                r->earliest_start, r->earliest_finish,
-                r->latest_start, r->latest_finish,
-                r->total_float, (int)crit,
-                expected[i].es, expected[i].ef, expected[i].ls, expected[i].lf,
-                expected[i].slack, expected[i].crit);
-            abort();
-        }
+    int count = COUNT(activities);
+
+    CPMResult *r = cpm_compute(activities, count);
+    assert(r);
+    assert(max_ef(r, count) == 22);
+
+    struct { int es, ef, ls, lf, slack; } want[] = {
+        { 0,  3,  0,  3, 0 },
+        { 3,  7,  5,  9, 2 },
+        { 3,  8,  3,  8, 0 },
+        { 7, 13,  9, 15, 2 },
+        { 8, 15,  8, 15, 0 },
+        {15, 18, 15, 18, 0 },
+        {18, 22, 18, 22, 0 },
+    };
+    for (int i = 0; i < count; ++i) {
+        assert(r[i].earliest_start  == want[i].es);
+        assert(r[i].earliest_finish == want[i].ef);
+        assert(r[i].latest_start    == want[i].ls);
+        assert(r[i].latest_finish   == want[i].lf);
+        assert(r[i].total_float     == want[i].slack);
     }
 
-    free(topo);
-    free(results);
-    printf("  ok  textbook_network\n");
+    free(r);
+    printf("  ok  textbook\n");
 }
 
-static void test_single_activity(void) {
-    ActivityList list = {0};
-    add_activity(&list, 'X', "Only", 5, NULL, 0);
-
-    int *topo = NULL;
-    assert(topological_sort(list.items, list.count, &topo));
-
-    CPMResult *results = calloc((size_t)list.count, sizeof(CPMResult));
-    int project_duration = 0;
-    assert(cpm_compute(list.items, list.count, topo, results, &project_duration));
-
-    assert(project_duration == 5);
-    assert(results[0].earliest_start == 0 && results[0].earliest_finish == 5);
-    assert(results[0].latest_start   == 0 && results[0].latest_finish   == 5);
-    assert(results[0].total_float == 0);
-
-    free(topo);
-    free(results);
-    printf("  ok  single_activity\n");
+static void test_single(void) {
+    Activity activities[] = { { .id='X', .name="Only", .duration=5 } };
+    CPMResult *r = cpm_compute(activities, 1);
+    assert(r);
+    assert(r[0].earliest_start == 0 && r[0].earliest_finish == 5);
+    assert(r[0].latest_start   == 0 && r[0].latest_finish   == 5);
+    assert(r[0].total_float == 0);
+    free(r);
+    printf("  ok  single\n");
 }
 
-static void test_parallel_paths(void) {
-    /* Two parallel chains from S to T:
-     *     S(2) -> A(5) -> T(1)        path = 8 (critical)
-     *     S(2) -> B(3) -> T(1)        path = 6
-     *
-     * A is critical, B is not (slack 2).
-     */
-    ActivityList list = {0};
-    int S = add_activity(&list, 'S', "Start", 2, NULL, 0);
-    int A = add_activity(&list, 'A', "A",     5, (int[]){S}, 1);
-    int B = add_activity(&list, 'B', "B",     3, (int[]){S}, 1);
-    int T = add_activity(&list, 'T', "End",   1, (int[]){A, B}, 2);
-    (void)T;
+static void test_parallel(void) {
+    /* Two parallel chains: S->A->T = 8 (critical), S->B->T = 6 (B has slack 2). */
+    Activity activities[] = {
+        { .id='S', .name="Start", .duration=2 },
+        { .id='A', .name="A",     .duration=5, .dep_count=1, .deps={0} },
+        { .id='B', .name="B",     .duration=3, .dep_count=1, .deps={0} },
+        { .id='T', .name="End",   .duration=1, .dep_count=2, .deps={1,2} },
+    };
+    int count = COUNT(activities);
 
-    int *topo = NULL;
-    assert(topological_sort(list.items, list.count, &topo));
+    CPMResult *r = cpm_compute(activities, count);
+    assert(r);
+    assert(max_ef(r, count) == 8);
+    assert(r[1].total_float == 0);  /* A on critical path */
+    assert(r[2].total_float == 2);  /* B has slack */
 
-    CPMResult *results = calloc((size_t)list.count, sizeof(CPMResult));
-    int project_duration = 0;
-    assert(cpm_compute(list.items, list.count, topo, results, &project_duration));
-
-    assert(project_duration == 8);
-    assert(results[find_idx(&list, 'A')].total_float == 0);
-    assert(results[find_idx(&list, 'B')].total_float == 2);
-
-    free(topo);
-    free(results);
-    printf("  ok  parallel_paths\n");
+    free(r);
+    printf("  ok  parallel\n");
 }
 
-static void test_cycle_rejected(void) {
-    /* A -> B -> A is a cycle; topological sort must fail. */
-    ActivityList list = {0};
-    int A = add_activity(&list, 'A', "A", 1, (int[]){1}, 1);   /* will reference B */
-    int B = add_activity(&list, 'B', "B", 1, (int[]){A}, 1);
-    (void)B;
-
-    int *topo = NULL;
-    assert(!topological_sort(list.items, list.count, &topo));
-
-    printf("  ok  cycle_rejected\n");
+static void test_cycle(void) {
+    /* A -> B -> A. cpm_compute must reject it. */
+    Activity activities[] = {
+        { .id='A', .name="A", .duration=1, .dep_count=1, .deps={1} },
+        { .id='B', .name="B", .duration=1, .dep_count=1, .deps={0} },
+    };
+    assert(cpm_compute(activities, COUNT(activities)) == NULL);
+    printf("  ok  cycle\n");
 }
 
 int main(void) {
     printf("running cpm tests:\n");
-    test_textbook_network();
-    test_single_activity();
-    test_parallel_paths();
-    test_cycle_rejected();
+    test_textbook();
+    test_single();
+    test_parallel();
+    test_cycle();
     printf("all tests passed.\n");
     return 0;
 }

@@ -1,0 +1,7 @@
+A Requirements 3
+B Design 4 A
+C Database 5 A
+D Frontend 6 B
+E Backend 7 C
+F Integration 3 D E
+G Testing 4 F

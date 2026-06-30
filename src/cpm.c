@@ -1,72 +1,82 @@
 #include "cpm.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
-bool cpm_compute(const Activity *activities, int count,
-                 const int *topo_order,
-                 CPMResult *results, int *out_project_duration) {
-    if (count <= 0 || !topo_order || !results) return false;
+/* Kahn's algorithm. Returns malloc'd order array (caller frees), NULL on cycle/OOM. */
+static int *topological_sort(const Activity *activities, int count) {
+    int *order = malloc((size_t)count * sizeof(int));
+    if (!order) return NULL;
 
-    /* Forward pass: ES/EF in topological order. */
-    int project_duration = 0;
-    for (int topo_pos = 0; topo_pos < count; ++topo_pos) {
-        int activity_index = topo_order[topo_pos];
-        const Activity *activity = &activities[activity_index];
-        CPMResult *result = &results[activity_index];
+    int in_degree[count];
+    for (int i = 0; i < count; ++i) in_degree[i] = activities[i].dep_count;
 
-        int earliest_start = 0;
-        for (int dep_slot = 0; dep_slot < activity->dep_count; ++dep_slot) {
-            int predecessor_finish = results[activity->deps[dep_slot]].earliest_finish;
-            if (predecessor_finish > earliest_start) earliest_start = predecessor_finish;
+    int produced = 0;
+    while (produced < count) {
+        int picked = -1;
+        for (int i = 0; i < count; ++i) {
+            if (in_degree[i] == 0) { picked = i; break; }
         }
-        result->earliest_start  = earliest_start;
-        result->earliest_finish = earliest_start + activity->duration;
-
-        if (result->earliest_finish > project_duration) {
-            project_duration = result->earliest_finish;
+        if (picked < 0) {
+            fprintf(stderr, "cpm: cycle in dependency graph\n");
+            free(order);
+            return NULL;
         }
-    }
-    *out_project_duration = project_duration;
-
-    /* Backward pass: walk reverse topo order, pushing each node's LS
-     * into its predecessors' LF as a min. */
-    for (int index = 0; index < count; ++index) {
-        results[index].latest_finish = project_duration;
-    }
-    for (int topo_pos = count - 1; topo_pos >= 0; --topo_pos) {
-        int activity_index = topo_order[topo_pos];
-        const Activity *activity = &activities[activity_index];
-        CPMResult *result = &results[activity_index];
-
-        result->latest_start = result->latest_finish - activity->duration;
-        result->total_float  = result->latest_start - result->earliest_start;
-
-        for (int dep_slot = 0; dep_slot < activity->dep_count; ++dep_slot) {
-            CPMResult *predecessor_result = &results[activity->deps[dep_slot]];
-            if (result->latest_start < predecessor_result->latest_finish) {
-                predecessor_result->latest_finish = result->latest_start;
+        in_degree[picked] = -1;
+        order[produced++] = picked;
+        for (int j = 0; j < count; ++j) {
+            for (int k = 0; k < activities[j].dep_count; ++k) {
+                if (activities[j].deps[k] == picked) { in_degree[j]--; break; }
             }
         }
     }
-    return true;
+
+    return order;
 }
 
-void cpm_print_table(const Activity *activities, int count,
-                     const int *topo_order,
-                     const CPMResult *results, int project_duration) {
-    printf("\n%-3s  %-22s  %4s  %4s  %4s  %4s  %4s  %5s  %s\n",
-           "ID", "Name", "Dur", "ES", "EF", "LS", "LF", "Slack", "Crit");
-    printf("------------------------------------------------------------------\n");
-    for (int topo_pos = 0; topo_pos < count; ++topo_pos) {
-        int activity_index = topo_order ? topo_order[topo_pos] : topo_pos;
-        const Activity  *activity = &activities[activity_index];
-        const CPMResult *result   = &results[activity_index];
-        bool critical = (result->total_float == 0);
-        printf("%-3c  %-22s  %4d  %4d  %4d  %4d  %4d  %5d  %s\n",
-               activity->id, activity->name, activity->duration,
-               result->earliest_start, result->earliest_finish,
-               result->latest_start, result->latest_finish, result->total_float,
-               critical ? "*" : "");
+CPMResult *cpm_compute(const Activity *activities, int count) {
+    if (count <= 0) return NULL;
+
+    int *order = topological_sort(activities, count);
+    if (!order) return NULL;
+
+    CPMResult *results = calloc((size_t)count, sizeof(CPMResult));
+    if (!results) { free(order); return NULL; }
+
+    /* Forward pass: ES/EF in topological order. */
+    for (int pos = 0; pos < count; ++pos) {
+        int idx = order[pos];
+        const Activity *a = &activities[idx];
+        int es = 0;
+        for (int k = 0; k < a->dep_count; ++k) {
+            int ef = results[a->deps[k]].earliest_finish;
+            if (ef > es) es = ef;
+        }
+        results[idx].earliest_start  = es;
+        results[idx].earliest_finish = es + a->duration;
     }
-    printf("\nProject duration: %d\n\n", project_duration);
+
+    int project_duration = 0;
+    for (int i = 0; i < count; ++i) {
+        if (results[i].earliest_finish > project_duration) {
+            project_duration = results[i].earliest_finish;
+        }
+    }
+    /* Backward pass: reverse topo order, push each node's LS into preds' LF as a min. */
+    for (int i = 0; i < count; ++i) results[i].latest_finish = project_duration;
+    for (int pos = count - 1; pos >= 0; --pos) {
+        int idx = order[pos];
+        const Activity *a = &activities[idx];
+        results[idx].latest_start = results[idx].latest_finish - a->duration;
+        results[idx].total_float  = results[idx].latest_start - results[idx].earliest_start;
+        for (int k = 0; k < a->dep_count; ++k) {
+            CPMResult *pr = &results[a->deps[k]];
+            if (results[idx].latest_start < pr->latest_finish) {
+                pr->latest_finish = results[idx].latest_start;
+            }
+        }
+    }
+
+    free(order);
+    return results;
 }

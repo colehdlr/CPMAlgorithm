@@ -13,46 +13,6 @@
 #define WINDOW_W     1200
 #define WINDOW_H     750
 
-typedef struct { float x, y; } Pos;
-
-static Pos *compute_layout(const Activity *activities, int count,
-                           const int *topo_order, int *out_max_rank) {
-    Pos *positions = calloc((size_t)count, sizeof(Pos));
-    int *rank      = calloc((size_t)count, sizeof(int));
-    if (!positions || !rank) { free(positions); free(rank); return NULL; }
-
-    /* Rank = longest path from any source. topo_order guarantees
-     * predecessors are ranked before successors. */
-    int max_rank = 0;
-    for (int i = 0; i < count; ++i) {
-        int idx = topo_order[i];
-        int r = 0;
-        for (int k = 0; k < activities[idx].dep_count; ++k) {
-            int pr = rank[activities[idx].deps[k]] + 1;
-            if (pr > r) r = pr;
-        }
-        rank[idx] = r;
-        if (r > max_rank) max_rank = r;
-    }
-    *out_max_rank = max_rank;
-
-    int *slot = calloc((size_t)(max_rank + 1), sizeof(int));
-    if (!slot) { free(positions); free(rank); return NULL; }
-
-    /* Walk in topo order so predecessors place above successors. */
-    for (int i = 0; i < count; ++i) {
-        int idx = topo_order[i];
-        int r = rank[idx];
-        positions[idx].x = MARGIN + r * COL_SPACING + NODE_W * 0.5f;
-        positions[idx].y = MARGIN + NODE_H * 0.5f + slot[r] * ROW_SPACING;
-        slot[r]++;
-    }
-
-    free(slot);
-    free(rank);
-    return positions;
-}
-
 static void draw_edge(Vector2 from, Vector2 to, bool critical) {
     Color color = critical ? (Color){ 200, 40, 40, 255 } : (Color){ 90, 90, 90, 255 };
     float thickness = critical ? 3.0f : 2.0f;
@@ -85,24 +45,64 @@ static void draw_node(const Activity *a, const CPMResult *r, Vector2 center) {
              critical ? (Color){ 180, 30, 30, 255 } : text);
 }
 
-void render_run(const Activity *activities, int count,
-                const int *topo_order,
-                const CPMResult *results, int project_duration) {
+void render_run(const Activity *activities, int count, const CPMResult *results) {
     if (count <= 0) return;
 
+    /* Layout: longest-path rank by relaxation, then assign columns/rows. */
+    Vector2 *positions = calloc((size_t)count, sizeof(Vector2));
+    int     *rank      = calloc((size_t)count, sizeof(int));
+    if (!positions || !rank) {
+        free(positions); free(rank);
+        fprintf(stderr, "render: out of memory\n");
+        return;
+    }
+    for (int pass = 0; pass < count; ++pass) {
+        for (int i = 0; i < count; ++i) {
+            for (int k = 0; k < activities[i].dep_count; ++k) {
+                int pr = rank[activities[i].deps[k]] + 1;
+                if (pr > rank[i]) rank[i] = pr;
+            }
+        }
+    }
     int max_rank = 0;
-    Pos *positions = compute_layout(activities, count, topo_order, &max_rank);
-    if (!positions) { fprintf(stderr, "render: out of memory\n"); return; }
+    for (int i = 0; i < count; ++i) if (rank[i] > max_rank) max_rank = rank[i];
+
+    int *slot = calloc((size_t)(max_rank + 1), sizeof(int));
+    if (!slot) {
+        free(positions); free(rank);
+        fprintf(stderr, "render: out of memory\n");
+        return;
+    }
+    for (int i = 0; i < count; ++i) {
+        int r = rank[i];
+        positions[i].x = MARGIN + r * COL_SPACING + NODE_W * 0.5f;
+        positions[i].y = MARGIN + NODE_H * 0.5f + slot[r] * ROW_SPACING;
+        slot[r]++;
+    }
+    free(slot);
+    free(rank);
+
+    /* Project duration (for HUD) + camera center (for initial view / R reset). */
+    int project_duration = 0;
+    Vector2 center = { 0, 0 };
+    for (int i = 0; i < count; ++i) {
+        if (results[i].earliest_finish > project_duration) {
+            project_duration = results[i].earliest_finish;
+        }
+        center.x += positions[i].x;
+        center.y += positions[i].y;
+    }
+    center.x /= count;
+    center.y /= count;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     InitWindow(WINDOW_W, WINDOW_H, "CPM - Critical Path Method");
     SetTargetFPS(60);
 
-    float graph_w = (max_rank + 1) * COL_SPACING + MARGIN;
     Camera2D camera = {
         .zoom = 1.0f,
         .offset = { WINDOW_W * 0.5f, WINDOW_H * 0.5f },
-        .target = { graph_w * 0.5f, WINDOW_H * 0.5f },
+        .target = center,
     };
 
     while (!WindowShouldClose()) {
@@ -119,7 +119,7 @@ void render_run(const Activity *activities, int count,
         }
         if (IsKeyPressed(KEY_R)) {
             camera.zoom = 1.0f;
-            camera.target = (Vector2){ graph_w * 0.5f, WINDOW_H * 0.5f };
+            camera.target = center;
         }
         camera.offset = (Vector2){ GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f };
 
@@ -135,13 +135,11 @@ void render_run(const Activity *activities, int count,
                 const CPMResult *pr = &results[p];
                 bool crit = (pr->total_float == 0) && (sr->total_float == 0)
                             && (pr->earliest_finish == sr->earliest_start);
-                draw_edge((Vector2){ positions[p].x, positions[p].y },
-                          (Vector2){ positions[i].x, positions[i].y }, crit);
+                draw_edge(positions[p], positions[i], crit);
             }
         }
         for (int i = 0; i < count; ++i) {
-            draw_node(&activities[i], &results[i],
-                      (Vector2){ positions[i].x, positions[i].y });
+            draw_node(&activities[i], &results[i], positions[i]);
         }
         EndMode2D();
 

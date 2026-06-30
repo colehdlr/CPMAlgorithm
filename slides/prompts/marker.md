@@ -206,8 +206,12 @@ For each criterion, explicitly answer these in your assessment:
 - Is the slide structure clear, professional, and engaging?
 - Is there Q&A preparation showing depth of understanding?
 - Are speaker notes in speakable language?
-- **TIMING CHECK (CRITICAL):** Add up every slide's time allocation. The presentation MUST NOT exceed 10 minutes (Q&A is a separate 5 minutes). If the total exceeds 10 minutes, this is a MAJOR issue — flag it prominently and deduct marks. List the per-slide times and the total in your assessment. For ranges like "60-90 seconds", use the midpoint.
+- **TIMING CHECK (CRITICAL — THIS IS THE MOST IMPORTANT CHECK):** The presentation MUST be EXACTLY 10 minutes. Not 11, not 12, not 15. Q&A is a separate 5 minutes. Do TWO timing checks:
+  1. **Time allocations:** Add up every slide's stated time allocation. List them all. If the total exceeds 10 minutes, this is a FAIL-level issue — deduct heavily from Criterion 4.
+  2. **Speakability vs allocation:** For each slide, count the words in Speaker Notes and divide by 150 (words per minute). If the speakable time exceeds the allocated time, the slide is overstuffed and will run over. Flag every slide where content exceeds allocation.
 - **SPEAKER ASSIGNMENT CHECK:** Every slide must have a single, unambiguous speaker assigned. Flag any slide that says "X or Y" — this must be resolved to one person. All four members (Samuel, Jamie, Cole, Hamza) must have at least one slide.
+- **SLIDE FORMAT CHECK:** Each slide should have ONLY these sections: `# Slide N: Title`, `## On the Slide`, `## Speaker Notes`, `## KSBs Signalled`. Flag and penalise any invented framework like "MUST SAY", "IF TIME", "PRIORITY SENTENCE", "Q&A BACKUP", "PM Connections", "Design Notes", "Evidence Artefacts", "DO NOT", "Time Checkpoint". These are not presentation content — they are bloat. Speaker notes should just be what the speaker says, in order, fitting within the allocated time. Slide 11 (Q&A Preparation) is exempt as it's a reference doc.
+- **SPEAKABILITY CHECK:** Read the speaker notes for each slide and estimate how long they would take to actually say out loud (~150 words per minute). If the speaker notes contain more words than the time allocation allows, flag this as a MAJOR issue. A 1-minute slide should have ~150 words of speaker notes, not 500.
 
 ---
 

@@ -137,14 +137,22 @@ The slides must demonstrate ALL of these for A+:
 ## Constraints — DO NOT Violate These
 
 ### Format preservation
-- **Preserve the slide format:** Every slide must keep its existing structure: `# Slide N: Title`, `**Speaker:** Name | **Time:** X`, `## On the Slide`, `## Speaker Notes`, `## KSBs Signalled`
+- **Each slide must have EXACTLY these sections, in this order:**
+  1. `# Slide N: Title` with `**Speaker:** Name | **Time:** X`
+  2. `## On the Slide` — concise bullet points the audience sees
+  3. `## Speaker Notes` — what the speaker actually says, in order, as natural speech
+  4. `## KSBs Signalled` — for reference only
+- **Do NOT invent extra sections or labels.** No "MUST SAY", "IF TIME", "PRIORITY SENTENCE", "Q&A BACKUP", "PM Connections", "Design Notes", "Evidence Artefacts", "DO NOT", "Time Checkpoint", or any other invented framework. Just speaker notes — what you say, in order.
+- **Slide 11 (Q&A Preparation) is the only exception** — it can have prepared questions and answers since it's a reference doc, not a presented slide.
 - **Do not change speakers:** Keep the same person assigned to each slide
 - **Do not change the slide numbering or add/remove slides**
 
-### TIMING — HARD CONSTRAINT
-- **The presentation MUST NOT exceed 10 minutes.** The Q&A is a separate 5 minutes and does not count.
-- Add up every slide's time allocation. If the total exceeds 10 minutes, you MUST reduce time on slides to fit within 10 minutes. Cut speaker note content to match the reduced time — do not leave 2 minutes of content in a 1-minute slot.
-- When reducing time, prioritise keeping the highest-scoring content (PM theory, critical reflections) and trimming descriptive/transitional content.
+### TIMING — THE HARDEST CONSTRAINT
+- **The presentation is EXACTLY 10 minutes. Not 11. Not 12. Q&A is a separate 5 minutes.**
+- **Step 1:** Add up every slide's time allocation. If the total exceeds 10 minutes, reduce allocations until they total exactly 10 minutes.
+- **Step 2:** For each slide, count the words in Speaker Notes. At 150 words per minute, the word count must not exceed (allocated minutes × 150). If a 1-minute slide has 400 words of speaker notes, CUT IT TO 150 WORDS. The speaker cannot say more than the time allows.
+- When cutting, keep the highest-scoring content (PM theory application, critical reflections) and remove repetition, over-explanation, and filler.
+- **Do NOT add content that pushes any slide over its word budget.** Every improvement must fit within the time.
 
 ### SPEAKER ASSIGNMENT — HARD CONSTRAINT
 - Every slide must have ONE unambiguous speaker. No "X or Y" — pick one person.

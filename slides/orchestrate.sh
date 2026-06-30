@@ -247,7 +247,6 @@ for i in $(seq 1 "$MAX_ITERATIONS"); do
     git diff --cached --quiet || {
         git commit -m "Improver iteration $i: $(date '+%Y-%m-%d %H:%M')"
     }
-    git push origin "$(git branch --show-current)" 2>&1 || true
 
     log "Improvement complete. Starting next marking cycle..."
     sleep 3

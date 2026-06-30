@@ -206,7 +206,8 @@ For each criterion, explicitly answer these in your assessment:
 - Is the slide structure clear, professional, and engaging?
 - Is there Q&A preparation showing depth of understanding?
 - Are speaker notes in speakable language?
-- **TIMING CHECK (CRITICAL):** Add up every slide's time allocation. The presentation MUST NOT exceed 10 minutes (Q&A is a separate 5 minutes). If the total exceeds 10 minutes, this is a MAJOR issue — flag it prominently and deduct marks. List the per-slide times and the total in your assessment.
+- **TIMING CHECK (CRITICAL):** Add up every slide's time allocation. The presentation MUST NOT exceed 10 minutes (Q&A is a separate 5 minutes). If the total exceeds 10 minutes, this is a MAJOR issue — flag it prominently and deduct marks. List the per-slide times and the total in your assessment. For ranges like "60-90 seconds", use the midpoint.
+- **SPEAKER ASSIGNMENT CHECK:** Every slide must have a single, unambiguous speaker assigned. Flag any slide that says "X or Y" — this must be resolved to one person. All four members (Samuel, Jamie, Cole, Hamza) must have at least one slide.
 
 ---
 

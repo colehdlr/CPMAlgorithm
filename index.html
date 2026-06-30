@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPM Analyzer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: #0a0a0a;
+  color: #d4d4d8;
+  min-height: 100vh;
+  padding: 3rem 4rem;
+}
+
+header { margin-bottom: 2.5rem; }
+
+h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #fafafa;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: #52525b;
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+}
+
+/* ── Stats ── */
+.stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.stat {
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 1rem 1.4rem;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #52525b;
+  margin-bottom: 0.35rem;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fafafa;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-value.crit {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ── Panels ── */
+.panels { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.panel {
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 14px;
+  padding: 1.5rem 1.8rem;
+  overflow-x: auto;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.panel-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #3f3f46;
+  font-weight: 600;
+}
+
+.legend {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 0.7rem;
+  color: #52525b;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+.legend-dot.red { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+.legend-dot.gray { background: #3f3f46; }
+
+/* ── Table ── */
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+
+th {
+  text-align: left;
+  padding: 0.5rem 0.9rem;
+  color: #3f3f46;
+  font-weight: 600;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+td {
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid #1a1a1a;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.1s;
+}
+
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+tr.crit td { color: #f87171; }
+tr.crit td:nth-child(1) { font-weight: 700; }
+tr.crit td:nth-child(8) { color: #ef4444; font-weight: 700; }
+
+input[type="number"] {
+  width: 3.2rem;
+  background: #0a0a0a;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  color: #fafafa;
+  padding: 0.25rem 0.35rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+
+input[type="number"]:focus { outline: none; border-color: #ef4444; box-shadow: 0 0 0 2px rgba(239,68,68,0.15); }
+input[type="number"]::-webkit-inner-spin-button { opacity: 0; }
+
+/* ── SVG Graph ── */
+svg { width: 100%; display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Critical Path Method</h1>
+  <p class="subtitle">Edit durations to recalculate the schedule in real-time</p>
+</header>
+
+<div class="stats" id="stats"></div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Schedule</div>
+    </div>
+    <table>
+      <thead><tr>
+        <th>ID</th><th>Activity</th><th>Duration</th>
+        <th>ES</th><th>EF</th><th>LS</th><th>LF</th><th>Slack</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="panel" id="graph-panel">
+    <div class="panel-header">
+      <div class="panel-title">Network Diagram</div>
+      <div class="legend">
+        <span><span class="legend-dot red"></span>Critical path (zero slack)</span>
+        <span><span class="legend-dot gray"></span>Non-critical (has slack)</span>
+      </div>
+    </div>
+    <svg id="graph"></svg>
+  </div>
+</div>
+
+<script>
+const activities = [
+  { id: "A", name: "Requirements",    duration: 3, deps: [] },
+  { id: "B", name: "Design",          duration: 4, deps: ["A"] },
+  { id: "C", name: "Database Setup",  duration: 5, deps: ["A"] },
+  { id: "D", name: "Frontend Dev",    duration: 6, deps: ["B"] },
+  { id: "E", name: "Backend Dev",     duration: 7, deps: ["C"] },
+  { id: "F", name: "Integration",     duration: 3, deps: ["D", "E"] },
+  { id: "G", name: "Testing",         duration: 4, deps: ["F"] },
+];
+
+function cpm(acts) {
+  const a = acts.map(x => ({ ...x, es: 0, ef: 0, ls: 0, lf: 0, slack: 0, crit: false }));
+  const m = Object.fromEntries(a.map(x => [x.id, x]));
+  const succ = Object.fromEntries(a.map(x => [x.id, []]));
+  const deg = Object.fromEntries(a.map(x => [x.id, x.deps.length]));
+  for (const x of a) for (const d of x.deps) succ[d].push(x.id);
+
+  const order = [], q = a.filter(x => !deg[x.id]).map(x => x.id);
+  while (q.length) {
+    const id = q.shift();
+    order.push(id);
+    for (const s of succ[id]) if (!--deg[s]) q.push(s);
+  }
+
+  for (const id of order) {
+    const x = m[id];
+    x.es = x.deps.length ? Math.max(...x.deps.map(d => m[d].ef)) : 0;
+    x.ef = x.es + x.duration;
+  }
+
+  const dur = Math.max(...a.map(x => x.ef));
+  for (const x of a) x.lf = dur;
+
+  for (const id of [...order].reverse()) {
+    const x = m[id];
+    x.ls = x.lf - x.duration;
+    x.slack = x.ls - x.es;
+    x.crit = x.slack === 0;
+    for (const d of x.deps) m[d].lf = Math.min(m[d].lf, x.ls);
+  }
+
+  return { acts: a, dur, order, m };
+}
+
+function render() {
+  const r = cpm(activities);
+
+  const cp = r.acts.filter(x => x.crit).map(x => x.id).join("  →  ");
+  document.getElementById("stats").innerHTML =
+    `<div class="stat"><div class="stat-label">Project Duration</div><div class="stat-value">${r.dur} days</div></div>` +
+    `<div class="stat"><div class="stat-label">Critical Path</div><div class="stat-value crit">${cp}</div></div>` +
+    `<div class="stat"><div class="stat-label">Activities</div><div class="stat-value">${r.acts.length}</div></div>`;
+
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = r.acts.map(x =>
+    `<tr class="${x.crit ? 'crit' : ''}">` +
+    `<td>${x.id}</td><td>${x.name}</td>` +
+    `<td><input type="number" min="0" value="${x.duration}" data-id="${x.id}"></td>` +
+    `<td>${x.es}</td><td>${x.ef}</td><td>${x.ls}</td><td>${x.lf}</td><td>${x.slack}</td></tr>`
+  ).join("");
+  tbody.querySelectorAll("input").forEach(el => el.addEventListener("input", e => {
+    activities.find(a => a.id === e.target.dataset.id).duration = Math.max(0, +e.target.value || 0);
+    render();
+  }));
+
+  drawGraph(r);
+}
+
+function drawGraph({ acts, order, m }) {
+  const svg = document.getElementById("graph");
+
+  const rank = {};
+  for (const id of order) {
+    const x = m[id];
+    rank[id] = x.deps.length ? Math.max(...x.deps.map(d => rank[d])) + 1 : 0;
+  }
+
+  const W = 160, H = 96, PX = 80, PY = 50;
+  const T = H / 3;
+
+  const byRank = {};
+  for (const id in rank) (byRank[rank[id]] ??= []).push(id);
+
+  const maxR = Math.max(...Object.values(rank));
+  const maxN = Math.max(...Object.values(byRank).map(g => g.length));
+  const svgW = (maxR + 1) * (W + PX) + PX;
+  const svgH = maxN * (H + PY) + PY;
+
+  svg.setAttribute("viewBox", `0 0 ${svgW} ${svgH}`);
+  svg.style.height = Math.max(Math.min(svgH + 20, 520), 200) + "px";
+
+  const pos = {};
+  for (const r in byRank) {
+    const ids = byRank[r], x = PX + (+r) * (W + PX);
+    const totalH = ids.length * H + (ids.length - 1) * PY;
+    const y0 = (svgH - totalH) / 2;
+    ids.forEach((id, i) => { pos[id] = { x, y: y0 + i * (H + PY) }; });
+  }
+
+  let html = `<defs>
+    <marker id="ah" viewBox="0 0 12 8" refX="11" refY="4" markerWidth="10" markerHeight="8" orient="auto">
+      <path d="M0,1 L10,4 L0,7" fill="none" stroke="#3f3f46" stroke-width="1.2" stroke-linejoin="round"/></marker>
+    <marker id="ahc" viewBox="0 0 12 8" refX="11" refY="4" markerWidth="10" markerHeight="8" orient="auto">
+      <path d="M0,1 L10,4 L0,7" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-linejoin="round"/></marker>
+    <filter id="glow"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ef4444" flood-opacity="0.35"/></filter>
+  </defs>`;
+
+  // Edges
+  for (const a of acts) for (const d of a.deps) {
+    const c = m[d].crit && a.crit;
+    const f = pos[d], t = pos[a.id];
+    const x1 = f.x + W, y1 = f.y + H / 2, x2 = t.x, y2 = t.y + H / 2;
+    const dx = (x2 - x1) * 0.35;
+    html += `<path d="M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}"
+      fill="none" stroke="${c ? '#ef4444' : '#27272a'}" stroke-width="${c ? 2.5 : 1.5}"
+      marker-end="url(#${c ? 'ahc' : 'ah'})" ${c ? 'filter="url(#glow)"' : ''}/>`;
+  }
+
+  // Nodes
+  for (const a of acts) {
+    const p = pos[a.id], c = a.crit;
+
+    const bg = c ? '#1a0a0a' : '#161616';
+    const border = c ? '#dc2626' : '#27272a';
+    const divider = c ? '#391515' : '#1e1e1e';
+    const valColor = c ? '#fca5a5' : '#a1a1aa';
+    const nameColor = c ? '#fca5a5' : '#e4e4e7';
+    const lblColor = c ? '#7f1d1d' : '#3f3f46';
+    const filter = c ? ' filter="url(#glow)"' : '';
+
+    html += `<g transform="translate(${p.x},${p.y})"${filter}>`;
+    html += `<rect width="${W}" height="${H}" rx="8" ry="8" fill="${bg}" stroke="${border}" stroke-width="${c ? 2 : 1}"/>`;
+
+    // Dividers
+    const line = (x1,y1,x2,y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${divider}" stroke-width="0.5"/>`;
+    html += line(0,T,W,T) + line(0,T*2,W,T*2);
+    html += line(W/3,0,W/3,T) + line(W*2/3,0,W*2/3,T);
+    html += line(W/3,T*2,W/3,H) + line(W*2/3,T*2,W*2/3,H);
+
+    // Labels (tiny, above the values)
+    const lbl = (x,y,t) => `<text x="${x}" y="${y}" text-anchor="middle" fill="${lblColor}" font-size="7" font-weight="500" letter-spacing="0.08em">${t}</text>`;
+    html += lbl(W/6, T*0.32, 'ES') + lbl(W/2, T*0.32, 'ID') + lbl(W*5/6, T*0.32, 'EF');
+    html += lbl(W/6, T*2+T*0.32, 'LS') + lbl(W/2, T*2+T*0.32, 'SLACK') + lbl(W*5/6, T*2+T*0.32, 'LF');
+
+    // Values
+    const val = (x,y,t,color,size,weight) => `<text x="${x}" y="${y}" text-anchor="middle" fill="${color}" font-size="${size}" font-weight="${weight}">${t}</text>`;
+    html += val(W/6, T*0.78, a.es, valColor, 13, 600);
+    html += val(W/2, T*0.78, a.id, nameColor, 14, 700);
+    html += val(W*5/6, T*0.78, a.ef, valColor, 13, 600);
+    html += val(W/2, T+T*0.65, a.name, nameColor, 11, 500);
+    html += val(W/6, T*2+T*0.78, a.ls, valColor, 13, 600);
+    html += val(W/2, T*2+T*0.78, a.slack, c ? '#ef4444' : '#52525b', 13, 700);
+    html += val(W*5/6, T*2+T*0.78, a.lf, valColor, 13, 600);
+
+    html += `</g>`;
+  }
+
+  svg.innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>

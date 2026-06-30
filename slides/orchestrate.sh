@@ -14,9 +14,9 @@ set -uo pipefail
 # Usage: bash orchestrate.sh [max_iterations]
 # =============================================================================
 
-PROJECT="/Users/hpatel506/reflective/CPMAlgorithm/slides"
-MARKER_PROMPT="$PROJECT/prompts/marker.md"
-IMPROVER_PROMPT="$PROJECT/prompts/improver.md"
+PROJECT="$(cd "$(dirname "$0")" && pwd)"
+MARKER_PROMPT="$PROJECT/.prompts-resolved/marker.md"
+IMPROVER_PROMPT="$PROJECT/.prompts-resolved/improver.md"
 RUBRIC="$PROJECT/feedback/summary.md"
 ITERATIONS_DIR="$PROJECT/iterations"
 LOG_FILE="$PROJECT/feedback_loop.log"
@@ -187,6 +187,12 @@ echo ""
 } >> "$LOG_FILE"
 
 mkdir -p "$ITERATIONS_DIR"
+
+# Resolve {{PROJECT}} placeholders in prompt templates
+mkdir -p "$PROJECT/.prompts-resolved"
+sed "s|{{PROJECT}}|$PROJECT|g" "$PROJECT/prompts/marker.md" > "$MARKER_PROMPT"
+sed "s|{{PROJECT}}|$PROJECT|g" "$PROJECT/prompts/improver.md" > "$IMPROVER_PROMPT"
+log "Resolved prompt templates for $PROJECT"
 
 # ---- Main feedback loop ----
 for i in $(seq 1 "$MAX_ITERATIONS"); do

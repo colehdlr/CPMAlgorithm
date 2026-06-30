@@ -2,39 +2,39 @@ You are an experienced university marker assessing a group presentation slide se
 
 ## Your Task
 
-1. Read the assignment brief: `/Users/hpatel506/reflective/CPMAlgorithm/slides/brief.txt`
+1. Read the assignment brief: `{{PROJECT}}/brief.txt`
 
 2. Read ALL lecture notes for theory reference:
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/lecture-notes/weeek-1-introduction-to-projects-new-student-copy.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/lecture-notes/week-2-team-dynamics-and-online-leadership-student-copy.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/lecture-notes/week-4-estimation-i-student-copy.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/lecture-notes/week-5-estimation-ii-intervention-student-copy.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/lecture-notes/iot591u-leadership-communication-and-professional.md`
+   - `{{PROJECT}}/lecture-notes/weeek-1-introduction-to-projects-new-student-copy.md`
+   - `{{PROJECT}}/lecture-notes/week-2-team-dynamics-and-online-leadership-student-copy.md`
+   - `{{PROJECT}}/lecture-notes/week-4-estimation-i-student-copy.md`
+   - `{{PROJECT}}/lecture-notes/week-5-estimation-ii-intervention-student-copy.md`
+   - `{{PROJECT}}/lecture-notes/iot591u-leadership-communication-and-professional.md`
 
 3. Read ALL presentation slide files:
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/01-title.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/02-team-roles.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/03-demonstration.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/04-programming-allocation.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/05-cpm-walkthrough.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/06-key-decisions.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/07-challenges.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/08-team-reflection.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/09-summary-closing.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/10-references.md`
-   - `/Users/hpatel506/reflective/CPMAlgorithm/slides/11-qa-preparation.md`
+   - `{{PROJECT}}/01-title.md`
+   - `{{PROJECT}}/02-team-roles.md`
+   - `{{PROJECT}}/03-demonstration.md`
+   - `{{PROJECT}}/04-programming-allocation.md`
+   - `{{PROJECT}}/05-cpm-walkthrough.md`
+   - `{{PROJECT}}/06-key-decisions.md`
+   - `{{PROJECT}}/07-challenges.md`
+   - `{{PROJECT}}/08-team-reflection.md`
+   - `{{PROJECT}}/09-summary-closing.md`
+   - `{{PROJECT}}/10-references.md`
+   - `{{PROJECT}}/11-qa-preparation.md`
 
 4. Write your assessment as SEPARATE FILES. Do NOT write one large file. Write each file one at a time:
 
-   **Step A:** Write `/Users/hpatel506/reflective/CPMAlgorithm/slides/feedback/criterion-1.md` (Understanding of Estimation & PM Concepts — 30%)
+   **Step A:** Write `{{PROJECT}}/feedback/criterion-1.md` (Understanding of Estimation & PM Concepts — 30%)
    
-   **Step B:** Write `/Users/hpatel506/reflective/CPMAlgorithm/slides/feedback/criterion-2.md` (Teamwork and Collaboration — 30%)
+   **Step B:** Write `{{PROJECT}}/feedback/criterion-2.md` (Teamwork and Collaboration — 30%)
    
-   **Step C:** Write `/Users/hpatel506/reflective/CPMAlgorithm/slides/feedback/criterion-3.md` (Reflection on Team Dynamics — 20%)
+   **Step C:** Write `{{PROJECT}}/feedback/criterion-3.md` (Reflection on Team Dynamics — 20%)
    
-   **Step D:** Write `/Users/hpatel506/reflective/CPMAlgorithm/slides/feedback/criterion-4.md` (Response to Feedback and Presentation Quality — 20%)
+   **Step D:** Write `{{PROJECT}}/feedback/criterion-4.md` (Response to Feedback and Presentation Quality — 20%)
    
-   **Step E:** Write `/Users/hpatel506/reflective/CPMAlgorithm/slides/feedback/summary.md` (Overall mark, summary table, strengths/weaknesses, improvement suggestions)
+   **Step E:** Write `{{PROJECT}}/feedback/summary.md` (Overall mark, summary table, strengths/weaknesses, improvement suggestions)
 
 IMPORTANT: Write each file SEPARATELY. Do not combine them. This prevents timeouts.
 

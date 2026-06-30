@@ -42,14 +42,14 @@
 
 ### PERT Extension
 
-- "Our implementation uses deterministic durations — one fixed value per task. In practice, a project manager would use three-point estimation to account for uncertainty:"
+- "Our application supports both deterministic durations and PERT three-point estimation. The user can provide optimistic, most likely, and pessimistic values, and the system calculates the expected duration using:"
 - **Expected time = (O + 4M + P) / 6**
   - O = Optimistic duration
   - M = Most likely duration
   - P = Pessimistic duration
 - "Take our Backend Dev activity (E) as an example. If we estimated: Optimistic = 5 days, Most Likely = 7 days, Pessimistic = 12 days. Then Expected = (5 + 28 + 12) / 6 = 7.5 days, with standard deviation σ = (12 - 5) / 6 = 1.17 days."
 - "Our deterministic estimate was 7 days — slightly optimistic. That pattern played out in our actual sprint too: the parser took roughly 3x longer than our single-point estimate. Three-point estimation would have flagged that risk."
-- "This is the difference between CPM (deterministic) and PERT (probabilistic). Our architecture supports PERT — the duration field could be calculated from three input values instead of one."
+- "This is the difference between CPM (deterministic) and PERT (probabilistic). We implemented both so the user can see how uncertainty changes the critical path and project duration."
 
 ---
 

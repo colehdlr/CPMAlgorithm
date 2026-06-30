@@ -137,13 +137,12 @@ The slides must demonstrate ALL of these for A+:
 ## Constraints — DO NOT Violate These
 
 ### Format preservation
-- **Each slide must have EXACTLY these sections, in this order:**
+- **Each slide must have EXACTLY these sections, in this order, and NOTHING ELSE:**
   1. `# Slide N: Title` with `**Speaker:** Name | **Time:** X`
-  2. `## On the Slide` — concise bullet points the audience sees
-  3. `## Speaker Notes` — what the speaker actually says, in order, as natural speech
-  4. `## KSBs Signalled` — for reference only
-- **Do NOT invent extra sections or labels.** No "MUST SAY", "IF TIME", "PRIORITY SENTENCE", "Q&A BACKUP", "PM Connections", "Design Notes", "Evidence Artefacts", "DO NOT", "Time Checkpoint", or any other invented framework. Just speaker notes — what you say, in order.
-- **Slide 11 (Q&A Preparation) is the only exception** — it can have prepared questions and answers since it's a reference doc, not a presented slide.
+  2. `## On the Slide` — concise bullet points the audience sees on the PowerPoint
+  3. `## Speaker Notes` — a full script of what the speaker says, written as natural speech. This is the ONLY place for spoken content. Word count must equal allocated minutes × 150.
+- **REMOVE any other section that exists.** Delete: "KSBs Signalled", "MUST SAY", "IF TIME", "PRIORITY SENTENCE", "Q&A BACKUP", "PM Connections", "Design Notes", "Evidence Artefacts", "DO NOT", "Time Checkpoint", "Key Rules for Delivery", "Q&A Backup", "Evidence", or any other invented section. If valuable content exists in those sections, move the best parts into Speaker Notes (within the word budget) or into Slide 11 (Q&A Preparation). Delete the rest.
+- **Slide 11 (Q&A Preparation) is the only exception** — it is a reference doc for the team to study before Q&A, not a presented slide. It can have prepared questions and answers.
 - **Do not change speakers:** Keep the same person assigned to each slide
 - **Do not change the slide numbering or add/remove slides**
 

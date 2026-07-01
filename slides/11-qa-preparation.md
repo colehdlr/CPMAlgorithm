@@ -6,176 +6,108 @@
 
 ---
 
-## General Q&A Technique
+## Technique
 
-When asked a question:
-
-1. **Pause** for 2 seconds (rushed answers sound memorised)
-2. **Connect to your experience:** "In our project, we encountered this when..."
-3. **Name the principle:** "This relates to [PM concept]..."
+1. **Pause** for 2 seconds — rushed answers sound memorised
+2. **Connect to your project:** "We encountered this when..."
+3. **Name the principle** if relevant
 4. **Give the specific answer**
-5. **If you don't know:** "That is outside what we explored, but based on [principle], I would expect [reasoned guess]."
+5. **If you don't know:** "That's outside what we explored, but based on [principle], I'd expect [reasoned guess]."
 
-**Natural delivery:** Do NOT recite these answers word-for-word. Internalise the key point and the theory reference, then phrase it naturally. It's fine to pause and think.
-
-**Participation check:** If any member hasn't answered by minute 3 of Q&A, the next responder says "I'd like [Name] to add their perspective on [related aspect]."
+**Participation:** If any member hasn't answered by minute 3, the next responder says "I'd like [Name] to add their perspective."
 
 ---
 
 ## Area 1: CPM Mechanics
 
-### Likely Questions
-
-| Question | Theory Anchor | Project Example | Key Line |
-|----------|---------------|-----------------|----------|
-| Why does B have float of 2? | Float = path difference at merge | B-D=13, C-E=15, gap=2 | "C drives F's start; B can slip 2 days" |
-| What if B's duration = 7? | Critical path shifts dynamically | B-D becomes 23 > current 22 | "Critical path isn't fixed — it changes when durations change" |
-| How crash to 18 days? | Best cost-per-day ratio on critical | E first at £2,500/day | "Never crash non-critical activities" |
-| Total vs free float? | Total=project end; Free=next task | Both 2 for B here; diverge at shared merges | "Free float is what the downstream person cares about" |
-| Resource constraints in CPM? | CPM assumes unlimited resources | B and C both start day 3 — one person = sequential | "Resource levelling adjusts schedule to resolve conflicts" |
-
-### Extended CPM Detail
-
-- "CPM assumes unlimited resources. If one developer handled both B and C, B follows C rather than running in parallel — pushing D to finish at day 18 and the project to 24 days. That's a 2-day hit from one resource constraint."
-- "Resource levelling adjusts the schedule to resolve resource conflicts while keeping duration minimal. Resource smoothing only moves activities within their float."
-- "The PERT formula σ = (P - O) / 6 assumes a consistent beta distribution. In reality, some tasks have highly skewed risk profiles where this breaks down."
-- "Activity independence is the bigger practical issue. Samuel's C struggle affected both parser and testing confidence — correlated activities mean our confidence interval is probably too narrow."
-- "If our deadline was 20 days, we'd crash Activity E first — it's critical with the best cost-per-day ratio at £2,500/day versus G at £3,000/day. You never crash non-critical activities. Once you crash E enough that B-D becomes critical too, you'd need to crash both paths simultaneously."
-- "Fast-tracking — overlapping Algorithm and Integration — was rejected because Integration literally needs Algorithm's compiled output. Fast-tracking only works with soft dependencies."
+| Question | Answer | Project Link |
+|----------|--------|--------------|
+| Why does B have float of 2? | B-D path = 13 days, C-E path = 15 days. B can slip 2 days before it affects F's start. | "You can see it in our demo output — B and D are grey, not red." |
+| What if B's duration increased to 7? | B-D path becomes 14, then 17 with D. Still under 22, so CP unchanged. But at B=8, B-D=18 and D-F path = 23 > 22 — CP shifts. | "Critical path isn't fixed. It changes when durations change." |
+| Total float vs free float? | Total = delay before project end slips. Free = delay before the NEXT task slips. Both are 2 for B here because B's successor (D) feeds only into F alongside E. | "Free float is what the downstream person cares about." |
+| Resource constraints in CPM? | CPM assumes unlimited resources. If one person handled both B and C (both start Day 3), one becomes sequential. Schedule extends. | "Resource levelling adjusts the schedule; CPM alone doesn't model people." |
+| How would you crash to 18 days? | Only crash critical activities. Shorten E or G — whichever has the better cost-per-day ratio. Once one path is shortened enough that another becomes critical, you crash both. | "Never crash non-critical activities." |
 
 ---
 
-## Area 2: Estimation and Iron Triangle
+## Area 2: PERT and Estimation
 
-### Likely Questions
-
-| Question | Theory Anchor | Project Example | Key Line |
-|----------|---------------|-----------------|----------|
-| Triple constraint? | Iron Triangle — fix two, flex one | Time+cost fixed → scope flexed via MoSCoW | "Scope is your only control lever" |
-| CPM vs PERT? | Deterministic vs probabilistic | 22 days vs 23.8 days, range [20.2, 27.4] | "PERT forces pessimistic thinking" |
-| Which estimation method best? | Context-dependent (Week 4) | Analogous matched actual; expert was worst | "Analogous → parametric → PERT → expert as fallback" |
-| Why didn't you implement PERT in code? | MoSCoW — it was a 'Could have' | Architecture supports it; would've cut testing time | "That's an Iron Triangle call — correctness over features" |
-| Why EVA? | Extends estimation into monitoring | SPI 0.75 = behind schedule by 25% | "Turns estimation from one-time to continuous" |
-
-### Extended Estimation Detail
-
-- "Four estimation methods compared on the parser: expert judgement (+200% error), PERT (+114%), analogous (~0% using Python coursework scaled by 2x), parametric (close after pair-programming adjustment). Analogous was most accurate because we had directly comparable historical data."
-- "Parametric estimation: experienced C developers averaged 15 lines/hour, less experienced averaged 8. For the 45-line parser, parametric gives 5.6 hours — closer to actual once you factor pair-programming cutting time roughly in half."
-- "EVA limitation: requires reliable percentage-complete data, which is subjective for knowledge work. Our Day 1 checkpoint worked because we could objectively count completed WBS packages."
-- "We applied PERT during our Day 1 replan — re-estimating remaining work with O/M/P scenarios. That's how we decided visualisation was still achievable rather than cutting it. PERT informed a real-time scope decision, not just retrospective analysis."
-- "Our hybrid lifecycle: sequential critical path dependency combined with iterative refinement within modules. Week 1 identifies hybrid as suited to 'complex projects with mixed needs' — our critical path needed predictability, but each module benefited from iterative feedback."
-- "Crashing Activity E from 7 to 5 days costs £5,000 in overtime (£2,500/day). Crashing G from 4 to 3 costs £3,000 (£3,000/day). Crash E first — better ratio."
+| Question | Answer | Project Link |
+|----------|--------|--------------|
+| Walk me through the PERT variance calculation. | Expected = (O+4M+P)/6. Variance = ((P-O)/6)². Sum variances along critical path. Square root gives project σ. Our critical path variance = 3.21, σ = 1.79. 95% CI = mean ± 1.96σ. | "That's how we get 23.8 ± ~3.5 days, so [20.2, 27.4]." |
+| CPM vs PERT — when use which? | CPM when durations are well-known. PERT when uncertainty matters — forces you to think about optimistic and pessimistic scenarios. | "PERT told us 23.8 vs 22 — a PM commits at 25, not 22." |
+| Which estimation method worked best for you? | Expert judgement was worst (+200% on parser). Analogous (Python coursework scaled 2× for C) matched actual. PERT halved the error vs expert. Hierarchy: analogous → parametric → PERT → expert as fallback. | "We had directly comparable past work — that's when analogous shines." |
+| How did you use PERT during the sprint? | When parser overran Day 1, we re-estimated remaining work with O/M/P. That told us visualisation was still achievable but the stretch goal was at risk. It informed a real-time scope decision. | "PERT isn't just retrospective — we used it to decide what to protect." |
+| Iron Triangle — what was your trade-off? | Time was fixed (2 days). Team size was fixed (4). So scope had to flex. We used MoSCoW to decide what to protect when we fell behind. | "Scope is your only control lever when time is fixed." |
 
 ---
 
-## Area 3: Teamwork and Team Theory
+## Area 3: Teamwork
 
-### Likely Questions
-
-| Question | Theory Anchor | Project Example | Key Line |
-|----------|---------------|-----------------|----------|
-| What Tuckman stage reached? | Forming→Storming→Norming→Performing | Norming by Day 1 end; Performing glimpses Day 2 | "True Performing takes longer than two days" |
-| Non-contributing member? | Storming — address directly | Understand why, reference allocation, offer support | "Suppressing it prolongs Storming" |
-| Strengths-based allocation risks? | McClelland — over-indexes achievement | In 2-day sprint, speed trumps growth | "Longer projects need rotation" |
-| Why Kanban over Scrum? | Uncertain durations; 2-day timeline | Ceremonies would eat into working time | "Continuous flow beat fixed-length sprints" |
-| Theory Y assumption — when does it fail? | Mixed motivation or unclear priorities | Need push-based assignment | "Validate Theory Y before assuming it" |
-
-### Extended Teamwork Detail
-
-- "Our Kanban board's pull-based model worked because all four self-motivated — Theory Y assumption (McGregor, 1960). In a team with mixed motivation, you'd need push-based assignment. WIP limit of 1 matched single-person WBS packages."
-- "Leadership shifted from transactional role allocation (Day 1 AM) to transformational influence during the C debate (Burns, 1978). That shift wasn't planned — it responded to what the team needed."
-- "McClelland's three drivers: achievement (each person succeeding at their area), affiliation (shared stand-ups and pair-programming), power (owning your module). The risk is over-indexing achievement — nobody grows."
-- "Our Tuckman progression: Formed Day 1 morning with role allocation, Stormed during C debate at 15:47, Normed by evening with shared processes, Performing glimpses Day 2 when people self-directed without checking in. But Norming wasn't a single transition — we Normed on process by Day 1 afternoon and didn't Norm on knowledge until Day 2."
-- "Wilemon & Thamhain barrier mapping: managed 5 of 11. Prevented: Role Conflicts (RACI + struct), Communication Problems (stand-ups + Kanban). Encountered: Differing Outlooks (C debate), Dynamic Environments (replan), Lack of Team Definition (role expansion). Remaining 6 not applicable in self-selecting academic peers but would need Day-1 attention in industry."
-- "Stand-ups worked because our modular task split meant blockers cascaded within hours. A block on parsing could stall everything downstream by next morning. In independent work, stand-ups would be wasted time."
-- "Self-determination theory (Deci and Ryan, 1985): strengths-based allocation satisfied autonomy, familiar territory satisfied competence, shared stand-ups satisfied relatedness. Theory Y is the assumption; SDT is the mechanism."
+| Question | Answer | Project Link |
+|----------|--------|--------------|
+| What Tuckman stage did you reach? | Norming by Day 1 evening — shared processes, roles clear. Glimpses of Performing Day 2 when people self-directed without checking in. True Performing takes longer than two days. | "Norming on process happened Day 1; norming on knowledge took until Day 2." |
+| Did RACI actually change behaviour? | Yes — Hamza was Consulted on both Algorithm and Visualisation. That's why he caught the type mismatch between Jamie's output and Cole's renderer. Without that explicit role, he might have assumed it wasn't his business. | "The C/I distinction told him it was his job to look." |
+| What if a team member wasn't contributing? | Address it directly — suppressing it prolongs Storming. Understand why first (blocked? unclear task? disengaged?), then reference the allocation and offer support. Our escalation rule would apply. | "We'd use the same 15-min rule — surface it, don't avoid it." |
+| Why strengths-based allocation? Risk? | Speed — 2-day timeline meant we needed people where they'd succeed immediately. The risk is nobody grows. Longer projects need rotation. | "It worked here because of the timeline, not because it's always right." |
+| Why Kanban over Scrum? | 2-day timeline — sprint ceremonies would eat working time. Uncertain task durations suited continuous flow. WIP limit of 1 matched single-person packages. | "Continuous flow beat fixed-length sprints for this timeline." |
 
 ---
 
-## Area 4: Team Contract and Communication
+## Area 4: Reflection and Learning
 
-### Likely Questions
-
-| Question | Theory Anchor | Project Example | Key Line |
-|----------|---------------|-----------------|----------|
-| Team agreements? | Social contract (Belbin, 2010) | 6 agreements evolving through use | "Verbal for 4; write for 8+" |
-| Why verbal contract? | Speed vs rigour | 4 people, same room, prior trust | "Documented retrospectively as transfer template" |
-| Role evolution? | Tuckman Norming | Hamza's role grew into integration oversight | "Organic role expansion — roles refined as team discovers needs" |
-| Communication over time? | Tuckman stages (Highsmith, 2002) | Forming=directive → Norming=open → Performing=autonomous | "Shifted as trust built" |
-
-### Extended Detail
-
-- "Team contract as social contract (Belbin, 2010): verbal for four people who already knew each other in the same room. For eight people or remote, you'd need written documentation to prevent 'I thought we agreed...' disputes."
-- "Samuel proposed the sixth agreement ('test each other's modules before integration') at Day 2 stand-up, based on the Day 1 type-mismatch. Team agreed in under 2 minutes because evidence was fresh. That's a living contract, not static bureaucracy."
-- "Our Belbin roles were more useful as a retrospective lens than a planning tool. We allocated by strength, then discovered the mapping. The value was diagnostic — understanding WHY our allocation worked, not deciding what it should be."
-- "The 15-minute stand-ups adapted through use: first one ran 25 minutes, we restructured to the 3-question format (what did, what will do, blockers), cut to 12 minutes. Treating processes as living tools, not fixed."
+| Question | Answer | Project Link |
+|----------|--------|--------------|
+| How did you structure your reflections? | Each person identified an assumption they held, the specific moment it was challenged, the theory that explains why, and a concrete future action. | "It's roughly Kolb's cycle — experience, reflect, theorise, plan — but messier in reality." |
+| Schön vs Kolb? | Kolb is retrospective — you reflect after the event. Schön's reflection-in-action happens in real time. Samuel's was Schön — he reframed "I'm stuck on syntax" to "I don't know what correct looks like" while still working. | "Schön doesn't require stopping to reflect formally." |
+| What's your biggest team-level lesson? | We decomposed work but not understanding. The WBS split responsibilities but didn't ensure people knew enough about adjacent modules to do their own work well. | "Next time: a knowledge map alongside the WBS." |
+| What transfers to a new team? What doesn't? | Processes transfer — escalation rules, RACI, stand-up format. Trust doesn't — that came from a shared failure in a prior module. A new team would need to build relational foundations deliberately. | "We'd need to invest in trust-building before the processes become useful." |
+| Counter-arguments on your future actions? | Jamie: spiking only matters for irreversible decisions. Samuel: knowledge-sharing depends on the tester knowing enough to ask good questions. Cole: automated verification only works when correctness is measurable. Hamza: interface ownership adds overhead — unnecessary for tiny interfaces. | "Each action has boundary conditions where it stops being worth it." |
 
 ---
 
-## Area 5: Reflection and Learning Theory
+## Area 5: Challenges and Conflict
 
-### Likely Questions
-
-| Question | Theory Anchor | Project Example | Key Line |
-|----------|---------------|-----------------|----------|
-| How did you structure reflections? | Kolb's cycle (1984) adapted | Assumption → event → theory → future action | "Kolb works retrospectively; our learning was messier" |
-| Kolb vs Schön? | Retrospective vs in-action | Samuel's mid-flow knowledge-gap fix | "Schön doesn't require stopping to reflect formally" |
-| Biggest team-level lesson? | Knowledge decomposition | WBS decomposes work, not understanding | "Knowledge map alongside WBS" |
-| Adjourning — what transfers? | Tuckman (1965) | Processes transfer; trust doesn't | "Build relational foundations deliberately in new teams" |
-
-### Extended Detail
-
-- "Our reflection structure maps to Kolb's Experiential Learning Cycle — but Kolb assumes learning moves neatly from experience to reflection to theory. Ours was messier. The theory connection often came after the future action was already decided. Kolb is better as retrospective sense-making than a real-time learning model."
-- "What actually happened in real time was closer to Schön's (1983) reflection-in-action: notice discomfort, name the assumption, test it immediately — a micro-cycle that doesn't wait for formal reflection."
-- "The ADKAR connection goes further for Jamie's reflection: the structured C debate discussion ended up acting as Reinforcement. Committing publicly to 'stick with C but support each other' prevented reopening the debate every time someone hit a snag."
-- "Counter-arguments on future actions: Jamie — spiking only makes sense when stakes are high and knowledge is uncertain. Samuel — the transfer still depends on the tester knowing enough to ask good questions. Cole — visual verification only works when the tool has a natural visual form. Hamza — interface ownership adds overhead; unnecessary for 2-person teams with simple interfaces."
-- "What we plan to apply going forward: Jamie — spike before committing to irreversible decisions. Samuel — ask for the pessimistic estimate in stand-ups. Cole — pair visual checks with automated verification. Hamza — review interface contracts before development begins."
+| Question | Answer | Project Link |
+|----------|--------|--------------|
+| How did you resolve the C language debate? | Escalation rule triggered — unresolved after 15 mins, structured round-robin. Each person spoke in turn. Decision: stick with C, support each other. Jamie then pair-programmed Samuel's parser for 45 minutes. | "The round-robin prevented anyone dominating the conversation." |
+| Why did the round-robin work? | Because we already trusted each other. A previous module failure taught us blame destroys speed. The structure gave urgency and prevented dominance — but only because trust made honesty safe. | "A new team using the same process without that trust would get politeness, not honesty." |
+| What would you do differently with the C decision? | Spike it. We spent 20 minutes spiking JSON vs CSV but zero time testing whether C was feasible for everyone. We confused shared enthusiasm with shared capability. | "Spike the risky decisions, not just the easy ones." |
+| Hamza — without existing trust, what structural mechanism would you use? | Assign interface ownership as a formal role on Day 1 — separate from module ownership. Make it someone's explicit job to review contracts between modules. Then flagging mismatches is a role responsibility, not a personal confrontation. | "Structure can substitute for trust when trust hasn't been built yet." |
 
 ---
 
-## Area 6: Risk and Quality
+## Area 6: Scope and Decisions
 
-### Likely Questions
-
-| Question | Theory Anchor | Project Example | Key Line |
-|----------|---------------|-----------------|----------|
-| What risks identified? | Avoid/mitigate/transfer/accept | Integration→struct; Time→MoSCoW; Accuracy→tests | "Mitigation before the risk materialises" |
-| Testing approach? | "Build quality in" | Golden path + edge cases + error cases | "Proactive, not bolted on at the end" |
-| Demo failure plan? | Risk mitigation | Backup screenshot, rehearsed 3x | "5-second failover" |
-
----
-
-## Area 7: Change Management
-
-### Likely Questions
-
-| Question | Theory Anchor | Project Example | Key Line |
-|----------|---------------|-----------------|----------|
-| Managing plan revision? | Lewin (Unfreeze→Change→Refreeze) | Acknowledged overrun → MoSCoW replan → committed | "Acknowledging the problem was the hardest step" |
-| ADKAR in your project? | Hiatt (2006) | C debate: had Awareness+Desire, lacked Knowledge+Ability | "Change fails when you skip Knowledge and Ability" |
+| Question | Answer | Project Link |
+|----------|--------|--------------|
+| MoSCoW — how did you decide categories? | Must = core deliverable (CPM calc + parser — without these, nothing works). Should = visualisation (adds value but app functions without it). Could = PERT mode (stretch). Won't = GUI input (explicitly descoped Day 1). | "Must is 'does the thing exist', Should is 'is it good', Could is 'is it impressive'." |
+| PERT is implemented — why was it a "Could"? | It started as Could. When parser overran, we re-assessed: Musts were on track, Should was achievable given Cole's float. PERT survived because we found time — but it was genuinely at risk of being cut. | "MoSCoW isn't static — it told us what to sacrifice IF we needed to." |
+| If you had 3 more days, what would you add? | Monte Carlo simulation (random sampling instead of single PERT estimate), GUI input (currently JSON file), and resource-constrained scheduling. | "Monte Carlo would give a probability distribution rather than one confidence interval." |
+| How does this relate to managing a real project? | Same principles at different scale. CPM/PERT apply to construction, software, any multi-activity project. The difference: real projects have hundreds of activities, external dependencies, and resource constraints CPM doesn't model. | "The maths scales; what changes is the number of unknowns." |
 
 ---
 
-## Hard-Mode Questions to Practise
+## Hard Questions to Practise
 
-1. "If you had 3 more days, what would you add to the application?"
-2. "How would your process change with a 6-person team?"
+1. "Walk me through how you'd add a new activity to your network and recalculate."
+2. "How would your process change with 6 people instead of 4?"
 3. "What's the limitation of your JSON input format?"
-4. "How would you handle resource constraints in CPM?"
-5. "What would you do if two team members wanted the same role?"
-6. "How does your experience relate to managing a real construction project?"
-7. "Why didn't you implement Monte Carlo simulation?"
-8. "What would happen if your critical path shifted during the project?"
+4. "What would happen if your critical path shifted mid-project?"
+5. "Why didn't you implement Monte Carlo simulation?"
+6. "What would you do if two team members wanted the same role?"
+7. "How did you test that your algorithm gives correct results?"
+8. "What's the difference between resource levelling and resource smoothing?"
 
 ---
 
 ## Handling Difficult Moments
 
-**If you genuinely don't know:**
-"That is outside what we explored in this sprint, but based on [principle], I would expect [reasoned guess]. I would want to verify by [action]."
+**If you don't know:**
+"That's outside what we explored, but based on [principle], I'd expect [reasoned guess]."
 
 **If asked about someone else's area:**
-Give a brief answer showing cross-team knowledge, then: "[Name] can add detail on this."
+Brief answer showing cross-team knowledge, then: "[Name] can add more detail on this."
 
-**If asked a calculation you need to think through:**
-"Let me work through that. [Pause. Think aloud briefly.] The new path would be... which means..."
+**If asked a calculation:**
+"Let me work through that." [Pause. Think aloud.] "The new path would be... which means..."

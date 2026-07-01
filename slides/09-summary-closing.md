@@ -8,7 +8,7 @@
 
 - **Samuel:** WBS needs a knowledge map — you can plan work but not understanding
 - **Jamie:** Single-point estimates are always optimistic — including our estimate of our own abilities
-- **Cole:** Building a PM tool taught us PM — accuracy for the wrong audience is still a miss
+- **Cole:** Building a PM tool taught us PM — not just the theory, but how it breaks down in practice
 - **Hamza:** Thank you — we welcome your questions
 
 ---
@@ -19,6 +19,6 @@
 
 **Jamie:** PERT taught us single-point estimates are always optimistic — including our estimate of our own abilities.
 
-**Cole:** Building a PM tool taught us project management — accuracy for the wrong audience is still a miss.
+**Cole:** Building a PM tool taught us project management — not just the theory, but how it breaks down in practice.
 
 **Hamza:** Thank you. We welcome your questions.

@@ -23,4 +23,4 @@ The round-robin worked for us specifically because we already knew each other �
 
 Not all challenges were reactive. The shared struct definition took 30 minutes upfront but prevented integration conflicts entirely. The JSON spike cost 20 minutes, saved 2-3 hours. No spike on C — an hour of frustration instead. That's our gap: we spiked the easy decisions but not the risky one.
 
-Beyond tasks, Jamie noticed Samuel was quieter and messaged privately — surfacing frustration he hadn't voiced.
+Not all support was technical. Jamie noticed Samuel was quieter and messaged privately — surfacing frustration he hadn't voiced. That's a different kind of collaboration from pair-programming, but it mattered just as much.

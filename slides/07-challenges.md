@@ -21,6 +21,6 @@ We agreed on C initially but it slowed Samuel down. Our escalation rule kicked i
 
 The round-robin worked for us specifically because we already knew each other — a previous module failure taught us that blame destroys speed. That trust made it safe to say "I'm struggling" rather than defending a position. In a new team without that history, the same process would probably produce politeness rather than honesty.
 
-Not all challenges were reactive. The JSON spike cost 20 minutes, saved 2-3 hours. No spike on C — an hour of frustration instead. That's our gap: we spiked the easy decision but not the risky one.
+Not all challenges were reactive. The shared struct definition took 30 minutes upfront but prevented integration conflicts entirely. The JSON spike cost 20 minutes, saved 2-3 hours. No spike on C — an hour of frustration instead. That's our gap: we spiked the easy decisions but not the risky one.
 
 Beyond tasks, Jamie noticed Samuel was quieter and messaged privately — surfacing frustration he hadn't voiced.

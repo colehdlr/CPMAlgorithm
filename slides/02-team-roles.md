@@ -19,7 +19,6 @@
 
 - Shared struct before coding → prevented integration conflicts
 - 15-min stand-ups → ran 25 mins first time → restructured → cut to 12 mins
-- 15-min escalation rule → triggered during C debate
 
 **Belbin Gap:** No Completer Finisher → Hamza shifted Day 2 to full integration testing
 
@@ -29,6 +28,6 @@
 
 We allocated by strengths — I took Scrum Master knowing the team, Jamie owned the algorithm from his CPM research, Cole brought RayLib experience, Hamza was strongest at spotting cross-module issues.
 
-Everyone was self-motivated, so they didn't need managing — I just kept things moving. The RACI formalised who owned what: Integration had three Consulted because that's where cross-module risk sat.
+Everyone was self-motivated, so they didn't need managing — I just kept things moving. The RACI formalised who owned what: Integration had three Consulted because that's where cross-module risk sat. Our agreements evolved — stand-ups ran 25 minutes the first time, so we restructured to the 3-question format and got it down to 12. The shared struct prevented integration surprises.
 
 When my parser took 3× estimate, Cole picked up some of my testing scope Day 2 — keeping workload balanced. The Belbin gap — no Completer Finisher — is a label we applied in retrospect. What actually happened: Hamza naturally shifted to running full integration once we realised nobody was doing it.

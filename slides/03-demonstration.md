@@ -36,7 +36,7 @@ PERT Project Duration: 23.8 days (vs 22 deterministic)
 
 ## Speaker Notes
 
-I'll run our app on the 7-activity scenario. Forward pass calculates earliest start and finish. Backward pass works backwards for latest start and finish. Float is the difference — zero float means critical.
+What you're seeing is an AON network diagram rendered in RayLib. I'll run our app on the 7-activity scenario. Forward pass calculates earliest start and finish. Backward pass works backwards for latest start and finish. Float is the difference — zero float means critical.
 
 Critical path: A, C, E, F, G — 22 days. B and D have 2 days of float, shown in grey. Critical in red.
 

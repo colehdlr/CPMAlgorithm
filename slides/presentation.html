@@ -989,7 +989,7 @@ body.notes-open .progress-bar {
             </div>
             <div class="slide-bottom-rule"></div>
             <span class="pagenum">001</span>
-            <span class="nav-hint">arrows / space</span>
+            <span class="nav-hint">arrows / space &bull; P = presenter mode</span>
         </section>
 
         <!-- ===========================
@@ -1626,7 +1626,7 @@ body.notes-open .progress-bar {
     <div class="notes-speaker" id="notesSpeaker"></div>
     <div class="notes-body" id="notesBody"></div>
 </div>
-<div class="notes-hint">N = notes</div>
+<div class="notes-hint">N = notes &bull; P = presenter mode</div>
 
 <!-- Edit mode controls -->
 <div class="edit-hotzone" id="editHotzone"></div>
@@ -1898,8 +1898,110 @@ const origShowSlide = presentation.showSlide.bind(presentation);
 presentation.showSlide = function(index) {
     origShowSlide(index);
     notes.update(this.currentSlide);
+    if (presenterMode) presenterMode.sync(this.currentSlide);
 };
 presentation.showSlide(0);
+
+/* ===========================================
+   PRESENTER MODE (P key)
+   Opens a second window for the speaker's laptop.
+   Audience screen shows clean slides only.
+   =========================================== */
+class PresenterMode {
+    constructor() {
+        this.win = null;
+        this.startTime = null;
+        this.timerInterval = null;
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'p' || e.key === 'P') && !e.target.getAttribute('contenteditable')) {
+                e.preventDefault();
+                this.open();
+            }
+        });
+    }
+
+    open() {
+        if (this.win && !this.win.closed) {
+            this.win.focus();
+            return;
+        }
+
+        this.win = window.open('', 'presenter', 'width=900,height=700');
+        if (!this.win) { alert('Enable popups for presenter mode'); return; }
+
+        this.win.document.write(this.buildHTML());
+        this.win.document.close();
+        this.startTime = Date.now();
+        this.timerInterval = setInterval(() => this.updateTimer(), 1000);
+        this.sync(presentation.currentSlide);
+
+        this.win.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight': case ' ': case 'ArrowDown':
+                    e.preventDefault(); presentation.next(); break;
+                case 'ArrowLeft': case 'ArrowUp':
+                    e.preventDefault(); presentation.prev(); break;
+            }
+        });
+
+        this.win.addEventListener('beforeunload', () => {
+            clearInterval(this.timerInterval);
+        });
+    }
+
+    buildHTML() {
+        return `<!DOCTYPE html><html><head><title>Presenter Notes</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e8e8e8; padding: 24px; height: 100vh; display: flex; flex-direction: column; }
+            .top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #333; margin-bottom: 20px; flex-shrink: 0; }
+            .slide-num { font-size: 28px; font-weight: 700; color: #7b8cff; }
+            .timer { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; color: #e8e8e8; }
+            .timer.warn { color: #ff6b6b; }
+            .speaker { font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; color: #7b8cff; margin-bottom: 12px; flex-shrink: 0; }
+            .notes { font-size: 22px; line-height: 1.6; color: #f0f0f0; overflow-y: auto; flex: 1; padding-right: 8px; }
+            .notes strong { color: #fff; font-weight: 700; }
+            .next-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: #666; margin-top: 16px; padding-top: 12px; border-top: 1px solid #333; flex-shrink: 0; }
+            .next-title { font-size: 15px; color: #999; margin-top: 4px; flex-shrink: 0; }
+            .controls-hint { font-size: 11px; color: #555; text-align: center; margin-top: 12px; flex-shrink: 0; }
+        </style></head><body>
+        <div class="top-bar">
+            <span class="slide-num" id="pSlideNum">1 / ${presentation.totalSlides}</span>
+            <span class="timer" id="pTimer">00:00</span>
+        </div>
+        <div class="speaker" id="pSpeaker"></div>
+        <div class="notes" id="pNotes"></div>
+        <div class="next-label">NEXT</div>
+        <div class="next-title" id="pNext"></div>
+        <div class="controls-hint">← → arrows to navigate &bull; also controls main screen</div>
+        </body></html>`;
+    }
+
+    sync(index) {
+        if (!this.win || this.win.closed) return;
+        const doc = this.win.document;
+        const note = speakerNotes[index];
+        doc.getElementById('pSlideNum').textContent = `${index + 1} / ${presentation.totalSlides}`;
+        doc.getElementById('pSpeaker').textContent = note ? note.speaker : '';
+        doc.getElementById('pNotes').innerHTML = note ? note.notes.replace(/\n/g, '<br>') : '';
+
+        const nextNote = speakerNotes[index + 1];
+        doc.getElementById('pNext').textContent = nextNote ? nextNote.speaker : '— end —';
+    }
+
+    updateTimer() {
+        if (!this.win || this.win.closed) { clearInterval(this.timerInterval); return; }
+        const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+        const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const secs = String(elapsed % 60).padStart(2, '0');
+        const el = this.win.document.getElementById('pTimer');
+        el.textContent = `${mins}:${secs}`;
+        el.classList.toggle('warn', elapsed >= 570);
+    }
+}
+
+const presenterMode = new PresenterMode();
 </script>
 </body>
 </html>

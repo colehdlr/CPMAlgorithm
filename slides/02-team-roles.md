@@ -26,8 +26,8 @@
 
 ## Speaker Notes
 
-We allocated by strengths — I took Scrum Master knowing the team, Jamie owned the algorithm from his CPM research, Cole brought RayLib experience, Hamza was strongest at spotting cross-module issues.
+We picked roles based on who was genuinely best at what — Jamie knew CPM inside out, Cole had RayLib experience, Hamza was sharp at catching cross-module issues, and I knew the team well enough to keep things coordinated. The RACI made ownership explicit, especially around integration where multiple people needed input.
 
-Everyone was self-motivated, so they didn't need managing — I just kept things moving. The RACI formalised who owned what: Integration had three Consulted because that's where cross-module risk sat. Our agreements evolved — stand-ups ran 25 minutes the first time, so we restructured to the 3-question format and got it down to 12. The shared struct prevented integration surprises.
+Our agreements adapted as we went — first stand-up ran 25 minutes, so we switched to a tighter format and halved that. The shared struct stopped integration surprises before they started.
 
-When my parser took 3× estimate, Cole picked up some of my testing scope Day 2 — keeping workload balanced. The Belbin gap — no Completer Finisher — is a label we applied in retrospect. What actually happened: Hamza naturally shifted to running full integration once we realised nobody was doing it.
+When my parser overran, Cole picked up some testing to keep us on track. The Belbin labels you see there — we mapped those after the fact. What stood out was nobody naturally filled that quality-checking role, so Hamza shifted to cover integration testing once we spotted the gap.

@@ -15,13 +15,6 @@
 
 - **Team insight:** We decomposed work but not knowledge — WBS needs a knowledge map alongside it
 
-**Knowledge Map Example (what we'd build next time):**
-
-| WBS Package | Samuel needs to know | Jamie needs to know | Cole needs to know | Hamza needs to know |
-|-------------|---------------------|--------------------|--------------------|---------------------|
-| Parser | Owns it | Output struct fields | Struct field types for rendering | Data types for integration |
-| Algorithm | How LF values update (for test assertions) | Owns it | Output format for visual layout | Result types for orchestration |
-
 ---
 
 ## Speaker Notes
@@ -36,4 +29,4 @@
 
 **Hamza:** I nearly didn't flag the type mismatch because it felt like criticising their work. The real conflict was specification ambiguity — what the struct said versus what each person assumed. Psychological safety isn't binary — I spoke up only because existing trust overrode that discomfort. In future, assign interface ownership separately from module ownership.
 
-**Jamie (capstone):** Same root across all four: we decomposed work but not understanding. Next time, a knowledge map alongside our WBS. One collective gap: we chose C unanimously but all underestimated it — groupthink at Forming stage, prioritising affiliation (McClelland) over critical evaluation. Countermeasure: a Devil's Advocate role for irreversible decisions. As we Adjourn — processes transfer but the trust enabling them does not. That's our next challenge: rebuilding relational foundations in new teams.
+**Jamie (capstone):** Same root across all four: we decomposed work but not understanding. Next time, a knowledge map alongside our WBS. One collective gap: we chose C unanimously but all underestimated it — groupthink at Forming stage, prioritising affiliation over critical evaluation. Countermeasure: a Devil's Advocate role for irreversible decisions. As we Adjourn — processes transfer but the trust enabling them does not. That's our next challenge: rebuilding relational foundations in new teams.

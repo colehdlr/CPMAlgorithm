@@ -6,16 +6,13 @@
 
 ## On the Slide
 
-- **Proactive infrastructure:** Pre-agreed escalation rule (Day 1 morning) — any decision unresolved after 15 mins → structured round-robin
-- **Proactive prevention:** Shared struct definition (30 mins, Day 1) prevented integration conflicts; JSON vs CSV spike (20 mins) saved ~2-3 hrs rework
-- **Reactive event with pre-built process:** C language debate → escalation triggered → structured round-robin → unanimous resolution
+- **Proactive:** Shared struct definition (30 mins) prevented integration conflicts; JSON vs CSV spike (20 mins) saved ~2-3 hrs rework
+- **Reactive:** C language debate → 15-min escalation rule triggered → structured round-robin → unanimous decision to stick with C + support each other
 - **Why it worked:** Round-robin created urgency, prevented dominance, lowered emotional temperature; trust from shared failure in prior module provided psychological safety (Edmondson, 1999)
-- **Barrier mapping:** Wilemon & Thamhain (1983) — proactively prevented Role Conflicts (RACI), Communication Problems (stand-ups); encountered Differing Outlooks (C debate)
-- **Adapted strategy:** First stand-up ran 25 mins → restructured to 3-question format → cut to 12 mins
-- **Gap identified:** No spike on C — confirmation bias made us confuse enthusiasm with capability
-- **Beyond task support:** Jamie noticed Samuel was quieter — unprompted check surfaced unvoiced frustration
+- **Gap:** No spike on C — confirmation bias made us confuse enthusiasm with capability
+- **Beyond task:** Jamie noticed Samuel was quieter — unprompted check surfaced unvoiced frustration
 
-> **Evidence — Teams Conversation (Day 1, 15:47–15:52):**
+> **Evidence — Teams (Day 1, 15:47):**
 > Hamza: *"C is taking way longer than we expected, should we switch?"*
 > Cole: *"we're 80% done on the algorithm, switching now would waste more time than finishing."*
 > Samuel: *"yeah but the parser is brutal with all the malloc/free, python would be 10 lines."*

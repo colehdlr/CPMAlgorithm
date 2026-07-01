@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPM — Critical Path Method | IOT591U</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Hanken+Grotesk:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   Include this ENTIRE file in every presentation.
+   Slides are authored at 1920×1080 and scaled as a whole.
+   =========================================== */
+
+/* 1. Lock the browser viewport */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+/* 2. Full-window deck viewport */
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+/* 3. Fixed 16:9 design canvas.
+   JavaScript sets transform: translate(...) scale(...). */
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+/* 4. Slides stack inside the fixed stage.
+   Content must be laid out at 1920×1080, not reflowed per device. */
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+/* 5. Keep media inside authored slide bounds */
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* 6. Presentation chrome stays outside the slide design system */
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+/* 7. Print one fixed-size slide per page */
+@media print {
+    html,
+    body {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-viewport {
+        position: static;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        background: none;
+    }
+
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .deck-controls {
+        display: none !important;
+    }
+}
+
+/* 8. Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* ===========================================
+   COBALT GRID DESIGN SYSTEM
+   Two-color: cream paper + cobalt ink
+   =========================================== */
+
+:root {
+    --stage-bg: #E6E0CE;
+    --slide-bg: #F0EBDE;
+    --paper: #F0EBDE;
+    --paper-2: #E6E0CE;
+    --ink: #1F2BE0;
+    --ink-soft: #5560E5;
+    --ink-grid: rgba(31, 43, 224, 0.10);
+    --ink-faint: rgba(31, 43, 224, 0.18);
+
+    --font-display: 'Newsreader', Georgia, serif;
+    --font-body: 'Hanken Grotesk', sans-serif;
+    --font-mono: 'DM Mono', ui-monospace, monospace;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* === GLOBAL SLIDE STYLES === */
+.slide {
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--paper);
+}
+
+/* Permanent graph-paper grid */
+.slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, var(--ink-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--ink-grid) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Top hairline */
+.slide::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 70px;
+    right: 70px;
+    height: 1.5px;
+    background: var(--ink);
+    z-index: 2;
+}
+
+/* Bottom hairline */
+.slide-bottom-rule {
+    position: absolute;
+    bottom: 24px;
+    left: 70px;
+    right: 70px;
+    height: 1.5px;
+    background: var(--ink);
+    z-index: 2;
+}
+
+/* Page number */
+.pagenum {
+    position: absolute;
+    right: 70px;
+    bottom: 52px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0.06em;
+    z-index: 3;
+}
+
+/* Nav hint */
+.nav-hint {
+    position: absolute;
+    left: 70px;
+    bottom: 52px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    letter-spacing: 0.08em;
+    opacity: 0.4;
+    z-index: 3;
+}
+
+/* === CONTENT CONTAINERS === */
+.slide-frame {
+    position: absolute;
+    top: 86px;
+    left: 70px;
+    right: 70px;
+    bottom: 100px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === TYPOGRAPHY === */
+.display-hero {
+    font-family: var(--font-display);
+    font-size: 160px;
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.008em;
+    color: var(--ink);
+}
+
+.display-chapter {
+    font-family: var(--font-display);
+    font-size: 100px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+}
+
+.headline {
+    font-family: var(--font-display);
+    font-size: 72px;
+    font-weight: 400;
+    line-height: 0.95;
+    color: var(--ink);
+}
+
+.headline-sm {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--ink);
+}
+
+.ed-callout {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--ink);
+}
+
+.body-lede {
+    font-family: var(--font-body);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ink);
+}
+
+.body {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ink);
+}
+
+.micro {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+}
+
+.mono-tag {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+}
+
+.mono-chrome {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+}
+
+/* === TOPBAR COMPONENT === */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 16px;
+    border-bottom: 1.5px solid var(--ink);
+    margin-bottom: 32px;
+}
+
+/* === TABLE/INDEX STYLES === */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1.5px solid var(--ink);
+    color: var(--ink);
+}
+
+.data-table td {
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 400;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--ink-faint);
+    color: var(--ink);
+    vertical-align: top;
+}
+
+.data-table td.mono {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+}
+
+.data-table td.serif {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 400;
+}
+
+/* === NETWORK DIAGRAM (AON) === */
+.aon-diagram {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    margin: 20px 0;
+}
+
+.aon-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.aon-node {
+    position: absolute;
+    width: 210px;
+    height: 100px;
+    border: 2px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 14px;
+    background: var(--paper);
+    z-index: 2;
+}
+
+.aon-node.critical {
+    border-width: 3px;
+    background: rgba(31, 43, 224, 0.06);
+}
+
+.aon-node .node-id-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.aon-node .node-label {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+}
+
+.aon-node .node-duration {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+}
+
+.aon-node .node-data-row {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+    opacity: 0.75;
+}
+
+.aon-node .node-data-row.node-float-row {
+    opacity: 1;
+    font-weight: 700;
+}
+
+/* === GANTT CHART === */
+.gantt {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.gantt-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    align-items: center;
+    border-bottom: 1px solid var(--ink-faint);
+    padding: 12px 0;
+}
+
+.gantt-label {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.gantt-bar-container {
+    position: relative;
+    height: 28px;
+    display: flex;
+    align-items: center;
+}
+
+.gantt-bar {
+    position: absolute;
+    height: 24px;
+    background: var(--ink-grid);
+    border: 1.5px solid var(--ink-faint);
+}
+
+.gantt-bar.critical {
+    background: rgba(31, 43, 224, 0.12);
+    border-color: var(--ink);
+}
+
+.gantt-header {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-bottom: 1.5px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+}
+
+.gantt-time-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+}
+
+/* === PIXEL-STACK BAR CHART === */
+.pixel-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    height: 200px;
+    padding-top: 20px;
+}
+
+.pixel-col {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 3px;
+    align-items: center;
+    flex: 1;
+}
+
+.pixel-cell {
+    width: 100%;
+    height: 16px;
+    background: var(--ink-grid);
+}
+
+.pixel-cell.on {
+    background: var(--ink);
+}
+
+.pixel-col-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* === WBS TREE === */
+.wbs-tree {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    line-height: 2;
+    color: var(--ink);
+}
+
+.wbs-tree .critical-item {
+    font-weight: 500;
+}
+
+/* === REFLECTION CARDS === */
+.reflection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.reflection-card {
+    padding: 24px;
+    border: 1px solid var(--ink-faint);
+    background: var(--paper);
+}
+
+.reflection-card .card-name {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 10px;
+}
+
+.reflection-card .card-assumption {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 12px;
+}
+
+.reflection-card .card-theory {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+}
+
+.reflection-card .card-action {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.4;
+}
+
+/* === CLOSING QUOTES === */
+.closing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 32px;
+}
+
+.closing-item {
+    padding: 20px 0;
+    border-top: 1px solid var(--ink-faint);
+}
+
+.closing-item .who {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.closing-item .what {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+/* === PIXEL GLITCH DECORATION === */
+.pixel-glitch {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.pixel-glitch-bar {
+    position: absolute;
+    right: 0;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--ink) 0px,
+        var(--ink) 2px,
+        transparent 2px,
+        transparent 6px
+    );
+    opacity: 0.15;
+}
+
+/* === QR BLOCK DECORATION === */
+.qr-block {
+    display: grid;
+    grid-template-columns: repeat(8, 10px);
+    grid-template-rows: repeat(8, 10px);
+    gap: 1.5px;
+    background: var(--paper);
+    padding: 4px;
+    box-shadow: 0 0 0 1.5px var(--paper);
+    position: absolute;
+    z-index: 3;
+}
+
+.qr-block span {
+    background: var(--paper);
+}
+
+.qr-block span.on {
+    background: var(--ink);
+}
+
+/* === REVEAL ANIMATIONS === */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s var(--ease-out-expo),
+                transform 0.6s var(--ease-out-expo);
+}
+
+.slide.visible .reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal:nth-child(1) { transition-delay: 0.1s; }
+.reveal:nth-child(2) { transition-delay: 0.2s; }
+.reveal:nth-child(3) { transition-delay: 0.35s; }
+.reveal:nth-child(4) { transition-delay: 0.5s; }
+.reveal:nth-child(5) { transition-delay: 0.65s; }
+
+/* === SLIDE-SPECIFIC LAYOUTS === */
+.cover-content {
+    position: absolute;
+    top: 86px;
+    left: 70px;
+    right: 350px;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    z-index: 2;
+}
+
+.cover-team {
+    display: flex;
+    gap: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--ink-faint);
+    margin-top: 40px;
+}
+
+.cover-team span {
+    font-family: var(--font-body);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+/* MoSCoW visual */
+.moscow-visual {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.moscow-item {
+    padding: 10px 16px;
+    border: 1.5px solid var(--ink);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.moscow-item.must { background: rgba(31, 43, 224, 0.12); }
+.moscow-item.should { background: rgba(31, 43, 224, 0.06); }
+.moscow-item.could { background: transparent; border-style: dashed; }
+.moscow-item.wont { background: transparent; border-color: var(--ink-faint); color: var(--ink-soft); }
+
+/* Two-column layout */
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    flex: 1;
+}
+
+/* Process flow */
+.process-flow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.process-step {
+    padding: 10px 18px;
+    border: 1.5px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+}
+
+.process-step.highlight {
+    background: rgba(31, 43, 224, 0.08);
+}
+
+.process-arrow {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--ink);
+}
+
+/* Insight callout */
+.insight-box {
+    margin-top: 24px;
+    padding: 20px 24px;
+    border-left: 3px solid var(--ink);
+    background: rgba(31, 43, 224, 0.03);
+}
+
+.insight-box p {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--ink);
+}
+
+/* References list */
+.ref-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.ref-list li {
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ink-faint);
+    color: var(--ink);
+}
+
+.ref-list li em {
+    font-style: italic;
+}
+
+/* === PROGRESS BAR === */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--ink);
+    z-index: 9999;
+    transition: width 0.3s ease;
+}
+
+/* === EDIT MODE === */
+.edit-hotzone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    z-index: 10000;
+    cursor: pointer;
+}
+
+.edit-toggle {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-toggle.show,
+.edit-toggle.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+[contenteditable="true"] {
+    outline: 1.5px dashed var(--ink-soft);
+    outline-offset: 4px;
+    cursor: text;
+}
+
+/* === SPEAKER NOTES PANEL === */
+.notes-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 220px;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 20px 32px;
+    overflow-y: auto;
+    z-index: 9998;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    border-top: 2px solid var(--ink);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+}
+
+.notes-panel.visible {
+    transform: translateY(0);
+}
+
+.notes-panel .notes-header {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+}
+
+.notes-panel .notes-speaker {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+}
+
+.notes-panel .notes-body {
+    color: #d4d4d4;
+}
+
+.notes-panel .notes-body strong {
+    color: #fff;
+}
+
+.notes-hint {
+    position: fixed;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    opacity: 0.3;
+    z-index: 9997;
+}
+
+body.notes-open .deck-viewport {
+    height: calc(100% - 220px);
+}
+
+body.notes-open .progress-bar {
+    bottom: 220px;
+    top: auto;
+}
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+    <main class="deck-stage" id="deckStage">
+
+        <!-- ===========================
+             SLIDE 1: TITLE / COVER
+             =========================== -->
+        <section class="slide active" data-slide="1">
+            <div class="cover-content">
+                <div class="micro reveal" style="margin-bottom: 24px;">IOT591U &mdash; Reflective Leadership and Project Management</div>
+                <h1 class="display-hero reveal">Critical Path Method</h1>
+                <div class="cover-team reveal">
+                    <span>Samuel</span>
+                    <span>Jamie</span>
+                    <span>Cole</span>
+                    <span>Hamza</span>
+                </div>
+            </div>
+            <!-- Pixel glitch decoration -->
+            <div class="pixel-glitch">
+                <div class="pixel-glitch-bar" style="top: 60px; width: 240px; height: 80px;"></div>
+                <div class="pixel-glitch-bar" style="top: 160px; width: 200px; height: 60px;"></div>
+                <div class="pixel-glitch-bar" style="top: 240px; width: 260px; height: 100px;"></div>
+                <div class="pixel-glitch-bar" style="top: 360px; width: 180px; height: 70px;"></div>
+                <div class="pixel-glitch-bar" style="top: 450px; width: 220px; height: 90px;"></div>
+                <div class="pixel-glitch-bar" style="top: 560px; width: 160px; height: 60px;"></div>
+                <div class="pixel-glitch-bar" style="top: 640px; width: 240px; height: 80px;"></div>
+                <div class="pixel-glitch-bar" style="top: 740px; width: 190px; height: 70px;"></div>
+                <div class="pixel-glitch-bar" style="top: 830px; width: 210px; height: 90px;"></div>
+                <div class="pixel-glitch-bar" style="top: 940px; width: 170px; height: 60px;"></div>
+            </div>
+            <!-- QR block -->
+            <div class="qr-block" style="top: 60px; right: 300px;">
+                <span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span><span class="on"></span>
+                <span></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span>
+                <span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span>
+                <span></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span class="on"></span>
+                <span class="on"></span><span class="on"></span><span></span><span></span><span class="on"></span><span class="on"></span><span></span><span></span>
+                <span></span><span class="on"></span><span class="on"></span><span></span><span></span><span class="on"></span><span class="on"></span><span class="on"></span>
+                <span class="on"></span><span></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span></span>
+                <span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">001</span>
+            <span class="nav-hint">arrows / space &bull; P = presenter mode</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 2: TEAM ROLES
+             =========================== -->
+        <section class="slide" data-slide="2">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">We allocated by strengths for speed</span>
+                    <span class="mono-tag">strengths-based allocation</span>
+                </div>
+                <table class="data-table reveal">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Rationale</th>
+                            <th>Belbin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="serif">Samuel</td>
+                            <td>Dev + Scrum Master</td>
+                            <td>Knowledge of team member strengths</td>
+                            <td class="mono">Co-ordinator</td>
+                        </tr>
+                        <tr>
+                            <td class="serif">Jamie</td>
+                            <td>Dev + Product Owner</td>
+                            <td>Additional research into CPM</td>
+                            <td class="mono">Specialist</td>
+                        </tr>
+                        <tr>
+                            <td class="serif">Cole</td>
+                            <td>Dev + UI</td>
+                            <td>Prior RayLib experience</td>
+                            <td class="mono">Implementer</td>
+                        </tr>
+                        <tr>
+                            <td class="serif">Hamza</td>
+                            <td>Dev + QA</td>
+                            <td>Strongest at finding cross-module issues</td>
+                            <td class="mono">Monitor Evaluator</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="insight-box reveal">
+                    <p>RACI matrix &mdash; each WBS package has one R/A owner; Integration had three Consulted (cross-module risk)</p>
+                </div>
+                <div class="reveal" style="display: flex; gap: 24px; margin-top: 16px; align-items: baseline;">
+                    <span class="mono-tag" style="opacity: 0.6;">Tuckman: entered sprint at Norming &mdash; C debate (Slide 6) = Storming episode</span>
+                </div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">002</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 3: THE ALGORITHM
+             =========================== -->
+        <section class="slide" data-slide="3">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">How the algorithm works</span>
+                    <span class="mono-tag">PERT &bull; CPM</span>
+                </div>
+
+                <div class="reveal" style="margin-bottom: 20px; display: flex; align-items: baseline; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--ink-faint);">
+                    <span class="mono-tag">PERT (per activity)</span>
+                    <span class="body" style="font-family: var(--font-mono); font-size: 15px;">Expected = (Optimistic + 4&times;Most&nbsp;Likely + Pessimistic) / 6</span>
+                </div>
+
+                <div class="two-col reveal">
+                    <div style="display: flex; flex-direction: column; gap: 22px;">
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">1. Forward traversal</div>
+                            <div class="body" style="font-family: var(--font-mono); font-size: 15px; line-height: 1.9;">
+                                Earliest Start &nbsp;=&nbsp; Earliest Finish of previous<br>
+                                Earliest Finish &nbsp;=&nbsp; Earliest Start + Duration
+                            </div>
+                        </div>
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">2. Backward traversal</div>
+                            <div class="body" style="font-family: var(--font-mono); font-size: 15px; line-height: 1.9;">
+                                Latest Finish &nbsp;=&nbsp; lowest Latest Start of successor(s)<br>
+                                Latest Start &nbsp;=&nbsp; Latest Finish &minus; Duration
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 22px;">
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">3. Forward traversal (float)</div>
+                            <div class="body" style="font-family: var(--font-mono); font-size: 15px; line-height: 1.9;">
+                                Free Float &nbsp;=&nbsp; lowest Earliest Start of successor(s) &minus; Earliest Finish<br>
+                                Total Float &nbsp;=&nbsp; Latest Start &minus; Earliest Start
+                            </div>
+                        </div>
+                        <div class="insight-box" style="margin-top: 0;">
+                            <p>Critical path: activities where Total Float = Free Float = 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal" style="margin-top: 28px; flex: 1; display: flex; flex-direction: column; justify-content: flex-end;">
+                    <div class="aon-diagram" style="height: 320px;">
+                        <!-- Same data/activities.json the RayLib app schedules: ES/EF/LS/LF/TF/FF per node.
+                             Node boxes and edge lines share one coordinate space (0 0 1780 320), so
+                             edges are computed from actual box edges, not hand-tuned rotations. -->
+                        <svg class="aon-svg" viewBox="0 0 1780 320" preserveAspectRatio="none">
+                            <defs>
+                                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                                    <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-faint)"></path>
+                                </marker>
+                                <marker id="arrow-critical" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+                                    <path d="M0,0 L10,5 L0,10 z" fill="var(--ink)"></path>
+                                </marker>
+                            </defs>
+                            <!-- A -> B (float 2) -->
+                            <line x1="230" y1="160" x2="368" y2="60" stroke="var(--ink-faint)" stroke-width="2" marker-end="url(#arrow)"></line>
+                            <!-- A -> C (critical) -->
+                            <line x1="230" y1="160" x2="368" y2="260" stroke="var(--ink)" stroke-width="3" marker-end="url(#arrow-critical)"></line>
+                            <!-- B -> D (float 2) -->
+                            <line x1="580" y1="60" x2="718" y2="60" stroke="var(--ink-faint)" stroke-width="2" marker-end="url(#arrow)"></line>
+                            <!-- C -> E (critical) -->
+                            <line x1="580" y1="260" x2="718" y2="260" stroke="var(--ink)" stroke-width="3" marker-end="url(#arrow-critical)"></line>
+                            <!-- D -> F (float 2) -->
+                            <line x1="930" y1="60" x2="1068" y2="160" stroke="var(--ink-faint)" stroke-width="2" marker-end="url(#arrow)"></line>
+                            <!-- E -> F (critical) -->
+                            <line x1="930" y1="260" x2="1068" y2="160" stroke="var(--ink)" stroke-width="3" marker-end="url(#arrow-critical)"></line>
+                            <!-- F -> G (critical) -->
+                            <line x1="1280" y1="160" x2="1418" y2="160" stroke="var(--ink)" stroke-width="3" marker-end="url(#arrow-critical)"></line>
+                        </svg>
+
+                        <div class="aon-node critical" style="left: 20px; top: 110px;">
+                            <div class="node-id-row"><span class="node-label">A</span><span class="node-duration">3d</span></div>
+                            <div class="node-data-row">ES 0&nbsp;&nbsp; EF 3</div>
+                            <div class="node-data-row">LS 0&nbsp;&nbsp; LF 3</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node" style="left: 370px; top: 10px;">
+                            <div class="node-id-row"><span class="node-label">B</span><span class="node-duration">4d</span></div>
+                            <div class="node-data-row">ES 3&nbsp;&nbsp; EF 7</div>
+                            <div class="node-data-row">LS 5&nbsp;&nbsp; LF 9</div>
+                            <div class="node-data-row">TF 2&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node critical" style="left: 370px; top: 210px;">
+                            <div class="node-id-row"><span class="node-label">C</span><span class="node-duration">5d</span></div>
+                            <div class="node-data-row">ES 3&nbsp;&nbsp; EF 8</div>
+                            <div class="node-data-row">LS 3&nbsp;&nbsp; LF 8</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node" style="left: 720px; top: 10px;">
+                            <div class="node-id-row"><span class="node-label">D</span><span class="node-duration">6d</span></div>
+                            <div class="node-data-row">ES 7&nbsp;&nbsp; EF 13</div>
+                            <div class="node-data-row">LS 9&nbsp;&nbsp; LF 15</div>
+                            <div class="node-data-row">TF 2&nbsp;&nbsp; FF 2</div>
+                        </div>
+                        <div class="aon-node critical" style="left: 720px; top: 210px;">
+                            <div class="node-id-row"><span class="node-label">E</span><span class="node-duration">7d</span></div>
+                            <div class="node-data-row">ES 8&nbsp;&nbsp; EF 15</div>
+                            <div class="node-data-row">LS 8&nbsp;&nbsp; LF 15</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node critical" style="left: 1070px; top: 110px;">
+                            <div class="node-id-row"><span class="node-label">F</span><span class="node-duration">3d</span></div>
+                            <div class="node-data-row">ES 15&nbsp;&nbsp; EF 18</div>
+                            <div class="node-data-row">LS 15&nbsp;&nbsp; LF 18</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node critical" style="left: 1420px; top: 110px;">
+                            <div class="node-id-row"><span class="node-label">G</span><span class="node-duration">4d</span></div>
+                            <div class="node-data-row">ES 18&nbsp;&nbsp; EF 22</div>
+                            <div class="node-data-row">LS 18&nbsp;&nbsp; LF 22</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                    </div>
+                    <div class="process-flow" style="margin-top: 12px;">
+                        <span class="process-step highlight">A</span>
+                        <span class="process-arrow">&rarr;</span>
+                        <span class="process-step highlight">C</span>
+                        <span class="process-arrow">&rarr;</span>
+                        <span class="process-step highlight">E</span>
+                        <span class="process-arrow">&rarr;</span>
+                        <span class="process-step highlight">F</span>
+                        <span class="process-arrow">&rarr;</span>
+                        <span class="process-step highlight">G</span>
+                        <span style="font-family: var(--font-mono); font-size: 14px; margin-left: 16px; letter-spacing: 0.04em;">= 22 days, Total Float = Free Float = 0 all the way through</span>
+                    </div>
+                    <div style="margin-top: 10px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.02em; opacity: 0.85;">
+                        <span class="mono-tag" style="margin-right: 10px;">CPM vs PERT</span>
+                        CPM (single-point durations): <strong>22d</strong>
+                        &nbsp;&bull;&nbsp;
+                        PERT expected (O, M, P per activity): <strong>23.3d</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">003</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 4: PROGRAMMING ALLOCATION
+             =========================== -->
+        <section class="slide" data-slide="4">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">Float gave us rescue capacity</span>
+                    <span class="mono-tag">WBS + sprint schedule</span>
+                </div>
+                <div class="two-col reveal" style="flex: 1;">
+                    <div>
+                        <div class="micro" style="margin-bottom: 16px;">Work Breakdown Structure</div>
+                        <div class="wbs-tree">
+                            <div style="font-family: var(--font-display); font-size: 22px; margin-bottom: 12px;">CPM Application</div>
+                            <div class="critical-item">&nbsp;&nbsp;├── Parser <span style="opacity:0.5">(Samuel)</span></div>
+                            <div class="critical-item">&nbsp;&nbsp;├── Algorithm <span style="opacity:0.5">(Jamie)</span></div>
+                            <div>&nbsp;&nbsp;├── Visualisation <span style="opacity:0.5">(Cole)</span></div>
+                            <div>&nbsp;&nbsp;├── Tests <span style="opacity:0.5">(Samuel)</span></div>
+                            <div class="critical-item">&nbsp;&nbsp;└── Integration <span style="opacity:0.5">(Hamza)</span></div>
+                        </div>
+                        <div class="insight-box" style="margin-top: 24px;">
+                            <p>Critical Path: Parser &rarr; Algorithm &rarr; Integration = 10h sequential</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="micro" style="margin-bottom: 16px;">Sprint Schedule (2 Days)</div>
+                        <div class="gantt">
+                            <div class="gantt-header">
+                                <div></div>
+                                <div class="gantt-time-labels">
+                                    <span>D1 AM</span>
+                                    <span>D1 PM</span>
+                                    <span>D2 AM</span>
+                                    <span>D2 PM</span>
+                                </div>
+                            </div>
+                            <div class="gantt-row">
+                                <div class="gantt-label">Parser (Samuel)</div>
+                                <div class="gantt-bar-container">
+                                    <div class="gantt-bar critical" style="left: 0%; width: 50%;"></div>
+                                </div>
+                            </div>
+                            <div class="gantt-row">
+                                <div class="gantt-label">Algorithm (Jamie)</div>
+                                <div class="gantt-bar-container">
+                                    <div class="gantt-bar critical" style="left: 0%; width: 62%;"></div>
+                                </div>
+                            </div>
+                            <div class="gantt-row">
+                                <div class="gantt-label">Tests (Samuel)</div>
+                                <div class="gantt-bar-container">
+                                    <div class="gantt-bar" style="left: 50%; width: 38%;"></div>
+                                </div>
+                            </div>
+                            <div class="gantt-row">
+                                <div class="gantt-label">Visualisation (Cole)</div>
+                                <div class="gantt-bar-container">
+                                    <div class="gantt-bar" style="left: 0%; width: 80%;"></div>
+                                </div>
+                            </div>
+                            <div class="gantt-row">
+                                <div class="gantt-label">Integration (Hamza)</div>
+                                <div class="gantt-bar-container">
+                                    <div class="gantt-bar critical" style="left: 50%; width: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">004</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 5: KEY DECISIONS
+             =========================== -->
+        <section class="slide" data-slide="5">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">Fixed time meant scope had to flex</span>
+                    <span class="mono-tag">iron triangle + MoSCoW</span>
+                </div>
+                <div class="two-col reveal" style="flex: 1;">
+                    <div>
+                        <table class="data-table" style="font-size: 15px;">
+                            <thead>
+                                <tr>
+                                    <th>Decision</th>
+                                    <th>What We Did</th>
+                                    <th>PM Justification</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="serif" style="font-size: 18px;">Language</td>
+                                    <td>C over Python &amp; JS</td>
+                                    <td style="font-size: 15px;">Iron Triangle: accepted higher time for deeper understanding</td>
+                                </tr>
+                                <tr>
+                                    <td class="serif" style="font-size: 18px;">Scope</td>
+                                    <td>MoSCoW prioritisation</td>
+                                    <td style="font-size: 15px;">Fixed time &rarr; scope must flex</td>
+                                </tr>
+                                <tr>
+                                    <td class="serif" style="font-size: 18px;">Estimation</td>
+                                    <td>Expert judgement + bottom-up</td>
+                                    <td style="font-size: 15px;">Each person estimated their own WBS package</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="moscow-visual" style="margin-top: 24px;">
+                            <div class="moscow-item must">Must: CPM + Parser</div>
+                            <div class="moscow-item should">Should: Visualisation</div>
+                            <div class="moscow-item could">Could: PERT &mdash; delivered</div>
+                            <div class="moscow-item wont">Won't: GUI Input</div>
+                        </div>
+                        <div class="mono-tag" style="opacity: 0.6; margin-top: 16px;">CHAOS Report: 66% of projects fail; 43% avg cost overrun (Standish Group, 2003)</div>
+                    </div>
+                    <div>
+                        <div class="micro" style="margin-bottom: 16px;">Estimation vs Reality</div>
+                        <!-- Parser -->
+                        <div style="margin-bottom: 28px;">
+                            <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
+                                <span class="mono-tag">Parser (Samuel)</span>
+                                <span style="font-family: var(--font-display); font-size: 48px; font-weight: 400; color: var(--ink);">+200%</span>
+                            </div>
+                            <div style="position: relative; height: 20px; width: 100%; background: var(--ink-grid);">
+                                <div style="position: absolute; left: 0; top: 0; height: 100%; width: 75%; background: var(--ink);"></div>
+                                <div style="position: absolute; left: 25%; top: -4px; bottom: -4px; width: 2px; background: var(--paper); box-shadow: 0 0 0 1px var(--ink);"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                                <span class="mono-chrome">est: 1h</span>
+                                <span class="mono-chrome">actual: 3h</span>
+                            </div>
+                        </div>
+                        <!-- Algorithm -->
+                        <div style="margin-bottom: 28px;">
+                            <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
+                                <span class="mono-tag">Algorithm (Jamie)</span>
+                                <span style="font-family: var(--font-display); font-size: 48px; font-weight: 400; color: var(--ink);">+33%</span>
+                            </div>
+                            <div style="position: relative; height: 20px; width: 100%; background: var(--ink-grid);">
+                                <div style="position: absolute; left: 0; top: 0; height: 100%; width: 100%; background: var(--ink);"></div>
+                                <div style="position: absolute; left: 75%; top: -4px; bottom: -4px; width: 2px; background: var(--paper); box-shadow: 0 0 0 1px var(--ink);"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                                <span class="mono-chrome">est: 3h</span>
+                                <span class="mono-chrome">actual: 4h</span>
+                            </div>
+                        </div>
+                        <!-- Visualisation -->
+                        <div>
+                            <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
+                                <span class="mono-tag">Visualisation (Cole)</span>
+                                <span style="font-family: var(--font-display); font-size: 48px; font-weight: 400; color: var(--ink);">+25%</span>
+                            </div>
+                            <div style="position: relative; height: 20px; width: 100%; background: var(--ink-grid);">
+                                <div style="position: absolute; left: 0; top: 0; height: 100%; width: 63%; background: var(--ink);"></div>
+                                <div style="position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: var(--paper); box-shadow: 0 0 0 1px var(--ink);"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                                <span class="mono-chrome">est: 2h</span>
+                                <span class="mono-chrome">actual: 2.5h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">005</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 6: CHALLENGES
+             =========================== -->
+        <section class="slide" data-slide="6">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">Trust let us resolve conflict</span>
+                    <span class="mono-tag">proactive + reactive</span>
+                </div>
+                <div class="two-col reveal" style="flex: 1;">
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        <div>
+                            <div class="micro" style="margin-bottom: 12px;">Proactive Decisions</div>
+                            <div class="body-lede" style="line-height: 1.7;">
+                                <strong>Shared struct definition</strong> (30 mins)<br>
+                                &rarr; Prevented integration conflicts entirely
+                            </div>
+                            <div class="body-lede" style="line-height: 1.7; margin-top: 12px;">
+                                <strong>JSON vs CSV spike</strong> (20 mins)<br>
+                                &rarr; Saved ~2&ndash;3 hours rework
+                            </div>
+                        </div>
+                        <div>
+                            <div class="micro" style="margin-bottom: 12px;">Reactive: C Language Debate</div>
+                            <div class="process-flow" style="flex-wrap: wrap;">
+                                <span class="process-step">15-min rule triggered</span>
+                                <span class="process-arrow">&rarr;</span>
+                                <span class="process-step">Round-robin</span>
+                                <span class="process-arrow">&rarr;</span>
+                                <span class="process-step highlight">Stick with C + support</span>
+                            </div>
+                            <div class="mono-tag" style="opacity: 0.6; margin-top: 8px;">Tuckman: Storming &rarr; Norming &bull; McClelland: affiliation need met &rarr; safe to disagree</div>
+                        </div>
+                        <div>
+                            <div class="micro" style="margin-bottom: 12px;">Gap Identified</div>
+                            <div class="body" style="opacity: 0.8;">
+                                No spike on C &mdash; we spiked the easy decisions but not the risky one
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="insight-box" style="margin-top: 0;">
+                            <p>Round-robin worked because we already trusted each other from a previous module failure &mdash; we knew blame wouldn&rsquo;t follow disagreement</p>
+                        </div>
+                        <div style="padding: 20px 0; border-top: 1px solid var(--ink-faint);">
+                            <div class="micro" style="margin-bottom: 12px;">Beyond Task &mdash; Servant Leadership (Greenleaf)</div>
+                            <div class="body-lede">
+                                Jamie noticed Samuel was quieter &mdash; unprompted check surfaced unvoiced frustration
+                            </div>
+                        </div>
+                        <div style="padding: 16px 0; border-top: 1px solid var(--ink-faint);">
+                            <div class="mono-tag" style="opacity: 0.6;">
+                                Edmondson (1999) Psychological Safety &bull; Greenleaf (1977) Servant Leadership &bull; Burns (1978) Transformational
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">006</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 7: TEAM REFLECTION
+             =========================== -->
+        <section class="slide" data-slide="7">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">We split the work but not the knowledge</span>
+                    <span class="mono-tag">assumptions challenged</span>
+                </div>
+                <div class="reflection-grid reveal">
+                    <div class="reflection-card">
+                        <div class="card-name">Jamie</div>
+                        <div class="card-assumption">Consensus = rigour</div>
+                        <div class="card-theory">ADKAR (Hiatt, 2006)</div>
+                        <div class="card-action">Spike before committing when reversibility is low</div>
+                    </div>
+                    <div class="reflection-card">
+                        <div class="card-name">Samuel</div>
+                        <div class="card-assumption">Tests only need I/O specs</div>
+                        <div class="card-theory">Sch&ouml;n (1983) reflection-in-action</div>
+                        <div class="card-action">15-min knowledge-sharing session before testing</div>
+                    </div>
+                    <div class="reflection-card">
+                        <div class="card-name">Cole</div>
+                        <div class="card-assumption">Looks right = is correct</div>
+                        <div class="card-theory">Wilemon &amp; Thamhain: Communication Problems</div>
+                        <div class="card-action">Pair visual feedback with automated tests</div>
+                    </div>
+                    <div class="reflection-card">
+                        <div class="card-name">Hamza</div>
+                        <div class="card-assumption">Shared spec &ne; shared understanding</div>
+                        <div class="card-theory">McClelland (1961) affiliation need + Edmondson (1999)</div>
+                        <div class="card-action">Assign interface ownership separately</div>
+                    </div>
+                </div>
+                <div class="insight-box reveal" style="margin-top: 20px;">
+                    <p>We decomposed work but not knowledge &mdash; WBS needs a knowledge map alongside it. Collective gap: McClelland&rsquo;s affiliation need meant nobody challenged C &rarr; assign a Devil&rsquo;s Advocate for irreversible decisions</p>
+                </div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">007</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 8: SUMMARY & CLOSING
+             =========================== -->
+        <section class="slide" data-slide="8">
+            <div class="slide-frame" style="justify-content: center;">
+                <div class="reveal">
+                    <div class="micro" style="margin-bottom: 32px;">Summary</div>
+                    <div class="closing-grid">
+                        <div class="closing-item">
+                            <div class="who">Samuel</div>
+                            <div class="what">WBS needs a knowledge map &mdash; you can plan work but not understanding</div>
+                        </div>
+                        <div class="closing-item">
+                            <div class="who">Jamie</div>
+                            <div class="what">Single-point estimates are always optimistic &mdash; including our estimate of our own abilities</div>
+                        </div>
+                        <div class="closing-item">
+                            <div class="who">Cole</div>
+                            <div class="what">Building a PM tool taught us PM &mdash; not just the theory, but how it breaks down in practice</div>
+                        </div>
+                        <div class="closing-item">
+                            <div class="who">Hamza</div>
+                            <div class="what">Thank you &mdash; we welcome your questions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pixel glitch on left side (colophon mirror) -->
+            <div class="pixel-glitch" style="left: 0; right: auto;">
+                <div class="pixel-glitch-bar" style="top: 100px; width: 180px; height: 70px;"></div>
+                <div class="pixel-glitch-bar" style="top: 200px; width: 220px; height: 80px;"></div>
+                <div class="pixel-glitch-bar" style="top: 310px; width: 160px; height: 60px;"></div>
+                <div class="pixel-glitch-bar" style="top: 400px; width: 240px; height: 90px;"></div>
+                <div class="pixel-glitch-bar" style="top: 520px; width: 190px; height: 70px;"></div>
+                <div class="pixel-glitch-bar" style="top: 620px; width: 210px; height: 80px;"></div>
+                <div class="pixel-glitch-bar" style="top: 730px; width: 170px; height: 60px;"></div>
+                <div class="pixel-glitch-bar" style="top: 820px; width: 230px; height: 90px;"></div>
+                <div class="pixel-glitch-bar" style="top: 940px; width: 200px; height: 70px;"></div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">008</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 9: REFERENCES
+             =========================== -->
+        <section class="slide" data-slide="9">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">References</span>
+                    <span class="mono-tag">Harvard style</span>
+                </div>
+                <ol class="ref-list reveal">
+                    <li>Belbin, R.M. (2010) <em>Team Roles at Work</em>. 2nd edn. Oxford: Butterworth-Heinemann.</li>
+                    <li>Burns, J.M. (1978) <em>Leadership</em>. New York: Harper &amp; Row.</li>
+                    <li>Edmondson, A.C. (1999) &lsquo;Psychological safety and learning behavior in work teams&rsquo;, <em>Administrative Science Quarterly</em>, 44(2), pp. 350&ndash;383.</li>
+                    <li>Greenleaf, R.K. (1977) <em>Servant Leadership: A Journey into the Nature of Legitimate Power and Greatness</em>. New York: Paulist Press.</li>
+                    <li>Hiatt, J. (2006) <em>ADKAR: A Model for Change in Business, Government and Our Community</em>. Loveland, CO: Prosci Research.</li>
+                    <li>McClelland, D.C. (1961) <em>The Achieving Society</em>. Princeton: Van Nostrand.</li>
+                    <li>Sch&ouml;n, D.A. (1983) <em>The Reflective Practitioner: How Professionals Think in Action</em>. New York: Basic Books.</li>
+                    <li>Standish Group (2003) <em>CHAOS Report</em>. Boston: The Standish Group International.</li>
+                    <li>Tuckman, B.W. (1965) &lsquo;Developmental sequence in small groups&rsquo;, <em>Psychological Bulletin</em>, 63(6), pp. 384&ndash;399.</li>
+                    <li>Wilemon, D.L. and Thamhain, H.J. (1983) &lsquo;Team building in project management&rsquo;, <em>Project Management Quarterly</em>, 14(2), pp. 73&ndash;81.</li>
+                </ol>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">009</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 10: Q&A PREPARATION
+             =========================== -->
+        <section class="slide" data-slide="10">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">Q&amp;A Preparation</span>
+                    <span class="mono-tag">reference document</span>
+                </div>
+                <div class="two-col reveal" style="flex: 1;">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">Estimation &amp; CPM</div>
+                            <div class="body" style="line-height: 1.7;">
+                                <strong>Why not use analogous estimation?</strong><br>
+                                No prior C project to draw from &mdash; expert judgement was our only option. Bottom-up decomposition via WBS gave us the granularity.<br><br>
+                                <strong>Why did estimates fail?</strong><br>
+                                Planning fallacy: we estimated best-case as base-case. CHAOS data shows this is systemic &mdash; 66% failure rate. PERT corrects by forcing three-point thinking.<br><br>
+                                <strong>How does your app handle cycles?</strong><br>
+                                Parser rejects circular dependencies with an error &mdash; CPM requires a DAG. We validate adjacency before forward pass.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">Technical Decisions</div>
+                            <div class="body" style="line-height: 1.7;">
+                                <strong>Why C over Python?</strong><br>
+                                Iron Triangle trade-off: we chose learning depth over delivery speed. If deadline was tighter, Python would have been correct.<br><br>
+                                <strong>Would you choose C again?</strong><br>
+                                No. We&rsquo;d spike the language risk first &mdash; 30 minutes of prototype would have surfaced the malloc difficulty before committing.
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">Teamwork &amp; Collaboration</div>
+                            <div class="body" style="line-height: 1.7;">
+                                <strong>How did you handle the C conflict?</strong><br>
+                                Tuckman Storming: 15-min rule triggered round-robin. McClelland&rsquo;s affiliation need was met (prior trust), so we could disagree safely. Outcome: stick with C + pair-programming support.<br><br>
+                                <strong>What would you do differently in a new team?</strong><br>
+                                Invest more in Tuckman&rsquo;s Forming stage &mdash; explicit norm-setting. Our shortcuts worked because of prior history; a new team needs that scaffolding built deliberately.<br><br>
+                                <strong>Was Samuel&rsquo;s struggle a leadership failure?</strong><br>
+                                Partly. Jamie&rsquo;s implicit PO authority (ADKAR gap) delayed pushback. Servant leadership &mdash; leading by supporting &mdash; should have surfaced the blocker earlier.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">Reflection &amp; Theory</div>
+                            <div class="body" style="line-height: 1.7;">
+                                <strong>Why Sch&ouml;n over Kolb?</strong><br>
+                                Sch&ouml;n captures reframing mid-action &mdash; Samuel&rsquo;s realisation happened during the sprint, not after. Kolb suits post-hoc cycles.<br><br>
+                                <strong>How does Wilemon &amp; Thamhain apply?</strong><br>
+                                Cole&rsquo;s phantom bug = &lsquo;Communication Problems&rsquo; barrier specifically &mdash; miscommunication through artefacts, not words. The fix: automated verification alongside visual output.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">010</span>
+        </section>
+
+    </main>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Speaker notes panel -->
+<div class="notes-panel" id="notesPanel">
+    <div class="notes-header">Speaker Notes <span style="opacity:0.5">(N to toggle)</span></div>
+    <div class="notes-speaker" id="notesSpeaker"></div>
+    <div class="notes-body" id="notesBody"></div>
+</div>
+<div class="notes-hint">N = notes &bull; P = presenter mode</div>
+
+<!-- Edit mode controls -->
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">&#9998;</button>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.progressBar = document.getElementById('progressBar');
+        this.totalSlides = this.slides.length;
+
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.showSlide(0);
+    }
+
+    setupStageScale() {
+        const scale = () => {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const factor = Math.min(vw / 1920, vh / 1080);
+            const x = (vw - 1920 * factor) / 2;
+            const y = (vh - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute('contenteditable')) return;
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case ' ':
+                case 'PageDown':
+                    e.preventDefault();
+                    this.next();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                case 'PageUp':
+                    e.preventDefault();
+                    this.prev();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    this.showSlide(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    this.showSlide(this.totalSlides - 1);
+                    break;
+            }
+        });
+    }
+
+    setupTouchNav() {
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - startX;
+            const dy = e.changedTouches[0].clientY - startY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+                if (dx < 0) this.next();
+                else this.prev();
+            }
+        }, { passive: true });
+    }
+
+    setupWheelNav() {
+        let wheelTimeout = null;
+        document.addEventListener('wheel', (e) => {
+            if (wheelTimeout) return;
+            wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 600);
+            if (e.deltaY > 0) this.next();
+            else if (e.deltaY < 0) this.prev();
+        }, { passive: true });
+    }
+
+    next() { this.showSlide(this.currentSlide + 1); }
+    prev() { this.showSlide(this.currentSlide - 1); }
+
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.totalSlides - 1));
+        this.slides.forEach((slide, i) => {
+            const isActive = i === this.currentSlide;
+            slide.classList.toggle('active', isActive);
+            slide.classList.toggle('visible', isActive);
+        });
+        this.progressBar.style.width = `${((this.currentSlide + 1) / this.totalSlides) * 100}%`;
+    }
+}
+
+/* ===========================================
+   INLINE EDITOR
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.toggle = document.getElementById('editToggle');
+        this.hotzone = document.getElementById('editHotzone');
+        this.setupHotzone();
+        this.setupKeyboard();
+    }
+
+    setupHotzone() {
+        let hideTimeout = null;
+
+        this.hotzone.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+            this.toggle.classList.add('show');
+        });
+
+        this.hotzone.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (!this.isActive) this.toggle.classList.remove('show');
+            }, 400);
+        });
+
+        this.toggle.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); });
+        this.toggle.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (!this.isActive) this.toggle.classList.remove('show');
+            }, 400);
+        });
+
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        this.hotzone.addEventListener('click', () => this.toggleEditMode());
+    }
+
+    setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) {
+                this.toggleEditMode();
+            }
+            if (e.key === 's' && (e.ctrlKey || e.metaKey) && this.isActive) {
+                e.preventDefault();
+                this.save();
+            }
+        });
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        this.toggle.classList.toggle('active', this.isActive);
+
+        const editables = document.querySelectorAll(
+            '.display-hero, .display-chapter, .headline, .headline-sm, .ed-callout, ' +
+            '.body-lede, .body, .card-assumption, .card-action, .what, .insight-box p, ' +
+            'td, .closing-item .what, .ref-list li'
+        );
+
+        editables.forEach(el => {
+            el.contentEditable = this.isActive ? 'true' : 'false';
+        });
+    }
+
+    save() {
+        const html = document.documentElement.outerHTML;
+        localStorage.setItem('cpm-presentation-backup', html);
+    }
+}
+
+/* ===========================================
+   SPEAKER NOTES
+   =========================================== */
+const speakerNotes = [
+    {
+        speaker: "Samuel | 20 seconds",
+        notes: "Good morning. We're Samuel, Jamie, Cole, and Hamza, and this is our Critical Path Method application — a C program that identifies the critical path from a set of project activities and visualises it. I'll start by introducing our team and how we structured our roles."
+    },
+    {
+        speaker: "Samuel | 55 seconds",
+        notes: "We picked roles based on strengths — Jamie knew CPM, Cole had RayLib experience, Hamza was sharp at cross-module issues, and I knew the team well enough to coordinate. The RACI made ownership explicit, especially integration where three people were Consulted.\n\nIn Tuckman's terms, we entered the sprint at Norming — we'd already formed in a previous module and trust was established. The C debate you'll see on Slide 6 was our Storming moment, which actually strengthened agreements.\n\nWhen my parser overran, Cole picked up testing because his float allowed it. The Belbin roles are retrospective — but what mattered was adapting: first stand-up ran 25 minutes, so we halved it. Hamza shifted to cover integration testing once we spotted nobody naturally filled that quality-checking role."
+    },
+    {
+        speaker: "Jamie | 1 minute",
+        notes: "This is the algorithm, end to end. PERT first: each activity gets an optimistic, most likely, and pessimistic estimate, and expected duration is (O + 4M + P) / 6 — that's the number CPM actually schedules against.\n\nThen three passes. Forward pass: Earliest Start is the Earliest Finish of whatever comes before it, Earliest Finish is Earliest Start plus duration. Backward pass reverses it: Latest Finish is the lowest Latest Start among an activity's successors, Latest Start is Latest Finish minus duration.\n\nOne more forward pass gives us float, and this is the part people usually get wrong: free float is the lowest Earliest Start among successors minus this activity's Earliest Finish — how much you can slip before you delay the next activity's start. Total float is Latest Start minus Earliest Start — how much you can slip before you blow the whole project deadline. They're not the same number, and the gap between them is exactly the rescue capacity we used later when Samuel's parser overran.\n\nCritical path is simply every activity where both are zero — no slack anywhere, in either sense."
+    },
+    {
+        speaker: "Cole | 45 seconds",
+        notes: "We split work using a responsibility-based WBS — chosen because our challenge was four people coding in parallel. As you can see on the schedule, Parser starts Day 1 morning, Algorithm spans Day 1 into Day 2 morning, and Integration fills Day 2. Critical path: Parser, Algorithm, Integration — 10 hours sequential. Visualisation ran in parallel with float — it finishes before integration needs it.\n\nThat float created support capacity. I picked up some of Samuel's edge-case testing because my track was ahead. When Samuel struggled, Jamie pair-programmed on the parser. If everything sat on the critical path, nobody could have helped."
+    },
+    {
+        speaker: "Hamza | 1 minute",
+        notes: "Three decisions to highlight. Language: we chose C over Python — an Iron Triangle trade-off. Fixed time meant scope had to flex, and we accepted higher time cost for deeper understanding. Estimation: each person estimated their own package using expert judgement and bottom-up decomposition.\n\nWe estimated the parser at one hour. Actual: three — 200% overrun. The CHAOS report shows 66% of projects fail, often from exactly this kind of estimation error. When it overran, we re-estimated using PERT three-point estimates. That told us visualisation was achievable and, once the core was stable, PERT mode was too — so MoSCoW did what it's meant to: protect the Musts first, then pull the Could back in once there was room.\n\nBy Day 1 end we were clearly behind. We protected CPM and Parser, confirmed Visualisation was still achievable, and by Day 2 had float enough to land PERT mode as well."
+    },
+    {
+        speaker: "Hamza | 1 minute 5 seconds",
+        notes: "The C debate was our Tuckman Storming moment. It triggered our 15-minute escalation rule — structured round-robin, then decision: stick with C, support each other. Jamie pair-programmed Samuel's malloc patterns for 45 minutes. Parser done by Day 2 morning.\n\nWhy did the round-robin work? McClelland's affiliation need was already met through prior trust — a previous module failure taught us blame destroys speed. That made it safe to say 'I'm struggling' rather than defend a position. In a new team, the same process would produce politeness, not honesty.\n\nNot all challenges were reactive. Shared struct: 30 minutes upfront, prevented integration conflicts entirely. JSON spike: 20 minutes, saved 2-3 hours. No spike on C — that's our gap: we spiked easy decisions but not the risky one.\n\nJamie also noticed Samuel was quieter and checked in privately — servant leadership in action. Not all support is technical."
+    },
+    {
+        speaker: "Jamie (intro), then each member | 2 minutes 50 seconds",
+        notes: "<strong>Jamie (introduction):</strong> Each of us identified a specific mistake we made and what it cost the team.\n\n<strong>Jamie:</strong> I assumed consensus meant the decision was settled. We had ADKAR's Awareness and Desire for C, but not Knowledge or Ability. My mistake: my implicit authority as Product Owner delayed Samuel's pushback. I only noticed when he stopped challenging testing scope. In future, spike before committing when reversibility is low.\n\n<strong>Samuel:</strong> I assumed I could write tests from inputs and outputs alone. My mistake: I didn't ask for help early enough because I felt incompetent at something I owned. I thought I was stuck on syntax, but actually I didn't understand what correct looks like for the backward pass. Jamie explaining the logic — not the code — unlocked me. That's Schön's reflection-in-action: reframing the problem while you're in it. In future, a 15-minute knowledge-sharing before testing begins.\n\n<strong>Cole:</strong> I assumed my visualisation was correct because it looked right. My mistake: Activity D rendered wrong, and I nearly sent Jamie chasing a phantom bug. That's Wilemon and Thamhain's 'Communication Problems' — through artefacts, not words. I'm used to UI work where if it looks right, it is right. CPM is maths — looking right means nothing if the numbers are wrong. In future, pair visual output with automated verification.\n\n<strong>Hamza:</strong> I nearly didn't flag the type mismatch — McClelland's affiliation need made me prioritise belonging over the team's information need. My mistake: I hesitated 20 minutes before saying anything — time the team could have used. I spoke up only because existing trust overrode my discomfort. In future, assign interface ownership separately from module ownership so flagging mismatches is a role responsibility, not a personal confrontation.\n\n<strong>Jamie (capstone):</strong> Common thread: we split up the work but not the understanding. Next time, a knowledge map alongside the WBS. One collective gap: we chose C unanimously — McClelland's affiliation need meant nobody risked group harmony to challenge it. In future, assign a Devil's Advocate for irreversible decisions."
+    },
+    {
+        speaker: "All four members | 45 seconds",
+        notes: "<strong>Samuel:</strong> You can plan the work but not the understanding — WBS needs a knowledge map.\n\n<strong>Jamie:</strong> PERT taught us single-point estimates are always optimistic — including our estimate of our own abilities.\n\n<strong>Cole:</strong> Building a PM tool taught us project management — not just the theory, but how it breaks down in practice.\n\n<strong>Hamza:</strong> Thank you. We welcome your questions."
+    },
+    {
+        speaker: "None | Not narrated",
+        notes: "This slide is not narrated. It exists for submission completeness and academic integrity."
+    },
+    {
+        speaker: "None | Not narrated — Q&A reference",
+        notes: "This slide is not presented. It is a reference document for the 5-minute Q&A session. Each team member should be prepared to answer questions in their domain: Samuel (WBS, testing, Scrum), Jamie (CPM algorithm, PERT, ADKAR, estimation theory), Cole (visualisation, RayLib, Wilemon & Thamhain), Hamza (integration, Iron Triangle, MoSCoW, McClelland, psychological safety)."
+    }
+];
+
+class NotesPanel {
+    constructor(presentation) {
+        this.panel = document.getElementById('notesPanel');
+        this.speakerEl = document.getElementById('notesSpeaker');
+        this.bodyEl = document.getElementById('notesBody');
+        this.presentation = presentation;
+        this.isVisible = false;
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'n' || e.key === 'N') && !e.target.getAttribute('contenteditable')) {
+                this.toggle();
+            }
+        });
+
+        this.update(0);
+    }
+
+    toggle() {
+        this.isVisible = !this.isVisible;
+        this.panel.classList.toggle('visible', this.isVisible);
+        document.body.classList.toggle('notes-open', this.isVisible);
+        this.presentation.setupStageScale();
+    }
+
+    update(index) {
+        const note = speakerNotes[index];
+        if (note) {
+            this.speakerEl.textContent = note.speaker;
+            this.bodyEl.innerHTML = note.notes.replace(/\n/g, '<br>');
+        }
+    }
+}
+
+const presentation = new SlidePresentation();
+const editor = new InlineEditor();
+const notes = new NotesPanel(presentation);
+
+// Hook into slide changes to update notes
+let presenterMode = null;
+const origShowSlide = presentation.showSlide.bind(presentation);
+presentation.showSlide = function(index) {
+    origShowSlide(index);
+    notes.update(this.currentSlide);
+    if (presenterMode) presenterMode.sync(this.currentSlide);
+};
+presentation.showSlide(0);
+
+/* ===========================================
+   PRESENTER MODE (P key)
+   Opens a second window for the speaker's laptop.
+   Audience screen shows clean slides only.
+   =========================================== */
+class PresenterMode {
+    constructor() {
+        this.win = null;
+        this.startTime = null;
+        this.timerInterval = null;
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'p' || e.key === 'P') && !e.target.getAttribute('contenteditable')) {
+                e.preventDefault();
+                this.open();
+            }
+        });
+    }
+
+    open() {
+        if (this.win && !this.win.closed) {
+            this.win.focus();
+            return;
+        }
+
+        this.win = window.open('', 'presenter', 'width=900,height=700');
+        if (!this.win) { alert('Enable popups for presenter mode'); return; }
+
+        this.win.document.write(this.buildHTML());
+        this.win.document.close();
+        this.startTime = Date.now();
+        this.timerInterval = setInterval(() => this.updateTimer(), 1000);
+        this.sync(presentation.currentSlide);
+
+        this.win.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight': case ' ': case 'ArrowDown':
+                    e.preventDefault(); presentation.next(); break;
+                case 'ArrowLeft': case 'ArrowUp':
+                    e.preventDefault(); presentation.prev(); break;
+            }
+        });
+
+        this.win.addEventListener('beforeunload', () => {
+            clearInterval(this.timerInterval);
+        });
+    }
+
+    buildHTML() {
+        return `<!DOCTYPE html><html><head><title>Presenter Notes</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e8e8e8; padding: 24px; height: 100vh; display: flex; flex-direction: column; }
+            .top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #333; margin-bottom: 20px; flex-shrink: 0; }
+            .slide-num { font-size: 28px; font-weight: 700; color: #7b8cff; }
+            .timer { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; color: #e8e8e8; }
+            .timer.warn { color: #ff6b6b; }
+            .speaker { font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; color: #7b8cff; margin-bottom: 12px; flex-shrink: 0; }
+            .notes { font-size: 22px; line-height: 1.6; color: #f0f0f0; overflow-y: auto; flex: 1; padding-right: 8px; }
+            .notes strong { color: #fff; font-weight: 700; }
+            .next-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: #666; margin-top: 16px; padding-top: 12px; border-top: 1px solid #333; flex-shrink: 0; }
+            .next-title { font-size: 15px; color: #999; margin-top: 4px; flex-shrink: 0; }
+            .controls-hint { font-size: 11px; color: #555; text-align: center; margin-top: 12px; flex-shrink: 0; }
+        </style></head><body>
+        <div class="top-bar">
+            <span class="slide-num" id="pSlideNum">1 / ${presentation.totalSlides}</span>
+            <span class="timer" id="pTimer">00:00</span>
+        </div>
+        <div class="speaker" id="pSpeaker"></div>
+        <div class="notes" id="pNotes"></div>
+        <div class="next-label">NEXT</div>
+        <div class="next-title" id="pNext"></div>
+        <div class="controls-hint">← → arrows to navigate &bull; also controls main screen</div>
+        </body></html>`;
+    }
+
+    sync(index) {
+        if (!this.win || this.win.closed) return;
+        const doc = this.win.document;
+        const note = speakerNotes[index];
+        doc.getElementById('pSlideNum').textContent = `${index + 1} / ${presentation.totalSlides}`;
+        doc.getElementById('pSpeaker').textContent = note ? note.speaker : '';
+        doc.getElementById('pNotes').innerHTML = note ? note.notes.replace(/\n/g, '<br>') : '';
+
+        const nextNote = speakerNotes[index + 1];
+        doc.getElementById('pNext').textContent = nextNote ? nextNote.speaker : '— end —';
+    }
+
+    updateTimer() {
+        if (!this.win || this.win.closed) { clearInterval(this.timerInterval); return; }
+        const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+        const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const secs = String(elapsed % 60).padStart(2, '0');
+        const el = this.win.document.getElementById('pTimer');
+        el.textContent = `${mins}:${secs}`;
+        el.classList.toggle('warn', elapsed >= 570);
+    }
+}
+
+presenterMode = new PresenterMode();
+</script>
+</body>
+</html>

@@ -11,7 +11,9 @@ static int find_id(const Activity *a, int count, char id) {
 }
 
 /* Load activities from a whitespace-separated text file. Each non-blank line:
- *     ID NAME DURATION [DEP_ID ...]
+ *     ID NAME OPTIMISTIC MOST_LIKELY PESSIMISTIC [DEP_ID ...]
+ * The three-point PERT estimate is mandatory; cpm_compute() schedules the
+ * activity using round((O + 4M + P) / 6) as its duration.
  * Returns a malloc'd array (caller frees), writes count to *out_count.
  * Returns NULL and prints a message to stderr on error. */
 static Activity *parse_load(const char *path, int *out_count) {
@@ -44,20 +46,30 @@ static Activity *parse_load(const char *path, int *out_count) {
         char *id_tok = strtok(line, " \t\r\n");
         if (!id_tok) continue;
         char *name_tok = strtok(NULL, " \t\r\n");
-        char *dur_tok  = strtok(NULL, " \t\r\n");
-        if (strlen(id_tok) != 1 || !name_tok || !dur_tok
+        char *o_tok = strtok(NULL, " \t\r\n");
+        char *m_tok = strtok(NULL, " \t\r\n");
+        char *p_tok = strtok(NULL, " \t\r\n");
+        if (strlen(id_tok) != 1 || !name_tok || !o_tok || !m_tok || !p_tok
             || find_id(activities, i, id_tok[0]) >= 0) goto parse_err;
         activities[i].id = id_tok[0];
         snprintf(activities[i].name, sizeof(activities[i].name), "%s", name_tok);
-        char *end;
-        long dur = strtol(dur_tok, &end, 10);
-        if (*end != '\0' || dur < 0) goto parse_err;
-        activities[i].duration = (int)dur;
-        /* Deps stored as raw char ids; resolved to indices after pass 2. */
-        char *tok;
-        while ((tok = strtok(NULL, " \t\r\n")) != NULL) {
+
+        char *o_end, *m_end, *p_end;
+        long o = strtol(o_tok, &o_end, 10);
+        long m = strtol(m_tok, &m_end, 10);
+        long p = strtol(p_tok, &p_end, 10);
+        if (*o_end != '\0' || *m_end != '\0' || *p_end != '\0'
+            || o < 0 || o > m || m > p) goto parse_err;
+        activities[i].optimistic  = (int)o;
+        activities[i].most_likely = (int)m;
+        activities[i].pessimistic = (int)p;
+
+        char *tok = strtok(NULL, " \t\r\n");
+        /* Remaining tokens are dep ids, stored raw and resolved to indices after pass 2. */
+        while (tok != NULL) {
             if (strlen(tok) != 1 || activities[i].dep_count >= MAX_DEPS) goto parse_err;
             activities[i].deps[activities[i].dep_count++] = (unsigned char)tok[0];
+            tok = strtok(NULL, " \t\r\n");
         }
         i++;
     }
@@ -96,7 +108,10 @@ int main(int argc, char **argv) {
     CPMResult *results = cpm_compute(activities, count);
     if (!results) { free(activities); return 1; }
 
-    render_run(activities, count, results);
+    PERTSummary pert = pert_compute(activities, results, count);
+    pert_print_table(activities, results, count, pert);
+
+    render_run(activities, count, results, pert);
 
     free(results);
     free(activities);

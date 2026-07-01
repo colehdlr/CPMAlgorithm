@@ -1,0 +1,398 @@
+1
+Reflective Development Showcase
+Assessment Brief - 002 Coursework
+Module Code IOT591U
+Module Title Reflective Leadership and Project Management
+Module Organiser Dr. Manesha Peiris
+Assessment 002 Reflective Development Showcase
+Weighting (%) 60%
+Deadline Live presentations will be scheduled on Thursday (Sprint
+week, day 3) & Friday (Sprint week, day 4)
+Slide set submission deadline via QM+: Week 8 Tuesday,
+7th July 2026, 23:59
+Duration / Length 10 minutes + 5-minute Q & A
+Assessment Outline
+During Sprint Week (Figure 1), your group will develop a digital application in ONE of the
+following areas:
+• Option 1: Automate project cost estimation
+• Option 2: Automate critical path identification
+The goal is to demonstrate your ability to apply project management and digital technology skills,
+collaborate effectively as a team, and reflect critically on your learning and team dynamics.
+At the end of the week, your group will:
+• Present your developed application to your peers and a panel.
+• Reflect on team dynamics and development, including how your group collaborated,
+overcame challenges, and responded to feedback.
+This is a summative assessment worth 60% of your final grade.
+Guidance on getting started:
+• Artefact Development Process (Sprint days 1 & 2, Figure 1)
+o Choose ONE of the two options (cost estimation or critical path).
+o Develop a working prototype or functional demonstration of your application
+using either a preferred programming language or formulas/macros in Excel.
+o Ensure the application reflects sound project management principles and is
+practical and functional.
+o Keep a record of your development process (tools used, decisions made,
+challenges faced).
+NOTE: You are not assessed on the technical complexity of the artefact you are developing, but on
+your understanding and application of project management concepts.
+• Group Reflection (end of Sprint Day 2, Figure 1)
+Your reflection should focus on your experience developing Option A/B, with particular attention
+to team dynamics and your development as a team. Consider the following prompts:
+o How did your team organise and assign roles?
+o How did you handle challenges or conflicts?
+3
+o How did the team make decisions and solve problems?
+o How did you respond to feedback from peers or the panel?
+o How did individual contributions support team success?
+o What did you learn about collaboration, leadership, and project management?
+4
+Figure 1 Coursework 002 Assignment Structure
+5
+Presentation Instructions
+When: The presentations will be scheduled during days 3 & 4 of the Sprint week (Thursday and
+Friday)
+Duration: 10 minutes (presentation) + 5 minutes (Q&A)
+Structure:
+1. Demonstration of your application
+o You will demonstrate your application live during the presentation
+o Slides must include ONE of the following:
+▪ A link to your prototype, or
+▪ A link to the Excel file (if applicable), or
+▪ A user-manual-style demonstration of your application, including
+screenshots and step-by-step instructions, so the panel can understand its
+functionality.
+2. Discussion of your development process
+o You will present the key decisions your team made during the development of the
+artefact on Sprint Days 1 and 2.
+3. Team reflection on team dynamics and learning
+o Please ensure you provide a PPT slide that outlines the key points you are
+discussing
+o You may present your reflection verbally during your presentation, but the panel
+may ask follow-up questions, so ensure all members are familiar with the key
+points.
+All group members must participate in the presentation.
+6
+Submission Instructions
+Each group must submit their presentation slides via the QM+ submission link.
+• The slides must be the same as those used in the presentation.
+o Your slides must include a demonstration of the artefact, a discussion of the
+development process, and a reflection on team dynamics and lessons learned,
+as outlined in the “Presentation Instructions” section above.
+• Failure to submit the slides via QM+ will be treated as a non-submission, and the
+group will receive 0 marks for this component.
+Professional Presentation, Academic Integrity,
+Confidentiality, and Compliance
+Your slides should be clearly organised and professionally presented. Write in the first person
+where appropriate for reflection, but maintain a high standard of grammar, clarity, and structure.
+All academic sources used should be cited using the Harvard referencing style.
+For support with reflection and academic writing, please refer to the learning resources on QM+
+or contact the module organiser.
+You must not include any confidential or personally identifiable information in your work.
+Pseudonymise individuals or organisations where necessary. Plagiarism, falsification, or
+inappropriate use of AI tools will be treated as academic misconduct. Ensure you are familiar with
+the types of academic misconduct outlined in the QMUL Academic Integrity and Misconduct
+policy available here. If you are unsure about anything related to academic integrity or
+misconduct, please reach out to your module organiser.
+Generative AI
+Use of Generative AI (e.g., Microsoft Copilot or ChatGPT) is permitted for this assessment but must
+not be used to generate text which you then submit as your own as this is academic misconduct.
+If using spelling or grammar assistive tools, avoid using any Generative AI functionality which
+rewrites non-trivial portions of your work.
+Avoid relying on Generative AI (e.g., ChatGPT) to format your references as these tools can often
+produce references which do not exist.
+For more information, please see https://www.qmul.ac.uk/library/academic-skills/studentguide-to-generative-ai/.
+7
+Late Submissions and Extenuating Circumstances
+Assessments submitted after the published deadline will be marked as late and will receive a
+penalty, unless you have approved Extenuating Circumstances (EC).
+You may submit up to seven calendar days after the deadline but a penalty of 5% of the total
+marks available will be applied to the assessment for each 24-hour period (or part of it) that the
+work is late (e.g. five marks deducted each day from a total of 100). After seven calendar days
+the assessment will be recorded as a non-submission and given a mark of zero.
+For more information, you can find the latest Assessment Handbook and Extenuating
+Circumstances policy via the QMUL policies page here: https://www.qmul.ac.uk/governanceand-legal-services/policy/policies-by-category/
+8
+ASSESSMENT CRITERIA - REFLECTIVE DEVELOPMENT PORTFOLIO (60%)
+Submission type: Group submission
+Fail Pass
+Criteria 0-29 (F) 30-39 (E) 40-49 (D) 50-59 (C) 60-69 (B) 70-79 (A) 80-100 (A+)
+Not successful Below required
+standard
+Pass Satisfactory Good Excellent Outstanding
+Understanding of
+Estimation &
+Project
+Management
+concepts (30%)
+Mapped KSBs: K15,
+S5, S6, B4
+Poor
+understanding;
+significant errors
+or omissions.
+Non-submission:
+The group did not
+submit their slides
+on QM+; no work is
+available for
+assessment.
+Minimal
+understanding;
+inaccurate or
+incomplete
+application.
+Limited
+understanding:
+key concepts
+only partially
+applied. Some
+minor errors or
+omissions. But
+was able to
+address these
+errors.
+Adequate
+understanding;
+no errors or
+omissions.
+Good
+understanding;
+accurate
+implementation of
+concepts.
+Very strong
+understanding.
+Excellent
+implementation of
+concepts and
+justification.
+Application
+demonstrates
+exceptional
+understanding of
+estimation or critical
+path; calculations/
+processes are
+accurate and welljustified.
+Teamwork and
+Collaboration
+(30%)
+Mapped KSBs: S6,
+B5
+Very poor
+collaboration;
+incomplete work
+reflective of a lack
+of contribution and
+teamwork.
+Non-submission:
+The group did not
+Weak
+collaboration;
+minimal
+contribution. No
+evidence of
+approaches put
+in place to
+manage
+Limited
+collaboration;
+uneven or
+minimal
+participation;
+Some basic
+evidence of
+leadership and
+Satisfactory
+collaboration:
+some uneven
+contributions are
+evident; evidence
+of leadership, but
+challenges are
+poorly addressed.
+Good collaboration;
+some role clarity
+issues; evidence of
+leadership and
+moderate handling
+of challenges. The
+approaches put in
+place to manage
+Excellent,
+collaboration and
+leadership; roles
+clear; minor
+challenges managed.
+The approaches put in
+place to manage team
+dynamics are
+Exceptional
+collaboration and
+leadership; clear role
+allocation; team
+supported each other;
+challenges handled
+proactively. The
+approaches put in 
+9
+Fail Pass
+Criteria 0-29 (F) 30-39 (E) 40-49 (D) 50-59 (C) 60-69 (B) 70-79 (A) 80-100 (A+)
+Not successful Below required
+standard
+Pass Satisfactory Good Excellent Outstanding
+submit their slides
+on QM+; no work is
+available for
+assessment.
+conflict/lack of
+engagement.
+minimal
+evidence of
+approaches put
+in place to
+manage
+conflict/lack of
+engagement, and
+collaboration.
+Has put in some
+approaches to
+manage team
+dynamics.
+team dynamics are
+effective and wellthought-out.
+effective, and there is
+clear evidence of
+learning that informs
+future team working
+environments.
+place to manage team
+dynamics are
+effective, and there is
+clear evidence of not
+only learning that
+informs future team
+working
+environments, but
+also critical analysis
+of why such strategies
+were effective in this
+context.
+Reflection on
+Team Dynamics
+and Development
+(20%)
+Mapped KSBs: B4, B5
+No meaningful
+reflection on
+leadership or
+teamwork.
+Non-submission:
+The group did not
+submit their slides
+on QM+; no work is
+available for
+assessment.
+Minimal or
+absent reflection;
+no critical
+insight; no
+learning
+demonstrated.
+Limited
+reflection;
+mostly
+descriptive; little
+insight into
+learning.
+Adequate
+reflection;
+descriptive only;
+limited critical
+analysis or
+insight.
+Good reflection,
+some critical
+analysis, and some
+awareness of team
+learning.
+Strong reflection;
+critical evaluation
+present; good
+awareness of team
+and self-learning.
+Insightful, critically
+evaluative reflection;
+demonstrates high
+self- and teamawareness; lessons
+learned are clearly
+articulated.
+10
+Fail Pass
+Criteria 0-29 (F) 30-39 (E) 40-49 (D) 50-59 (C) 60-69 (B) 70-79 (A) 80-100 (A+)
+Not successful Below required
+standard
+Pass Satisfactory Good Excellent Outstanding
+Response to
+feedback and
+Presentation
+Quality (20%)
+Mapped KSBs: S5, S6,
+B5
+Did not respond,
+deflected or
+responded
+unprofessionally to
+feedback.
+Non-submission:
+The group did not
+submit their slides
+on QM+; no work is
+available for
+assessment.
+Very poor
+presentation;
+unclear or
+unprofessional;
+does not respond
+to feedback;
+minimal or no
+participation.
+Poor
+presentation;
+hard to follow;
+minimal
+response to
+feedback; some
+members did not
+engage.
+Satisfactory
+presentation;
+some clarity or
+structure issues;
+limited response
+to feedback;
+uneven
+participation.
+Good presentation;
+understandable and
+organised; responds
+to feedback
+adequately; most
+members
+contribute.
+Excellent
+presentation; clear
+and professional;
+responds to feedback
+appropriately; each
+member made an
+effort to participate.
+Outstanding
+presentation; clear,
+engaging,
+professional;
+responds to feedback
+confidently and
+thoughtfully; all
+members actively
+participate.

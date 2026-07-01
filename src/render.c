@@ -9,9 +9,9 @@
 #include "raymath.h"
 
 #define NODE_W        180.0f
-#define NODE_H        110.0f
+#define NODE_H        132.0f
 #define COL_SPACING   260.0f
-#define ROW_SPACING   150.0f
+#define ROW_SPACING   172.0f
 #define MARGIN_X      80.0f
 #define MARGIN_Y      80.0f
 
@@ -122,26 +122,36 @@ static void draw_node(const Activity *activity, Vector2 center) {
     DrawRectangleRounded(rect, 0.12f, 6, fill);
     DrawRectangleRoundedLinesEx(rect, 0.12f, 6, activity->is_critical ? 2.5f : 1.5f, border);
 
-    char header[64], early_line[64], late_line[64], slack_line[64];
+    char header[64], early_line[64], late_line[64], float_line[64], pert_line[64];
     snprintf(header,     sizeof(header),     "%s  (%dd)", activity->id, activity->duration);
     snprintf(early_line, sizeof(early_line), "ES %-3d  EF %-3d", activity->es, activity->ef);
     snprintf(late_line,  sizeof(late_line),  "LS %-3d  LF %-3d", activity->ls, activity->lf);
-    snprintf(slack_line, sizeof(slack_line), "Slack %d%s", activity->slack, activity->is_critical ? "  *" : "");
+    snprintf(float_line, sizeof(float_line), "TF %d  FF %d%s", activity->total_float,
+             activity->free_float, activity->is_critical ? "  *" : "");
+    snprintf(pert_line,  sizeof(pert_line),  "O%d M%d P%d  E %.1f", activity->optimistic,
+             activity->most_likely, activity->pessimistic, activity->pert_expected);
 
     int x = (int)(rect.x + 10);
     text_draw(header,         x, (int)(rect.y +  8), 18, text);
     text_draw(activity->name, x, (int)(rect.y + 32), 14, text);
     text_draw(early_line,     x, (int)(rect.y + 54), 13, text);
     text_draw(late_line,      x, (int)(rect.y + 70), 13, text);
-    text_draw(slack_line,     x, (int)(rect.y + 88), 13,
+    text_draw(float_line,     x, (int)(rect.y + 88), 13,
               activity->is_critical ? (Color){ 180, 30, 30, 255 } : text);
+    text_draw(pert_line,      x, (int)(rect.y + 108), 12, (Color){ 70, 80, 96, 255 });
 }
 
 static void draw_hud(const Graph *graph) {
-    char buffer[128];
+    char buffer[128], pert_buffer[160];
+    double low  = graph->project_pert_duration - 1.96 * graph->project_stddev;
+    double high = graph->project_pert_duration + 1.96 * graph->project_stddev;
     snprintf(buffer, sizeof(buffer), "Project duration: %d", graph->project_duration);
-    DrawRectangle(0, 0, GetScreenWidth(), 34, (Color){ 30, 36, 48, 230 });
+    snprintf(pert_buffer, sizeof(pert_buffer), "PERT expected: %.1fd   95%% CI: [%.1f, %.1f]",
+             graph->project_pert_duration, low, high);
+
+    DrawRectangle(0, 0, GetScreenWidth(), 54, (Color){ 30, 36, 48, 230 });
     text_draw(buffer, 12, 8, 20, RAYWHITE);
+    text_draw(pert_buffer, 12, 30, 16, (Color){ 180, 210, 255, 255 });
 
     const char *hint = "drag: pan   wheel: zoom   R: reset view   ESC: quit";
     text_draw(hint, GetScreenWidth() - text_width(hint, 14) - 12, 12, 14,

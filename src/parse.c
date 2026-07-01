@@ -49,6 +49,9 @@ void graph_init(Graph *graph) {
     graph->capacity = 0;
     graph->topo_order = NULL;
     graph->project_duration = 0;
+    graph->project_pert_duration = 0.0;
+    graph->project_variance = 0.0;
+    graph->project_stddev = 0.0;
 }
 
 void graph_free(Graph *graph) {
@@ -105,10 +108,13 @@ bool graph_load_from_json(const char *path, Graph *graph) {
             goto done;
         }
 
-        cJSON *id_node       = cJSON_GetObjectItemCaseSensitive(item, "id");
-        cJSON *name_node     = cJSON_GetObjectItemCaseSensitive(item, "name");
-        cJSON *duration_node = cJSON_GetObjectItemCaseSensitive(item, "duration");
-        cJSON *deps_node     = cJSON_GetObjectItemCaseSensitive(item, "dependencies");
+        cJSON *id_node          = cJSON_GetObjectItemCaseSensitive(item, "id");
+        cJSON *name_node        = cJSON_GetObjectItemCaseSensitive(item, "name");
+        cJSON *duration_node    = cJSON_GetObjectItemCaseSensitive(item, "duration");
+        cJSON *deps_node        = cJSON_GetObjectItemCaseSensitive(item, "dependencies");
+        cJSON *optimistic_node  = cJSON_GetObjectItemCaseSensitive(item, "optimistic");
+        cJSON *most_likely_node = cJSON_GetObjectItemCaseSensitive(item, "most_likely");
+        cJSON *pessimistic_node = cJSON_GetObjectItemCaseSensitive(item, "pessimistic");
 
         if (!cJSON_IsString(id_node) || !id_node->valuestring) {
             fprintf(stderr, "parse: activity[%d] missing string 'id'\n", i);
@@ -122,6 +128,12 @@ bool graph_load_from_json(const char *path, Graph *graph) {
             fprintf(stderr, "parse: activity '%s' 'dependencies' must be an array\n", id_node->valuestring);
             goto done;
         }
+        if ((optimistic_node && !cJSON_IsNumber(optimistic_node))
+            || (most_likely_node && !cJSON_IsNumber(most_likely_node))
+            || (pessimistic_node && !cJSON_IsNumber(pessimistic_node))) {
+            fprintf(stderr, "parse: activity '%s' has a non-numeric PERT estimate\n", id_node->valuestring);
+            goto done;
+        }
 
         Activity *activity = &graph->items[i];
         memset(activity, 0, sizeof(*activity));
@@ -129,6 +141,14 @@ bool graph_load_from_json(const char *path, Graph *graph) {
         copy_string_field(activity->name, sizeof(activity->name),
                           cJSON_IsString(name_node) ? name_node->valuestring : activity->id);
         activity->duration = (int)duration_node->valuedouble;
+
+        /* Three-point estimates default to `duration` (a single-point
+         * estimate collapses PERT to plain CPM: expected = duration,
+         * variance = 0). */
+        activity->optimistic  = optimistic_node  ? (int)optimistic_node->valuedouble  : activity->duration;
+        activity->most_likely = most_likely_node ? (int)most_likely_node->valuedouble : activity->duration;
+        activity->pessimistic = pessimistic_node ? (int)pessimistic_node->valuedouble : activity->duration;
+
         pending_deps[i] = deps_node;
     }
     graph->count = count;
@@ -186,6 +206,14 @@ bool graph_validate(const Graph *graph) {
         }
         if (graph->items[i].duration < 0) {
             fprintf(stderr, "parse: activity '%s' has negative duration\n", graph->items[i].id);
+            return false;
+        }
+        if (graph->items[i].optimistic < 0
+            || graph->items[i].optimistic > graph->items[i].most_likely
+            || graph->items[i].most_likely > graph->items[i].pessimistic) {
+            fprintf(stderr,
+                "parse: activity '%s' PERT estimates must satisfy 0 <= optimistic <= most_likely <= pessimistic\n",
+                graph->items[i].id);
             return false;
         }
         for (int j = i + 1; j < graph->count; ++j) {

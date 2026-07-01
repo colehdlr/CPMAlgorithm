@@ -387,15 +387,24 @@ svg {
     margin: 20px 0;
 }
 
+.aon-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
 .aon-node {
     position: absolute;
-    width: 120px;
-    height: 72px;
+    width: 210px;
+    height: 100px;
     border: 2px solid var(--ink);
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    gap: 4px;
+    padding: 0 14px;
     background: var(--paper);
     z-index: 2;
 }
@@ -405,9 +414,15 @@ svg {
     background: rgba(31, 43, 224, 0.06);
 }
 
+.aon-node .node-id-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
 .aon-node .node-label {
     font-family: var(--font-display);
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 400;
     color: var(--ink);
 }
@@ -417,38 +432,20 @@ svg {
     font-size: 12px;
     color: var(--ink);
     letter-spacing: 0.04em;
-    margin-top: 4px;
+    opacity: 0.7;
 }
 
-.aon-edge {
-    position: absolute;
-    height: 2px;
-    background: var(--ink-faint);
-    transform-origin: left center;
-    z-index: 1;
+.aon-node .node-data-row {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+    opacity: 0.75;
 }
 
-.aon-edge.critical {
-    background: var(--ink);
-    height: 3px;
-}
-
-.aon-edge::after {
-    content: '';
-    position: absolute;
-    right: -6px;
-    top: -4px;
-    width: 0;
-    height: 0;
-    border-left: 8px solid var(--ink-faint);
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-}
-
-.aon-edge.critical::after {
-    border-left-color: var(--ink);
-    right: -7px;
-    top: -4px;
+.aon-node .node-data-row.node-float-row {
+    opacity: 1;
+    font-weight: 700;
 }
 
 /* === GANTT CHART === */
@@ -1041,7 +1038,7 @@ body.notes-open .progress-bar {
                     <p>RACI matrix &mdash; each WBS package has one R/A owner; Integration had three Consulted (cross-module risk)</p>
                 </div>
                 <div class="reveal" style="display: flex; gap: 24px; margin-top: 16px; align-items: baseline;">
-                    <span class="mono-tag" style="opacity: 0.6;">Tuckman: entered sprint at Norming &mdash; C debate (Slide 7) = Storming episode</span>
+                    <span class="mono-tag" style="opacity: 0.6;">Tuckman: entered sprint at Norming &mdash; C debate (Slide 6) = Storming episode</span>
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
@@ -1049,88 +1046,135 @@ body.notes-open .progress-bar {
         </section>
 
         <!-- ===========================
-             SLIDE 3: DEMONSTRATION
+             SLIDE 3: THE ALGORITHM
              =========================== -->
         <section class="slide" data-slide="3">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">CPM finds 22 days; PERT says plan for 25</span>
-                    <span class="mono-tag">AON network diagram</span>
+                    <span class="headline">How the algorithm works</span>
+                    <span class="mono-tag">PERT &bull; CPM</span>
                 </div>
-                <div class="two-col" style="flex: 1;">
-                    <div class="reveal">
-                        <div class="aon-diagram" style="height: 340px;">
-                            <!-- Edges first (behind nodes) -->
-                            <div class="aon-edge critical" style="top: 95px; left: 132px; width: 138px; transform: rotate(-22deg);"></div>
-                            <div class="aon-edge" style="top: 118px; left: 132px; width: 138px; transform: rotate(22deg);"></div>
-                            <div class="aon-edge" style="top: 56px; left: 398px; width: 140px; transform: rotate(22deg);"></div>
-                            <div class="aon-edge critical" style="top: 186px; left: 398px; width: 140px; transform: rotate(-22deg);"></div>
-                            <div class="aon-edge" style="top: 95px; left: 550px; width: 130px; transform: rotate(16deg);"></div>
-                            <div class="aon-edge critical" style="top: 168px; left: 550px; width: 130px; transform: rotate(-12deg);"></div>
-                            <div class="aon-edge critical" style="top: 166px; left: 810px; width: 20px; transform: rotate(0deg);"></div>
-                            <!-- Nodes -->
-                            <div class="aon-node critical" style="top: 70px; left: 10px;">
-                                <span class="node-label">A</span>
-                                <span class="node-duration">3d</span>
-                            </div>
-                            <div class="aon-node" style="top: 16px; left: 268px;">
-                                <span class="node-label">B</span>
-                                <span class="node-duration">4d</span>
-                            </div>
-                            <div class="aon-node critical" style="top: 134px; left: 268px;">
-                                <span class="node-label">C</span>
-                                <span class="node-duration">5d</span>
-                            </div>
-                            <div class="aon-node" style="top: 16px; left: 528px;">
-                                <span class="node-label">D</span>
-                                <span class="node-duration">6d</span>
-                            </div>
-                            <div class="aon-node critical" style="top: 134px; left: 528px;">
-                                <span class="node-label">E</span>
-                                <span class="node-duration">7d</span>
-                            </div>
-                            <div class="aon-node critical" style="top: 134px; left: 690px;">
-                                <span class="node-label">F</span>
-                                <span class="node-duration">3d</span>
-                            </div>
-                            <div class="aon-node critical" style="top: 134px; left: 830px; width: 100px; height: 64px;">
-                                <span class="node-label">G</span>
-                                <span class="node-duration">4d</span>
+
+                <div class="reveal" style="margin-bottom: 20px; display: flex; align-items: baseline; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--ink-faint);">
+                    <span class="mono-tag">PERT (per activity)</span>
+                    <span class="body" style="font-family: var(--font-mono); font-size: 15px;">Expected = (Optimistic + 4&times;Most&nbsp;Likely + Pessimistic) / 6</span>
+                </div>
+
+                <div class="two-col reveal">
+                    <div style="display: flex; flex-direction: column; gap: 22px;">
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">1. Forward traversal</div>
+                            <div class="body" style="font-family: var(--font-mono); font-size: 15px; line-height: 1.9;">
+                                Earliest Start &nbsp;=&nbsp; Earliest Finish of previous<br>
+                                Earliest Finish &nbsp;=&nbsp; Earliest Start + Duration
                             </div>
                         </div>
-                        <div class="process-flow" style="margin-top: 0;">
-                            <span class="process-step highlight">A</span>
-                            <span class="process-arrow">&rarr;</span>
-                            <span class="process-step highlight">C</span>
-                            <span class="process-arrow">&rarr;</span>
-                            <span class="process-step highlight">E</span>
-                            <span class="process-arrow">&rarr;</span>
-                            <span class="process-step highlight">F</span>
-                            <span class="process-arrow">&rarr;</span>
-                            <span class="process-step highlight">G</span>
-                            <span style="font-family: var(--font-mono); font-size: 14px; margin-left: 16px; letter-spacing: 0.04em;">= 22 days</span>
+                        <div>
+                            <div class="micro" style="margin-bottom: 10px;">2. Backward traversal</div>
+                            <div class="body" style="font-family: var(--font-mono); font-size: 15px; line-height: 1.9;">
+                                Latest Finish &nbsp;=&nbsp; lowest Latest Start of successor(s)<br>
+                                Latest Start &nbsp;=&nbsp; Latest Finish &minus; Duration
+                            </div>
                         </div>
                     </div>
-                    <div class="reveal" style="display: flex; flex-direction: column; gap: 24px;">
+                    <div style="display: flex; flex-direction: column; gap: 22px;">
                         <div>
-                            <div class="micro" style="margin-bottom: 12px;">Deterministic Mode</div>
-                            <div class="body" style="font-family: var(--font-mono); font-size: 14px; line-height: 1.8; letter-spacing: 0.02em;">
-                                A (Req):&nbsp;&nbsp;&nbsp;&nbsp; ES=0&nbsp; EF=3&nbsp; Float=0 CRIT<br>
-                                B (Design):&nbsp; ES=3&nbsp; EF=7&nbsp; Float=2<br>
-                                C (DB):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ES=3&nbsp; EF=8&nbsp; Float=0 CRIT<br>
-                                D (Front):&nbsp;&nbsp; ES=7&nbsp; EF=13 Float=2<br>
-                                E (Back):&nbsp;&nbsp;&nbsp; ES=8&nbsp; EF=15 Float=0 CRIT<br>
-                                F (Integ):&nbsp;&nbsp; ES=15 EF=18 Float=0 CRIT<br>
-                                G (Test):&nbsp;&nbsp;&nbsp; ES=18 EF=22 Float=0 CRIT
+                            <div class="micro" style="margin-bottom: 10px;">3. Forward traversal (float)</div>
+                            <div class="body" style="font-family: var(--font-mono); font-size: 15px; line-height: 1.9;">
+                                Free Float &nbsp;=&nbsp; lowest Earliest Start of successor(s) &minus; Earliest Finish<br>
+                                Total Float &nbsp;=&nbsp; Latest Start &minus; Earliest Start
                             </div>
                         </div>
-                        <div>
-                            <div class="micro" style="margin-bottom: 12px;">PERT Mode</div>
-                            <div class="body" style="font-family: var(--font-mono); font-size: 14px; line-height: 1.8; letter-spacing: 0.02em;">
-                                Duration: 23.8 days<br>
-                                95% CI: [20.2, 27.4] days
-                            </div>
+                        <div class="insight-box" style="margin-top: 0;">
+                            <p>Critical path: activities where Total Float = Free Float = 0</p>
                         </div>
+                    </div>
+                </div>
+
+                <div class="reveal" style="margin-top: 28px; flex: 1; display: flex; flex-direction: column; justify-content: flex-end;">
+                    <div class="aon-diagram" style="height: 320px;">
+                        <!-- Same data/activities.json the RayLib app schedules: ES/EF/LS/LF/TF/FF per node.
+                             Node boxes and edge lines share one coordinate space (0 0 1780 320), so
+                             edges are computed from actual box edges, not hand-tuned rotations. -->
+                        <svg class="aon-svg" viewBox="0 0 1780 320" preserveAspectRatio="none">
+                            <defs>
+                                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                                    <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-faint)"></path>
+                                </marker>
+                                <marker id="arrow-critical" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+                                    <path d="M0,0 L10,5 L0,10 z" fill="var(--ink)"></path>
+                                </marker>
+                            </defs>
+                            <!-- A -> B (float 2) -->
+                            <line x1="230" y1="160" x2="368" y2="60" stroke="var(--ink-faint)" stroke-width="2" marker-end="url(#arrow)"></line>
+                            <!-- A -> C (critical) -->
+                            <line x1="230" y1="160" x2="368" y2="260" stroke="var(--ink)" stroke-width="3" marker-end="url(#arrow-critical)"></line>
+                            <!-- B -> D (float 2) -->
+                            <line x1="580" y1="60" x2="718" y2="60" stroke="var(--ink-faint)" stroke-width="2" marker-end="url(#arrow)"></line>
+                            <!-- C -> E (critical) -->
+                            <line x1="580" y1="260" x2="718" y2="260" stroke="var(--ink)" stroke-width="3" marker-end="url(#arrow-critical)"></line>
+                            <!-- D -> F (float 2) -->
+                            <line x1="930" y1="60" x2="1068" y2="160" stroke="var(--ink-faint)" stroke-width="2" marker-end="url(#arrow)"></line>
+                            <!-- E -> F (critical) -->
+                            <line x1="930" y1="260" x2="1068" y2="160" stroke="var(--ink)" stroke-width="3" marker-end="url(#arrow-critical)"></line>
+                            <!-- F -> G (critical) -->
+                            <line x1="1280" y1="160" x2="1418" y2="160" stroke="var(--ink)" stroke-width="3" marker-end="url(#arrow-critical)"></line>
+                        </svg>
+
+                        <div class="aon-node critical" style="left: 20px; top: 110px;">
+                            <div class="node-id-row"><span class="node-label">A</span><span class="node-duration">3d</span></div>
+                            <div class="node-data-row">ES 0&nbsp;&nbsp; EF 3</div>
+                            <div class="node-data-row">LS 0&nbsp;&nbsp; LF 3</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node" style="left: 370px; top: 10px;">
+                            <div class="node-id-row"><span class="node-label">B</span><span class="node-duration">4d</span></div>
+                            <div class="node-data-row">ES 3&nbsp;&nbsp; EF 7</div>
+                            <div class="node-data-row">LS 5&nbsp;&nbsp; LF 9</div>
+                            <div class="node-data-row">TF 2&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node critical" style="left: 370px; top: 210px;">
+                            <div class="node-id-row"><span class="node-label">C</span><span class="node-duration">5d</span></div>
+                            <div class="node-data-row">ES 3&nbsp;&nbsp; EF 8</div>
+                            <div class="node-data-row">LS 3&nbsp;&nbsp; LF 8</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node" style="left: 720px; top: 10px;">
+                            <div class="node-id-row"><span class="node-label">D</span><span class="node-duration">6d</span></div>
+                            <div class="node-data-row">ES 7&nbsp;&nbsp; EF 13</div>
+                            <div class="node-data-row">LS 9&nbsp;&nbsp; LF 15</div>
+                            <div class="node-data-row">TF 2&nbsp;&nbsp; FF 2</div>
+                        </div>
+                        <div class="aon-node critical" style="left: 720px; top: 210px;">
+                            <div class="node-id-row"><span class="node-label">E</span><span class="node-duration">7d</span></div>
+                            <div class="node-data-row">ES 8&nbsp;&nbsp; EF 15</div>
+                            <div class="node-data-row">LS 8&nbsp;&nbsp; LF 15</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node critical" style="left: 1070px; top: 110px;">
+                            <div class="node-id-row"><span class="node-label">F</span><span class="node-duration">3d</span></div>
+                            <div class="node-data-row">ES 15&nbsp;&nbsp; EF 18</div>
+                            <div class="node-data-row">LS 15&nbsp;&nbsp; LF 18</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                        <div class="aon-node critical" style="left: 1420px; top: 110px;">
+                            <div class="node-id-row"><span class="node-label">G</span><span class="node-duration">4d</span></div>
+                            <div class="node-data-row">ES 18&nbsp;&nbsp; EF 22</div>
+                            <div class="node-data-row">LS 18&nbsp;&nbsp; LF 22</div>
+                            <div class="node-data-row node-float-row">TF 0&nbsp;&nbsp; FF 0</div>
+                        </div>
+                    </div>
+                    <div class="process-flow" style="margin-top: 12px;">
+                        <span class="process-step highlight">A</span>
+                        <span class="process-arrow">&rarr;</span>
+                        <span class="process-step highlight">C</span>
+                        <span class="process-arrow">&rarr;</span>
+                        <span class="process-step highlight">E</span>
+                        <span class="process-arrow">&rarr;</span>
+                        <span class="process-step highlight">F</span>
+                        <span class="process-arrow">&rarr;</span>
+                        <span class="process-step highlight">G</span>
+                        <span style="font-family: var(--font-mono); font-size: 14px; margin-left: 16px; letter-spacing: 0.04em;">= 22 days, Total Float = Free Float = 0 all the way through</span>
                     </div>
                 </div>
             </div>
@@ -1139,78 +1183,9 @@ body.notes-open .progress-bar {
         </section>
 
         <!-- ===========================
-             SLIDE 4: CPM WALKTHROUGH
+             SLIDE 4: PROGRAMMING ALLOCATION
              =========================== -->
         <section class="slide" data-slide="4">
-            <div class="slide-frame">
-                <div class="topbar reveal">
-                    <span class="headline">Convergence takes the max; divergence takes the min</span>
-                    <span class="mono-tag">forward + backward pass</span>
-                </div>
-                <div class="two-col reveal" style="flex: 1;">
-                    <div style="display: flex; flex-direction: column; gap: 28px;">
-                        <div>
-                            <div class="micro" style="margin-bottom: 14px;">Forward Pass (Convergence)</div>
-                            <div class="ed-callout" style="font-size: 28px;">
-                                Activity F: ES = max(EF<sub>E</sub>, EF<sub>D</sub>)
-                            </div>
-                            <div class="body-lede" style="margin-top: 8px;">
-                                = max(15, 13) = <strong>15</strong>
-                            </div>
-                            <div class="body" style="margin-top: 12px; opacity: 0.7;">
-                                At convergence, take the maximum. D finishes early but F waits for E.
-                            </div>
-                        </div>
-                        <div>
-                            <div class="micro" style="margin-bottom: 14px;">Backward Pass (Divergence)</div>
-                            <div class="ed-callout" style="font-size: 28px;">
-                                Activity A: LF = min(LS<sub>B</sub>, LS<sub>C</sub>)
-                            </div>
-                            <div class="body-lede" style="margin-top: 8px;">
-                                = min(5, 3) = <strong>3</strong>
-                            </div>
-                            <div class="body" style="margin-top: 12px; opacity: 0.7;">
-                                At divergence, take the minimum. The tightest successor constrains you.
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 28px;">
-                        <div>
-                            <div class="micro" style="margin-bottom: 14px;">PERT Worked Example</div>
-                            <div class="body-lede">Activity E &mdash; three-point estimate:</div>
-                            <div style="display: flex; gap: 20px; margin-top: 14px;">
-                                <div style="text-align: center;">
-                                    <div class="mono-tag" style="margin-bottom: 6px;">O</div>
-                                    <div class="headline-sm" style="font-size: 42px;">5</div>
-                                </div>
-                                <div style="text-align: center;">
-                                    <div class="mono-tag" style="margin-bottom: 6px;">M</div>
-                                    <div class="headline-sm" style="font-size: 42px;">7</div>
-                                </div>
-                                <div style="text-align: center;">
-                                    <div class="mono-tag" style="margin-bottom: 6px;">P</div>
-                                    <div class="headline-sm" style="font-size: 42px;">12</div>
-                                </div>
-                                <div style="text-align: center; border-left: 1.5px solid var(--ink); padding-left: 20px;">
-                                    <div class="mono-tag" style="margin-bottom: 6px;">Expected</div>
-                                    <div class="headline-sm" style="font-size: 42px;">7.5d</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="insight-box">
-                            <p>A PM commits at 25, not 22. PERT gives a range instead of false precision.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="slide-bottom-rule"></div>
-            <span class="pagenum">004</span>
-        </section>
-
-        <!-- ===========================
-             SLIDE 5: PROGRAMMING ALLOCATION
-             =========================== -->
-        <section class="slide" data-slide="5">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">Float gave us rescue capacity</span>
@@ -1278,13 +1253,13 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">005</span>
+            <span class="pagenum">004</span>
         </section>
 
         <!-- ===========================
-             SLIDE 6: KEY DECISIONS
+             SLIDE 5: KEY DECISIONS
              =========================== -->
-        <section class="slide" data-slide="6">
+        <section class="slide" data-slide="5">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">Fixed time meant scope had to flex</span>
@@ -1321,7 +1296,7 @@ body.notes-open .progress-bar {
                         <div class="moscow-visual" style="margin-top: 24px;">
                             <div class="moscow-item must">Must: CPM + Parser</div>
                             <div class="moscow-item should">Should: Visualisation</div>
-                            <div class="moscow-item could">Could: PERT</div>
+                            <div class="moscow-item could">Could: PERT &mdash; delivered</div>
                             <div class="moscow-item wont">Won't: GUI Input</div>
                         </div>
                         <div class="mono-tag" style="opacity: 0.6; margin-top: 16px;">CHAOS Report: 66% of projects fail; 43% avg cost overrun (Standish Group, 2003)</div>
@@ -1377,13 +1352,13 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">006</span>
+            <span class="pagenum">005</span>
         </section>
 
         <!-- ===========================
-             SLIDE 7: CHALLENGES
+             SLIDE 6: CHALLENGES
              =========================== -->
-        <section class="slide" data-slide="7">
+        <section class="slide" data-slide="6">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">Trust let us resolve conflict</span>
@@ -1439,13 +1414,13 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">007</span>
+            <span class="pagenum">006</span>
         </section>
 
         <!-- ===========================
-             SLIDE 8: TEAM REFLECTION
+             SLIDE 7: TEAM REFLECTION
              =========================== -->
-        <section class="slide" data-slide="8">
+        <section class="slide" data-slide="7">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">We split the work but not the knowledge</span>
@@ -1482,13 +1457,13 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">008</span>
+            <span class="pagenum">007</span>
         </section>
 
         <!-- ===========================
-             SLIDE 9: SUMMARY & CLOSING
+             SLIDE 8: SUMMARY & CLOSING
              =========================== -->
-        <section class="slide" data-slide="9">
+        <section class="slide" data-slide="8">
             <div class="slide-frame" style="justify-content: center;">
                 <div class="reveal">
                     <div class="micro" style="margin-bottom: 32px;">Summary</div>
@@ -1525,13 +1500,13 @@ body.notes-open .progress-bar {
                 <div class="pixel-glitch-bar" style="top: 940px; width: 200px; height: 70px;"></div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">009</span>
+            <span class="pagenum">008</span>
         </section>
 
         <!-- ===========================
-             SLIDE 10: REFERENCES
+             SLIDE 9: REFERENCES
              =========================== -->
-        <section class="slide" data-slide="10">
+        <section class="slide" data-slide="9">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">References</span>
@@ -1551,13 +1526,13 @@ body.notes-open .progress-bar {
                 </ol>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">010</span>
+            <span class="pagenum">009</span>
         </section>
 
         <!-- ===========================
-             SLIDE 11: Q&A PREPARATION
+             SLIDE 10: Q&A PREPARATION
              =========================== -->
-        <section class="slide" data-slide="11">
+        <section class="slide" data-slide="10">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">Q&amp;A Preparation</span>
@@ -1611,7 +1586,7 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">011</span>
+            <span class="pagenum">010</span>
         </section>
 
     </main>
@@ -1816,15 +1791,11 @@ const speakerNotes = [
     },
     {
         speaker: "Samuel | 55 seconds",
-        notes: "We picked roles based on strengths — Jamie knew CPM, Cole had RayLib experience, Hamza was sharp at cross-module issues, and I knew the team well enough to coordinate. The RACI made ownership explicit, especially integration where three people were Consulted.\n\nIn Tuckman's terms, we entered the sprint at Norming — we'd already formed in a previous module and trust was established. The C debate you'll see on Slide 7 was our Storming moment, which actually strengthened agreements.\n\nWhen my parser overran, Cole picked up testing because his float allowed it. The Belbin roles are retrospective — but what mattered was adapting: first stand-up ran 25 minutes, so we halved it. Hamza shifted to cover integration testing once we spotted nobody naturally filled that quality-checking role."
+        notes: "We picked roles based on strengths — Jamie knew CPM, Cole had RayLib experience, Hamza was sharp at cross-module issues, and I knew the team well enough to coordinate. The RACI made ownership explicit, especially integration where three people were Consulted.\n\nIn Tuckman's terms, we entered the sprint at Norming — we'd already formed in a previous module and trust was established. The C debate you'll see on Slide 6 was our Storming moment, which actually strengthened agreements.\n\nWhen my parser overran, Cole picked up testing because his float allowed it. The Belbin roles are retrospective — but what mattered was adapting: first stand-up ran 25 minutes, so we halved it. Hamza shifted to cover integration testing once we spotted nobody naturally filled that quality-checking role."
     },
     {
-        speaker: "Cole | 50 seconds",
-        notes: "What you're seeing is an AON network diagram rendered in RayLib. I'll run our app on the 7-activity scenario. Forward pass calculates earliest start and finish. Backward pass works backwards for latest start and finish. Float is the difference — zero float means critical.\n\nCritical path: A, C, E, F, G — 22 days. B and D have 2 days of float, shown with lighter borders. Critical activities are highlighted with heavier borders.\n\nSwitching to PERT mode — same activities with three-point estimates. Duration increases to 23.8 days with a 95% range of 20.2 to 27.4 days. That helps a PM set realistic expectations rather than one optimistic number.\n\nJamie will walk you through how the algorithm works."
-    },
-    {
-        speaker: "Jamie | 1 minute 10 seconds",
-        notes: "Forward pass: earliest start and finish — at convergence points, take the maximum. Activity F depends on both E and D. ES of F equals max of EF_E and EF_D — max of 15 and 13 is 15. D finishes early but F waits for E.\n\nBackward pass reverses it. Activity A feeds both B and C. LF of A equals min of LS_B and LS_C — min of 5 and 3 is 3. The tightest successor constrains you. Float equals latest start minus earliest start. Zero float means critical.\n\nPERT mode: Activity E — optimistic 5, most likely 7, pessimistic 12, expected 7.5 days. Critical path sums to 23.8 days with a 95% range of 20.2 to 27.4 days. A PM commits at 25, not 22. That's PERT's value: a range instead of false precision.\n\nOne limitation from our sprint: Samuel's parser struggle correlated with his testing confidence — violating PERT's independence assumption."
+        speaker: "Jamie | 1 minute",
+        notes: "This is the algorithm, end to end. PERT first: each activity gets an optimistic, most likely, and pessimistic estimate, and expected duration is (O + 4M + P) / 6 — that's the number CPM actually schedules against.\n\nThen three passes. Forward pass: Earliest Start is the Earliest Finish of whatever comes before it, Earliest Finish is Earliest Start plus duration. Backward pass reverses it: Latest Finish is the lowest Latest Start among an activity's successors, Latest Start is Latest Finish minus duration.\n\nOne more forward pass gives us float, and this is the part people usually get wrong: free float is the lowest Earliest Start among successors minus this activity's Earliest Finish — how much you can slip before you delay the next activity's start. Total float is Latest Start minus Earliest Start — how much you can slip before you blow the whole project deadline. They're not the same number, and the gap between them is exactly the rescue capacity we used later when Samuel's parser overran.\n\nCritical path is simply every activity where both are zero — no slack anywhere, in either sense."
     },
     {
         speaker: "Cole | 45 seconds",
@@ -1832,7 +1803,7 @@ const speakerNotes = [
     },
     {
         speaker: "Hamza | 1 minute",
-        notes: "Three decisions to highlight. Language: we chose C over Python — an Iron Triangle trade-off. Fixed time meant scope had to flex, and we accepted higher time cost for deeper understanding. Estimation: each person estimated their own package using expert judgement and bottom-up decomposition.\n\nWe estimated the parser at one hour. Actual: three — 200% overrun. The CHAOS report shows 66% of projects fail, often from exactly this kind of estimation error. When it overran, we re-estimated using PERT three-point estimates. That told us visualisation was achievable but PERT mode was a stretch — so MoSCoW kicked in: protect the Musts, keep the Should, accept the Could might be dropped.\n\nBy Day 1 end we were clearly behind. We protected CPM and Parser, confirmed Visualisation was still achievable, and accepted PERT mode might not ship."
+        notes: "Three decisions to highlight. Language: we chose C over Python — an Iron Triangle trade-off. Fixed time meant scope had to flex, and we accepted higher time cost for deeper understanding. Estimation: each person estimated their own package using expert judgement and bottom-up decomposition.\n\nWe estimated the parser at one hour. Actual: three — 200% overrun. The CHAOS report shows 66% of projects fail, often from exactly this kind of estimation error. When it overran, we re-estimated using PERT three-point estimates. That told us visualisation was achievable and, once the core was stable, PERT mode was too — so MoSCoW did what it's meant to: protect the Musts first, then pull the Could back in once there was room.\n\nBy Day 1 end we were clearly behind. We protected CPM and Parser, confirmed Visualisation was still achievable, and by Day 2 had float enough to land PERT mode as well."
     },
     {
         speaker: "Hamza | 1 minute 5 seconds",

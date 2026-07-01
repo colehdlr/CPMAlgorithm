@@ -10,7 +10,8 @@
  * Minimal self-contained test driver for parse + cpm.
  *
  * Builds a small graph in memory (no JSON), runs validation / topological sort
- * / CPM, and asserts the expected ES/EF/LS/LF/slack/critical values.
+ * / CPM, and asserts the expected ES/EF/LS/LF/total_float/free_float/critical
+ * values.
  *
  * Run with `make test`.
  */
@@ -54,15 +55,19 @@ static void test_textbook_network(void) {
 
     assert(g.project_duration == 22);
 
-    /* Spot-check each activity */
-    struct { const char *id; int es, ef, ls, lf, slack; int crit; } expected[] = {
-        { "A", 0,  3,  0,  3, 0, 1 },
-        { "B", 3,  7,  5,  9, 2, 0 },
-        { "C", 3,  8,  3,  8, 0, 1 },
-        { "D", 7, 13,  9, 15, 2, 0 },
-        { "E", 8, 15,  8, 15, 0, 1 },
-        { "F",15, 18, 15, 18, 0, 1 },
-        { "G",18, 22, 18, 22, 0, 1 },
+    /* Spot-check each activity. Free float is tighter than total float for
+     * B and D: both can slip 2 days without blowing the deadline (total
+     * float), but D feeds F on its own, so D's own float (2) is genuine
+     * free float, while B feeds only D, so any slip in B immediately
+     * delays D's earliest start (free float 0). */
+    struct { const char *id; int es, ef, ls, lf, total_float, free_float; int crit; } expected[] = {
+        { "A", 0,  3,  0,  3, 0, 0, 1 },
+        { "B", 3,  7,  5,  9, 2, 0, 0 },
+        { "C", 3,  8,  3,  8, 0, 0, 1 },
+        { "D", 7, 13,  9, 15, 2, 2, 0 },
+        { "E", 8, 15,  8, 15, 0, 0, 1 },
+        { "F",15, 18, 15, 18, 0, 0, 1 },
+        { "G",18, 22, 18, 22, 0, 0, 1 },
     };
     for (size_t i = 0; i < sizeof(expected)/sizeof(expected[0]); ++i) {
         int idx = graph_find_id(&g, expected[i].id);
@@ -70,14 +75,15 @@ static void test_textbook_network(void) {
         const Activity *a = &g.items[idx];
         if (a->es != expected[i].es || a->ef != expected[i].ef
             || a->ls != expected[i].ls || a->lf != expected[i].lf
-            || a->slack != expected[i].slack
+            || a->total_float != expected[i].total_float
+            || a->free_float != expected[i].free_float
             || a->is_critical != (bool)expected[i].crit) {
             fprintf(stderr,
-                "mismatch on %s: got ES=%d EF=%d LS=%d LF=%d slack=%d crit=%d\n"
-                "           want ES=%d EF=%d LS=%d LF=%d slack=%d crit=%d\n",
-                a->id, a->es, a->ef, a->ls, a->lf, a->slack, (int)a->is_critical,
+                "mismatch on %s: got ES=%d EF=%d LS=%d LF=%d TF=%d FF=%d crit=%d\n"
+                "           want ES=%d EF=%d LS=%d LF=%d TF=%d FF=%d crit=%d\n",
+                a->id, a->es, a->ef, a->ls, a->lf, a->total_float, a->free_float, (int)a->is_critical,
                 expected[i].es, expected[i].ef, expected[i].ls, expected[i].lf,
-                expected[i].slack, expected[i].crit);
+                expected[i].total_float, expected[i].free_float, expected[i].crit);
             abort();
         }
     }
@@ -96,7 +102,8 @@ static void test_single_activity(void) {
     assert(g.project_duration == 5);
     assert(g.items[0].es == 0 && g.items[0].ef == 5);
     assert(g.items[0].ls == 0 && g.items[0].lf == 5);
-    assert(g.items[0].slack == 0);
+    assert(g.items[0].total_float == 0);
+    assert(g.items[0].free_float == 0);
     assert(g.items[0].is_critical);
 
     graph_free(&g);
@@ -108,7 +115,9 @@ static void test_parallel_paths(void) {
      *     S(2) -> A(5) -> T(1)        path = 8 (critical)
      *     S(2) -> B(3) -> T(1)        path = 6
      *
-     * A is critical, B is not (slack 2).
+     * A is critical, B is not (total float 2). B's only successor is T, and
+     * T's ES is already pinned by A, so B can also slip its full 2 days
+     * without moving T's ES: free float equals total float here.
      */
     Graph g; graph_init(&g);
     int S = add_activity(&g, "S", "Start", 2, NULL, 0);
@@ -124,7 +133,8 @@ static void test_parallel_paths(void) {
     assert(g.project_duration == 8);
     assert(g.items[graph_find_id(&g, "A")].is_critical);
     assert(!g.items[graph_find_id(&g, "B")].is_critical);
-    assert(g.items[graph_find_id(&g, "B")].slack == 2);
+    assert(g.items[graph_find_id(&g, "B")].total_float == 2);
+    assert(g.items[graph_find_id(&g, "B")].free_float == 2);
 
     graph_free(&g);
     printf("  ok  parallel_paths\n");

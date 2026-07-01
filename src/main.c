@@ -51,8 +51,10 @@ int main(int argc, char **argv) {
     if (!graph_validate(&graph)) goto done;
     if (!graph_topological_sort(&graph)) goto done;
     if (!cpm_compute(&graph)) { fprintf(stderr, "cpm: failed to compute schedule\n"); goto done; }
+    pert_compute(&graph);
 
     cpm_print_table(&graph);
+    pert_print_table(&graph);
     if (show_window) render_run(&graph);
     exit_code = 0;
 

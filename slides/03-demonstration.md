@@ -42,6 +42,4 @@ Critical path: A, C, E, F, G — 22 days. B and D have 2 days of float, shown in
 
 Switching to PERT mode — same activities with three-point estimates. Duration increases to 23.8 days with a 95% range up to 27.4 days. That helps a PM set realistic expectations rather than one optimistic number.
 
-If demo fails, we switch to our pre-recorded backup — rehearsed three times, under 5 seconds.
-
 Jamie will walk you through how the algorithm works.

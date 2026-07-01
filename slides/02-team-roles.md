@@ -29,6 +29,6 @@
 
 We allocated by strengths — I took Scrum Master knowing the team, Jamie owned the algorithm from his CPM research, Cole brought RayLib experience, Hamza was strongest at spotting cross-module issues.
 
-The RACI formalised accountability: Integration had three Consulted because that's where cross-module risk sat. I facilitated rather than directed — all four were self-motivated, so directive leadership would have undermined ownership.
+Everyone was self-motivated, so they didn't need managing — I just kept things moving. The RACI formalised who owned what: Integration had three Consulted because that's where cross-module risk sat.
 
-When Samuel's parser took 3× estimate, Cole absorbed some testing scope Day 2 — keeping workload equitable. And once we spotted our missing Completer Finisher, Hamza shifted to running full integration rather than just type checks.
+When my parser took 3× estimate, Cole picked up some of my testing scope Day 2 — keeping workload balanced. The Belbin gap — no Completer Finisher — is a label we applied in retrospect. What actually happened: Hamza naturally shifted to running full integration once we realised nobody was doing it.

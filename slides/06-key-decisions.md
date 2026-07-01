@@ -20,9 +20,8 @@
 | Algorithm (Jamie) | 3h | 4h | +33% | 3.3h |
 | Visualisation (Cole) | 2h | 2.5h | +25% | 2.3h |
 
-**EVA checkpoint (Day 1 end):** PV = £400 (50% of work planned) | EV = £300 (3 of 5 packages incomplete) | SPI = EV÷PV = 0.75 → triggered MoSCoW replan. Day 2 AM: SPI recovered to 0.92.
-
-**Budget basis:** 4 devs × 8h × £25/hr opportunity cost = £800
+**EVA (reconstructed retrospectively to demonstrate understanding):**
+Budget: 4 devs × 8h × £25/hr = £800 | PV at Day 1 end = £400 (half timeline elapsed) | EV = £320 (2 of 5 packages complete) | SPI = 320÷400 = **0.80** → triggered MoSCoW replan. Day 2 AM: recovered to 0.92.
 
 ---
 
@@ -32,6 +31,6 @@ What would you estimate the parser at? One hour? That's what we said. Actual: th
 
 PERT retrospectively would have given 1.4 hours for the parser — halving the error. Analogous data from Python coursework scaled 2× for C gave 3 hours — matching actual. The hierarchy: analogous first, parametric, PERT, then expert judgement as fallback (Green, 2006).
 
-Our 25% cost overrun beat the CHAOS report's 43% average (Larkowski, 2003) because MoSCoW stopped scope expanding.
+Our 25% cost overrun is below the CHAOS report's 43% average for software projects (Larkowski, 2003) — the scale is different but the principle is the same: scope control limits overrun.
 
-EVA: Planned Value at Day 1 end was £400 — half the budget for half the time. Earned Value was £300 because parser and algorithm were incomplete. SPI = 300 ÷ 400 = 0.75. That number triggered the replan. Day 2 morning it recovered to 0.92.
+We reconstructed EVA after the sprint to understand what happened. Budget was £800 — four people, two days, at £25/hr opportunity cost. Planned Value at Day 1 end was £400 — half the timeline done. Earned Value was £320 — only Parser and Visualisation were complete. SPI = 320 ÷ 400 = 0.80. In reality, what triggered our replan wasn't a formal SPI calculation — it was simply noticing we were behind. EVA gives us the vocabulary to quantify how far behind.

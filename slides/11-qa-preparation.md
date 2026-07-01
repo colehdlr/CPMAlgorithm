@@ -1,5 +1,7 @@
 # Q&A Preparation Guide
 
+**INTERNAL PREP ONLY — DO NOT INCLUDE IN SUBMITTED SLIDE DECK**
+
 **Time:** 5 minutes after presentation | **All members must answer at least one question**
 
 ---
@@ -127,7 +129,7 @@ When asked a question:
 - "What actually happened in real time was closer to Schön's (1983) reflection-in-action: notice discomfort, name the assumption, test it immediately — a micro-cycle that doesn't wait for formal reflection."
 - "The ADKAR connection goes further for Jamie's reflection: the structured C debate discussion ended up acting as Reinforcement. Committing publicly to 'stick with C but support each other' prevented reopening the debate every time someone hit a snag."
 - "Counter-arguments on future actions: Jamie — spiking only makes sense when stakes are high and knowledge is uncertain. Samuel — the transfer still depends on the tester knowing enough to ask good questions. Cole — visual verification only works when the tool has a natural visual form. Hamza — interface ownership adds overhead; unnecessary for 2-person teams with simple interfaces."
-- "The professional development transfer evidence: Jamie applied spike discipline at work (pushed for half-day spike rather than consensus vote on database choice). Samuel asks 'what's the pessimistic estimate?' in workplace stand-ups. Cole added automated screenshot comparison tests to his team's CI pipeline. Hamza reviews interface contracts before development begins."
+- "What we plan to apply going forward: Jamie — spike before committing to irreversible decisions. Samuel — ask for the pessimistic estimate in stand-ups. Cole — pair visual checks with automated verification. Hamza — review interface contracts before development begins."
 
 ---
 

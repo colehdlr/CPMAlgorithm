@@ -28,6 +28,8 @@ CPM Application
 
 **Critical Path:** Parser → Algorithm → Integration = 10 hours sequential
 
+**Resource constraint:** Testing blocked until Algorithm output available — float converted to sequential dependency
+
 ---
 
 ## Speaker Notes
@@ -36,6 +38,4 @@ We split work using a responsibility-based WBS — chosen because our challenge 
 
 That float created support capacity. Cole tested Jamie's edge cases because his track was ahead. When Samuel struggled, Jamie pair-programmed on the parser. If everything sat on the critical path, nobody could have helped.
 
-Day 1 PM, Samuel was blocked on testing until Algorithm completed — a resource constraint that converted his float into a sequential dependency. That's resource levelling: the schedule extends regardless of what CPM says.
-
-The shared struct definition forced a design conversation upfront — compile-time type checking caught mismatches automatically rather than surfacing them at integration.
+Day 1 PM, Samuel was blocked on testing until Algorithm completed — a resource constraint visible on the schedule. CPM assumes unlimited resources; resource levelling shows the real schedule once you account for people.

@@ -14,20 +14,24 @@
 
 **Estimation vs Reality:**
 
-| WBS Package | Estimated | Actual | Expert Error | PERT Would Give |
+| WBS Package | Estimated | Actual | Expert Error | PERT (used in Day 1 replan) |
 |-------------|-----------|--------|--------------|-----------------|
 | Parser (Samuel) | 1h | 3h | +200% | 1.4h |
 | Algorithm (Jamie) | 3h | 4h | +33% | 3.3h |
 | Visualisation (Cole) | 2h | 2.5h | +25% | 2.3h |
 
-**Cost outcome:** Estimated £800 → Actual £1,000 (25% overrun). SPI hit 0.75 at Day 1 end — triggered MoSCoW replan. Recovered to 0.92 by Day 2 morning.
+**EVA checkpoint (Day 1 end):** PV = £400 (50% of work planned) | EV = £300 (3 of 5 packages incomplete) | SPI = EV÷PV = 0.75 → triggered MoSCoW replan. Day 2 AM: SPI recovered to 0.92.
+
+**Budget basis:** 4 devs × 8h × £25/hr opportunity cost = £800
 
 ---
 
 ## Speaker Notes
 
-What would you estimate the parser at? One hour? That's what we said. Actual: three — 200% error. PERT would have given 1.4 hours, halving the error. Analogous data from Python coursework scaled 2× for C gave 3 hours — matching actual. The hierarchy: analogous first, parametric, PERT, then expert judgement as fallback (Green, 2006).
+What would you estimate the parser at? One hour? That's what we said. Actual: three — 200% error. When the parser overran Day 1 PM, we re-estimated remaining work using PERT three-point estimates — that told us visualisation was still achievable but PERT mode was a stretch. That's when we applied MoSCoW: protect the Musts, keep the Should, drop the Could if needed.
 
-With time fixed, we applied MoSCoW. When the parser overran, we knew what to protect. Our 25% cost overrun beat the CHAOS report's 43% average (Larkowski, 2003) because MoSCoW stopped scope expanding.
+PERT retrospectively would have given 1.4 hours for the parser — halving the error. Analogous data from Python coursework scaled 2× for C gave 3 hours — matching actual. The hierarchy: analogous first, parametric, PERT, then expert judgement as fallback (Green, 2006).
 
-SPI 0.75 at Day 1 end told us we were 25% behind — triggering the replan. Day 2 morning recovered to 0.92. Resource levelling also hit us — CPM assumes unlimited resources, but Samuel couldn't test until Jamie's algorithm was done.
+Our 25% cost overrun beat the CHAOS report's 43% average (Larkowski, 2003) because MoSCoW stopped scope expanding.
+
+EVA: Planned Value at Day 1 end was £400 — half the budget for half the time. Earned Value was £300 because parser and algorithm were incomplete. SPI = 300 ÷ 400 = 0.75. That number triggered the replan. Day 2 morning it recovered to 0.92.

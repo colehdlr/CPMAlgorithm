@@ -13,7 +13,14 @@
 | CPM section rewritten: code-talk → PM-talk | Day 3 peer feedback |
 | Reflections restructured: description → challenged assumptions | Peer feedback |
 | PERT comparison applied to own sprint | Dr. Peiris's Week 5 intervention |
-| Delivery pace slowed, engagement questions added | Day 4 practice |
+| Delivery pace slowed | Day 4 practice |
+
+**Closing:**
+
+- **Samuel:** WBS needs a knowledge map — you can plan work but not understanding
+- **Jamie:** Single-point estimates are always optimistic — including our estimate of our own abilities
+- **Cole:** Accuracy for the wrong audience is still a miss
+- **Hamza:** We welcome your questions
 
 ---
 

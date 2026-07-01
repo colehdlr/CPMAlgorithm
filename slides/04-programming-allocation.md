@@ -28,8 +28,6 @@ CPM Application
 
 **Critical Path:** Parser → Algorithm → Integration = 10 hours sequential
 
-**Resource constraint:** Testing blocked until Algorithm output available — float converted to sequential dependency
-
 ---
 
 ## Speaker Notes
@@ -37,5 +35,3 @@ CPM Application
 We split work using a responsibility-based WBS — chosen because our challenge was four people coding in parallel. Critical path: Parser, Algorithm, Integration — 10 hours sequential. Cole's visualisation ran in parallel with 4.5 hours of float.
 
 That float created support capacity. Cole tested Jamie's edge cases because his track was ahead. When Samuel struggled, Jamie pair-programmed on the parser. If everything sat on the critical path, nobody could have helped.
-
-Day 1 PM, Samuel was blocked on testing until Algorithm completed — a resource constraint visible on the schedule. CPM assumes unlimited resources; resource levelling shows the real schedule once you account for people.

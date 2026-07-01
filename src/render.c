@@ -144,15 +144,14 @@ void render_run(const Activity *activities, int count, const CPMResult *results,
         }
         EndMode2D();
 
-        char hud[64], pert_hud[128];
-        double low  = pert.project_pert_duration - 1.96 * pert.project_stddev;
-        double high = pert.project_pert_duration + 1.96 * pert.project_stddev;
+        char hud[64], pert_hud[160];
         snprintf(hud, sizeof(hud), "Project duration: %d", project_duration);
-        snprintf(pert_hud, sizeof(pert_hud), "PERT expected: %.1fd   95%% CI: [%.1f, %.1f]",
-                 pert.project_pert_duration, low, high);
+        snprintf(pert_hud, sizeof(pert_hud),
+                 "PERT: sum (O+4M+P)/6 over critical path = %.2fd",
+                 pert.project_pert_duration);
         DrawRectangle(0, 0, GetScreenWidth(), 54, (Color){ 30, 36, 48, 230 });
         DrawText(hud, 12, 8, 20, RAYWHITE);
-        DrawText(pert_hud, 12, 30, 16, (Color){ 180, 210, 255, 255 });
+        DrawText(pert_hud, 12, 30, 14, (Color){ 180, 210, 255, 255 });
 
         EndDrawing();
     }

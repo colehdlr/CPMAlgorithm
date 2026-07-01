@@ -1,18 +1,17 @@
 # Slide 3: Demonstration
 
-**Speaker:** Cole | **Time:** 60-90 seconds
+**Speaker:** Cole | **Time:** 60 seconds
 
 ---
 
 ## On the Slide
 
-- Screenshot of terminal output showing CPM table (ES, EF, LS, LF, float, critical path)
-- Screenshot of RayLib visualisation (AON network diagram with critical path in red)
-- Backup: pre-recorded screen capture if live demo fails
+- **Live demonstration** of CPM application: deterministic mode, then PERT mode
+- RayLib visualisation: AON network diagram with critical path highlighted in red
+- Demo environment: lab laptop, compiled binary tested pre-session
+- Backup: pre-recorded screen capture confirmed working. Failover rehearsed 3× — switch takes under 5 seconds
 
----
-
-## Expected Output
+**Deterministic Output:**
 
 ```
 Activity A (Requirements):   ES=0  EF=3  LS=0  LF=3   Float=0  CRITICAL
@@ -27,29 +26,33 @@ Critical Path: A -> C -> E -> F -> G
 Project Duration: 22 days
 ```
 
+**PERT Mode Output:**
+
+```
+Activity A: Expected=3.2 days  σ=0.50  (O=2, M=3, P=5)
+Activity C: Expected=5.5 days  σ=0.83  (O=4, M=5, P=9)
+Activity E: Expected=7.5 days  σ=1.17  (O=5, M=7, P=12)
+Activity F: Expected=3.3 days  σ=0.67  (O=2, M=3, P=6)
+Activity G: Expected=4.3 days  σ=0.67  (O=3, M=4, P=7)
+
+Critical Path: A -> C -> E -> F -> G
+PERT Project Duration: 23.8 days (vs 22 deterministic)
+Critical Path Variance: 3.21 | σ = 1.79 days
+95% Confidence Interval: [20.2, 27.4] days
+```
+
 ---
 
 ## Speaker Notes
 
-- Run the app once on the test scenario
-- Point at output: "The forward pass calculates earliest start and finish. The backward pass calculates latest start and finish. Float is the difference. Zero float = critical."
-- State the critical path: "A, C, E, F, G — project duration 22 days."
-- Point at the visualisation: "Critical path in red, non-critical in grey. B and D have 2 days of float."
-- One PM sentence: "Float tells a project manager which activities have flexibility — B and D's resources could be reallocated to critical activities without affecting the deadline."
-- If demo fails: switch to screenshot immediately. Say "We've prepared a screenshot of the output" and continue. No debugging live.
+I'll run our app on the 7-activity scenario. Forward pass calculates earliest start and finish. Backward pass works backwards for latest start and finish. Float is the difference — zero float means critical.
 
----
+Critical path: A, C, E, F, G — 22 days. B and D have 2 days of float, shown in grey. Critical in red.
 
-## DO NOT
+Switching to PERT mode — same activities with three-point estimates. Duration increases to 23.8 days with a 95% range up to 27.4 days. That helps a PM set realistic expectations rather than one optimistic number.
 
-- Explain the code
-- Show source files
-- Debug anything live
-- Spend more than 90 seconds
+Here's a simpler 3-activity example — X, Y, Z sequential, all critical, 10 days. The tool handles arbitrary inputs.
 
----
+If demo fails, we switch to our backup within 5 seconds — rehearsed three times.
 
-## KSBs Signalled
-
-- **K15** — estimation and time constraints (CPM output proves understanding)
-- **S6** — managing digital projects (tool identifies scheduling constraints)
+Jamie will walk you through how the algorithm works.

@@ -1,69 +1,36 @@
 # Slide 7: Challenges and Conflict Resolution
 
-**Speaker:** Hamza or Samuel | **Time:** 2 minutes
+**Speaker:** Hamza | **Time:** 1 minute 5 seconds
 
 ---
 
 ## On the Slide
 
-- Timeline showing: Agreement → Implementation → Friction → Structured Discussion → Resolution
-- Key quote: "We went round letting each team member voice their concerns"
+- **Proactive infrastructure:** Pre-agreed escalation rule (Day 1 morning) — any decision unresolved after 15 mins → structured round-robin
+- **Proactive prevention:** Shared struct definition (30 mins, Day 1) prevented integration conflicts; JSON vs CSV spike (20 mins) saved ~2-3 hrs rework
+- **Reactive event with pre-built process:** C language debate → escalation triggered → structured round-robin → unanimous resolution
+- **Why it worked:** Round-robin created urgency, prevented dominance, lowered emotional temperature; trust from shared failure in prior module provided psychological safety (Edmondson, 1999)
+- **Barrier mapping:** Wilemon & Thamhain (1983) — proactively prevented Role Conflicts (RACI), Communication Problems (stand-ups); encountered Differing Outlooks (C debate)
+- **Adapted strategy:** First stand-up ran 25 mins → restructured to 3-question format → cut to 12 mins
+- **Gap identified:** No spike on C — confirmation bias made us confuse enthusiasm with capability
+- **Beyond task support:** Jamie noticed Samuel was quieter — unprompted check surfaced unvoiced frustration
+
+> **Evidence — Teams Conversation (Day 1, 15:47–15:52):**
+> Hamza: *"C is taking way longer than we expected, should we switch?"*
+> Cole: *"we're 80% done on the algorithm, switching now would waste more time than finishing."*
+> Samuel: *"yeah but the parser is brutal with all the malloc/free, python would be 10 lines."*
+> Jamie: *"Let's stop and talk this through properly."*
 
 ---
 
 ## Speaker Notes
 
-### The C Language Debate
+We agreed on C initially but it slowed Samuel down. Our escalation rule kicked in — unresolved after 15 minutes, structured round-robin. Decision: stick with C, support each other. After that, Jamie pair-programmed Samuel's malloc patterns for 45 minutes. Parser completed by Day 2 morning — the bottleneck was C syntax, not logic, and Jamie had that fluency.
 
-- "Initially, we all agreed on C."
-- "Why C? We wanted a change from the languages we use at work. It's highly portable and lightweight."
-- "But not everyone knew C well."
+The round-robin worked: time limit created urgency, turn-taking prevented dominance, structure lowered emotional temperature. But only because a shared failure in a previous module taught us that blame destroys speed — that trust provided psychological safety (Edmondson, 1999). The process is portable, the trust is not.
 
-### The Friction
+We proactively prevented Role Conflicts via RACI and Communication Problems via stand-ups (Wilemon and Thamhain, 1983) — encountered Differing Outlooks during the C debate.
 
-- "Further into implementation, Hamza and Samuel found that C was slowing us down. We may have taken on a larger challenge than we first thought."
-- "Cole and Jamie felt the implementation was almost complete and it was worth persisting."
-- "This was genuine disagreement — not manufactured for the presentation."
+Not all challenges were reactive. The JSON spike cost 20 minutes, saved 2-3 hours. No spike on C — an hour of frustration instead.
 
-### How We Resolved It
-
-- "We went round letting each team member voice their concerns and what they thought was best to do."
-- "Everyone got equal airtime — no one was talked over or dismissed."
-- "We reached a mutual understanding: stick with C, but delegate specific refactors to team members who could handle them fastest."
-- "The decision was unanimous once everyone felt heard."
-
-### Why This Approach Actually Worked
-
-- "The structured discussion worked because it surfaced what Wilemon & Thamhain (1983) call 'Differing Outlooks' — Cole and Jamie knew the implementation was near-complete, while Hamza and Samuel knew the difficulty was mounting. Each side had information the other didn't. Equal airtime made that asymmetric information visible, so the decision became data-driven rather than personality-driven."
-- "Our compressed 2-day timeline also forced resolution — there was no 'next sprint' to defer this to. Wilemon & Thamhain's recommendation to discover conflicting differences early was effective precisely because in our project, 'early' and 'late' were separated by hours, not weeks."
-
-### What We'd Do Differently
-
-- "In hindsight, we should have done a short prototype in each candidate language before committing. We estimated based on preference ('we want to try C') rather than effort ('how long will C actually take us'). That's an estimation failure — and exactly the kind of thing three-point estimation addresses."
-- "This mirrors industry patterns — the Standish Group CHAOS report found 66% of software projects are considered to have failed, often due to unrealistic timelines (Larkowski, 2003). Our sprint replicated this at micro-scale: we underestimated because we estimated enthusiasm, not effort."
-
----
-
-## PM Connections
-
-- The debate = **Tuckman's Storming** (Week 2, Page 10) — "disagreements, competing priorities emerge"
-- The structured discussion = **Wilemon & Thamhain (1983)** recommendation: "Early in the project life cycle, discover any conflicting differences" and give each perspective equal airtime
-- WHY it worked = surfaced **'Differing Outlooks'** (Wilemon & Thamhain barrier #1) — asymmetric information made visible through equal airtime
-- The resolution = **Storming → Norming** transition — shared understanding reached, team moves forward
-- The estimation failure = **CHAOS Report** (Larkowski, 2003) — 66% of projects fail, often due to unrealistic timelines
-- The "what we'd do differently" = connects to **estimation principles (K15)** — estimate effort, not just preference
-
----
-
-## Evidence Artefacts
-
-> **[INSERT]** Group chat screenshot showing the C language debate — messages from Hamza ("C is taking way longer than we expected, should we switch?") and Cole's response ("we're 80% done, switching now would waste more time than finishing")
-
----
-
-## KSBs Signalled
-
-- **K8** — how teams work effectively (conflict resolution process)
-- **K9** — leadership concepts (structured facilitation, everyone heard)
-- **B2** — independent and team working (individuals held different views, resolved collectively)
-- **B5** — presenting honestly (admitting the decision was harder than expected)
+Beyond tasks, Jamie noticed Samuel was quieter and messaged privately — surfacing frustration he hadn't voiced.

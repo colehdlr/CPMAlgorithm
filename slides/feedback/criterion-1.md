@@ -1,13 +1,12 @@
-# Criterion 1: Understanding of Estimation & Project Management Concepts (30%)
+# Criterion 1: Understanding of Estimation & PM Concepts (30%)
 
-## Mark Awarded: 24 / 30
+## Mark Awarded: 26 / 30
 
 ## Band: A+ (80-100)
 
 ## Rubric Band Placement
 
-**Band above (n/a — this is the highest band):**
-> N/A — A+ is the ceiling.
+**Band above (N/A — this is the highest band):** N/A
 
 **Band awarded — A+ (80-100):**
 > "Application demonstrates exceptional understanding of estimation or critical path; calculations/processes are accurate and well-justified."
@@ -17,73 +16,72 @@
 
 ## What Earns the Mark
 
-### CPM Algorithm Correctly Explained (Slides 3, 5)
+**CPM algorithm correctly explained with forward/backward pass logic:**
+- Slide 5 demonstrates convergence logic: "Activity F: ES = max(EF_E, EF_D) = max(15, 13) = **15**" — correct application of the maximum rule at merge nodes.
+- Slide 5 demonstrates divergence logic: "Activity A: LF = min(LS_B, LS_C) = min(5, 3) = **3**" — correct application of the minimum rule at burst nodes.
+- Float calculation explicitly defined: "Float equals latest start minus earliest start. Zero float means critical."
+- Free float distinguished from total float in Speaker Notes (Slide 5): "Free float — delay without affecting the next task, not just the project end."
+- Slide 3 demo output shows accurate ES, EF, LS, LF, and Float values for all 7 activities — verified correct.
 
-The CPM walkthrough (Slide 5) provides a technically accurate, step-by-step explanation of the algorithm:
+**PERT applied with accurate calculations:**
+- PERT formula stated and applied: "Expected time = (O + 4M + P) / 6" (Slide 5).
+- Standard deviation formula: "σ = (P − O) / 6" with beta distribution assumption stated.
+- Full PERT comparison table (Slide 5) shows all 7 activities with O, M, P, Expected, and σ values — all calculations verified correct (e.g., Activity E: (5 + 28 + 12)/6 = 7.5 ✓).
+- Critical path variance: 0.25 + 0.69 + 1.37 + 0.45 + 0.45 = 3.21 ✓. σ = √3.21 = 1.79 ✓.
+- 95% confidence interval: 23.8 ± 1.96(1.79) = [20.3, 27.3] — slide states [20.2, 27.4], minor rounding difference, acceptable.
+- PM application articulated: "A PM commits at 25, not 22. That's PERT's value: a range instead of false precision" (Slide 5 Speaker Notes).
 
-- **Forward pass:** "Iterates through activities in dependency order... ES = maximum EF of all predecessors (at convergence points, take the MAX)... EF = ES + duration... Project duration is set at the end of this loop — it's the largest EF value." This is correct and well-articulated.
-- **Backward pass:** "Works backwards through activities... Latest Finish (LF) = looks at successor tasks and takes the minimum Latest Start... Latest Start (LS) = LF - duration." Correct.
-- **Float calculation:** Both Total Float ("LS - ES... how much can I delay starting without affecting the project deadline") and Free Float ("earliest ES of successors - EF of current activity... how much can I delay finishing without affecting the next task") are distinguished and defined. This is above what most groups deliver.
+**Estimation concepts APPLIED to the project, not just defined:**
+- Slide 6 compares expert judgement, PERT, and analogous estimation against actual outcomes for three WBS packages — not textbook definitions but real comparison with error percentages.
+- Estimation hierarchy referenced with justification: "analogous first, parametric, PERT, then expert judgement as fallback" (Slide 6 Speaker Notes), citing Week 4 lecture ordering.
+- Green's (2006) estimation process applied: "scope, deliverables, tasks, then what history tells us."
+- CHAOS report contextualisation: "Our 25% cost overrun beat the CHAOS report's 43% average" (Slide 6).
 
-The demonstration output (Slide 3) shows correct calculations:
-```
-Activity A: ES=0, EF=3, LS=0, LF=3, Float=0 — CRITICAL
-Activity C: ES=3, EF=8, LS=3, LF=8, Float=0 — CRITICAL
-Activity B: ES=3, EF=7, LS=5, LF=9, Float=2 — correctly non-critical
-Critical Path: A → C → E → F → G (correct)
-Project Duration: 22 days (correct: 3+5+7+3+4=22)
-```
+**Iron Triangle genuinely applied:**
+- Slide 6: "Iron Triangle: accepted higher time cost for deeper understanding" — C language decision justified as a conscious trade-off.
+- MoSCoW as scope management: "Fixed time → scope must flex" (Slide 6) — correctly identifies time as the fixed constraint and scope as the flex lever.
 
-### Estimation Concepts Applied to the Project (Slides 5, 6, 7)
+**WBS with justification:**
+- Responsibility-based WBS chosen with explicit reasoning: "chosen because our challenge was four people coding in parallel, satisfying the 100% rule" (Slide 4).
+- Alternative types named and rejected: "over deliverable-based or phase-based" (Slide 4).
+- Level 2 decomposition shown with all packages mapped to owners.
 
-- **PERT formula** stated correctly: E = (O + 4M + P) / 6, with contextualisation: "This weighted average gives a more realistic duration estimate. Our architecture supports this — the duration field could be calculated from three input values instead of one." (Slide 5)
-- **Iron Triangle** applied to a real decision: Jamie's scope pushback — "with time fixed, scope had to stay minimal" (Slide 4), and the C language choice — "accepted higher time cost for deeper understanding" (Slide 6).
-- **WBS principle** applied: Struct split justified as "modular decomposition — isolate parsing from calculation" mapped to "break into smallest manageable components" (Slide 6).
-- **Estimation failure** acknowledged with self-awareness: "We estimated based on preference ('we want to try C') rather than effort ('how long will C actually take us'). That's an estimation failure — and exactly the kind of thing three-point estimation addresses." (Slide 7)
+**EVA applied as monitoring tool:**
+- Two-checkpoint EVA (Slide 6) with PV, EV, SPI, CPI, and EAC calculations.
+- EAC formula shown: "EAC = BAC ÷ CPI = £800 ÷ 0.75 = £1,067."
+- Budget basis justified: "4 developers × 8 hours × £25/hr opportunity cost = £800."
+- EVA linked to decision-making: "SPI 0.75 at Day 1 end... triggering our MoSCoW replan" (Slide 6 Speaker Notes).
 
-### Justification Goes Beyond Description to "Why"
+**Resource levelling identified:**
+- Slide 4 Speaker Notes: "Samuel was blocked on testing until Algorithm completed — a resource constraint that converted his float into a sequential dependency. That's resource levelling."
+- Slide 6 Speaker Notes: "CPM assumes unlimited resources, but Samuel couldn't test until Jamie's algorithm was done."
 
-- Float interpretation: "Float tells a project manager which activities have flexibility — B and D's resources could be reallocated to critical activities without affecting the deadline." (Slide 3) — explains the PM significance, not just the calculation.
-- CPM vs PERT distinction: "This is the difference between CPM (deterministic) and PERT (probabilistic)." (Slide 5)
-- JSON over CSV: "JSON naturally represents activity-dependency relationships" — justified with data modelling reasoning, not just preference.
+**Critical limitation identified:**
+- PERT independence assumption violation: "Samuel's parser struggle correlated with his testing confidence — violating PERT's independence assumption" (Slide 5 Speaker Notes). This demonstrates understanding beyond the formula.
 
-### Q&A Preparation Depth (Slide 11)
-
-The Q&A preparation demonstrates understanding beyond what the slides present:
-- Dynamic critical path analysis (what happens when B's duration increases to 7)
-- Crashing analysis (targeting critical path activities by cost-per-day ratio)
-- Total float vs free float distinction with network topology reasoning
-- CPM-cost relationship through crashing
-- CHAOS Report statistics contextualising their estimation failure
+**Justification for WHY with reference to PM principles:**
+- Every major decision (language, estimation method, scope prioritisation, WBS type, monitoring approach) is justified with explicit reference to a PM principle or lecture concept.
 
 ## What Holds the Mark Back
 
-### PERT Not Actually Computed (Slide 5)
+1. **PERT applied retrospectively rather than prospectively:** The PERT comparison in Slide 6 is retrospective analysis ("PERT Would Give" column compared against actuals). While the Q&A preparation (Slide 11) mentions "We applied PERT during our Day 1 replan," this real-time application isn't shown on the presentation slides themselves. To reach 90+, the slides would need to show PERT being used as a live planning tool (e.g., the Day 1 replan decision with O/M/P estimates made before outcomes were known).
 
-The PERT formula is presented as a "future extension" rather than being computed with real values from the project. To reach the upper A+ band (85+), the slides would need to show an actual three-point estimate applied to at least one activity (e.g., "Backend Dev: O=5, M=7, P=12, Expected = (5 + 28 + 12)/6 = 7.5 days") demonstrating not just knowledge of the formula but its practical application.
+2. **No explicit critical path network diagram description on slides:** Slide 5 says "Diagram showing forward pass → backward pass → float calculation" as a placeholder rather than showing the actual AON network topology with node boxes. The demo output (Slide 3) shows text output. To reach 90+, the slide content would include or describe the visual network representation with node structure (ES/EF/LS/LF boxes).
 
-### No Formal WBS Diagram (Slide 6)
+3. **Gantt chart is simplified:** The Sprint Gantt Chart (Slide 4) uses block characters rather than showing dependencies with arrows. The critical path through the Gantt is stated but the dependency relationships between non-critical and critical tasks could be visually clearer.
 
-The WBS connection is implicit ("modular decomposition") rather than formally shown. To reach the upper A+ band, the slides would need a visual WBS diagram showing how the project was decomposed into work packages (parsing → algorithm → tests → visualisation), explicitly labelled as a WBS with level numbering.
-
-### Limited Reference to Estimation Methods from Week 4 (Slides 5-6)
-
-The slides reference Iron Triangle and PERT but do not explicitly name other estimation methods taught in Week 4 (expert judgement, analogous, parametric, bottom-up, top-down). These are discussed in the Q&A preparation but not in the main slide content. To strengthen, one slide could include: "We used expert judgement (each person estimated their own package) and bottom-up estimation (WBS decomposition into four packages, each individually estimated)."
-
-### CHAOS Report Not Referenced in Main Slides
-
-The Standish Group CHAOS report (Larkowski, 2003) — that 66% of software projects are considered to have failed — is taught in Week 4 and discussed in Q&A prep, but not referenced in the main slides to contextualise the team's own estimation failure.
+4. **EVA limitations not discussed in main slides:** The limitations of EVA (subjective percentage-complete for knowledge work) appear only in Q&A preparation (Slide 11), not in the presented material.
 
 ## Actionable Improvements
 
-1. **Slide 5 — Apply PERT with real numbers:** Add a worked example: "If we estimated Backend Dev as O=5, M=7, P=12 days, then E = (5+28+12)/6 = 7.5 days, with σ = (P-O)/6 = 1.17 days. This gives us a probabilistic range rather than our assumed 7 days." This demonstrates application, not just knowledge.
+1. **Slide 6:** Add one row to the Estimation vs Reality table showing a *prospective* PERT estimate made before work began (e.g., "Day 1 AM estimate for Algorithm: O=2h, M=3h, P=5h → Expected 3.2h") to demonstrate PERT as a planning tool, not just retrospective validation.
 
-2. **Slide 4 or 6 — Add a visual WBS:** Show a 3-level WBS tree: Level 0 = CPM Application; Level 1 = Parser, Algorithm, Tests, Visualisation; Level 2 = specific tasks under each. Label it explicitly as "Work Breakdown Structure (deliverable-based)."
+2. **Slide 5:** Replace the "Diagram showing forward pass → backward pass → float calculation" bullet with a description of the AON node format (e.g., "Each node shows: Activity Name | ES EF | Duration | LS LF | Float") to demonstrate understanding of network diagram conventions.
 
-3. **Slide 6 — Name estimation methods used:** Add one row to the decisions table: "Estimation approach | Expert judgement + bottom-up | Each person estimated their own WBS package; combined for total project estimate."
+3. **Slide 6 Speaker Notes:** Add one sentence acknowledging EVA's limitation: "EVA relies on objective percentage-complete — our WBS packages were countable deliverables, which made Day 1's checkpoint reliable."
 
-4. **Slide 7 — Reference CHAOS Report:** When discussing the estimation failure, add: "This mirrors industry patterns — the Standish Group CHAOS report found 66% of projects fail, often due to unrealistic timelines (Larkowski, 2003). Our sprint replicated this at micro-scale."
+4. **Slide 4:** Add dependency arrows notation to the Gantt chart or add a brief note in Speaker Notes explaining how dependencies were tracked (e.g., "Critical path dependencies shown by sequential scheduling; parallel tasks have explicit float noted").
 
 ## Conclusion
 
-The slides demonstrate an understanding of CPM that is genuinely exceptional — the algorithm is correctly explained at a level beyond most undergraduate presentations (including free float vs total float), calculations are demonstrably accurate, and every technical decision is justified with explicit PM reasoning (Iron Triangle, modular decomposition, estimation uncertainty). The mark sits at 80% (24/30) — the lower boundary of A+ — because while the understanding and justification are clearly exceptional, the PERT formula remains theoretical rather than applied, and formal estimation methodology naming is confined to Q&A preparation rather than the presented slides. The work comfortably exceeds the A band ("very strong understanding, excellent implementation and justification") by providing deeper PM reasoning and connecting CPM to broader estimation principles.
+The work demonstrates exceptional understanding of both CPM and estimation concepts. Calculations are accurate throughout — forward/backward pass logic, PERT formulas, EVA metrics, and variance calculations are all correct. Crucially, concepts are not merely defined but applied to the team's own sprint with genuine analytical insight (e.g., identifying PERT's independence assumption violation, using EVA to trigger scope replanning). The justification consistently references PM principles. The mark sits at 26/30 (87%) rather than higher because PERT is primarily used retrospectively in the presented material, and some depth (EVA limitations, AON diagram conventions) is reserved for Q&A rather than the main presentation.

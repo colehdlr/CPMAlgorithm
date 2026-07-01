@@ -1,132 +1,149 @@
 # Criterion 4: Response to Feedback and Presentation Quality (20%)
 
-## Mark Awarded: 15 / 20
+## Mark Awarded: 16 / 20
 
-## Band: A (70-79)
+## Band: A+ (80-100)
 
 ## Rubric Band Placement
 
-**Band above — A+ (80-100):**
+**Band above (N/A — this is the highest band):** N/A
+
+**Band awarded — A+ (80-100):**
 > "Outstanding presentation; clear, engaging, professional; responds to feedback confidently and thoughtfully; all members actively participate."
 
-**Band awarded — A (70-79):**
+**Band below — A (70-79):**
 > "Excellent presentation; clear and professional; responds to feedback appropriately; each member made an effort to participate."
-
-**Band below — B (60-69):**
-> "Good presentation; understandable and organised; responds to feedback adequately; most members contribute."
 
 ## What Earns the Mark
 
-### All Four Members Actively Participate (Slides 1-9)
+**Outstanding presentation quality — clear, engaging, professional:**
 
-Speaking allocation across the presentation:
+*Clear:*
+- Consistent slide structure throughout: Title with Speaker/Time, On the Slide, Speaker Notes. No extraneous sections.
+- Tables used effectively to present structured information (RACI, WBS, estimation comparison, EVA, team reflections).
+- Logical flow: Title → Roles → Demo → Programming → CPM Theory → Decisions → Challenges → Reflection → Summary → References → Q&A.
+- Speaker Notes written in speakable natural language, not bullet points or academic prose.
 
-| Member | Slides | Time | Role in Presentation |
-|--------|--------|------|---------------------|
-| Samuel | 1, 2, (7) | ~1.5 min + shared closing | Title, team roles, conflict resolution |
-| Cole | 3, 4 | ~3 min | Demonstration, programming allocation |
-| Jamie | 5, 8 | ~4 min | CPM walkthrough, reflection introduction |
-| Hamza | 6, (7) | ~2 min + shared closing | Key decisions, challenges |
-| All | 9 | 45 sec | Summary (one sentence each) |
+*Engaging:*
+- Engagement question built into Slide 6: "what would you estimate the parser at? One hour?" — involves the audience before revealing the answer.
+- Before/After examples (Slide 9) demonstrate growth visually — audience can see the improvement.
+- Evidence artefacts (Teams messages, commit logs) provide authentic detail.
+- Narrative arc: sets up the parser overrun early, resolves it through the challenges and reflection slides.
 
-Total: ~10 minutes. All four members have substantive speaking roles with their own content to deliver. The summary slide (Slide 9) gives each member a closing sentence, ensuring ALL participate in the final moment.
+*Professional:*
+- Harvard referencing used consistently (Slide 10: 13 references, all correctly formatted).
+- Evidence timestamped with specific platforms (Teams messages, commit logs with times).
+- Backup plan for demo failure rehearsed and documented (Slide 3).
+- Earned Value calculations show professional PM practice.
 
-### Structure Is Clear, Professional, and Logical
+**Responds to feedback confidently and thoughtfully:**
+- Slide 9 documents four specific feedback responses with source and impact:
+  1. "CPM section rewritten: code-talk → PM-talk" from Day 3 peer feedback → Slide 5 version 3.
+  2. "Reflections restructured: description → challenged assumptions" from peer feedback → Slide 8 format.
+  3. "PERT comparison applied to own sprint" from Dr. Peiris's Week 5 intervention → Slide 6 table.
+  4. "Delivery pace slowed, engagement questions added" from Day 4 practice → Slides 5 & 6.
+- Before/After examples demonstrate the nature of the change:
+  - Before: "The forward pass iterates through a topologically sorted adjacency list" → After: "The forward pass calculates the earliest each task can start" (Slide 9).
+  - Before: "We used daily stand-ups and they helped us identify blockers" → After: "I assumed stand-ups would suffice for coordination, but they failed to surface deeper knowledge misalignment" (Slide 9).
+- Cole's Slide 9 reflection explicitly engages with feedback emotionally: "Hearing 'your CPM section sounds like a code review' stung — but accuracy for the wrong audience is still a miss." This is confident AND thoughtful.
 
-The presentation follows a well-structured arc:
-1. Introduction (Slide 1) — context
-2. Team Roles (Slide 2) — who did what and why
-3. Demonstration (Slide 3) — the artefact
-4. Programming Allocation (Slide 4) — how work was divided
-5. CPM Walkthrough (Slide 5) — PM understanding
-6. Key Decisions (Slide 6) — development process
-7. Challenges (Slide 7) — conflict and resolution
-8. Team Reflection (Slide 8) — learning
-9. Summary (Slide 9) — closing
-10. References (Slide 10) — academic integrity
+**All members ACTIVELY participate:**
 
-This structure directly maps to the brief's requirements: "demonstration of your application" (Slides 3-5), "discussion of your development process" (Slides 4, 6-7), and "team reflection on team dynamics and learning" (Slides 7-8).
+| Member | Slides | Role |
+|--------|--------|------|
+| Samuel | Slide 1 (20s), Slide 2 (55s), Slide 8 (own reflection ~40s), Slide 9 (own closing ~15s) | 2 minutes 10 seconds |
+| Cole | Slide 3 (60s), Slide 4 (60s), Slide 8 (own reflection ~30s), Slide 9 (own closing ~11s) | 2 minutes 41 seconds |
+| Jamie | Slide 5 (80s), Slide 8 intro + own reflection + capstone (~75s), Slide 9 (own closing ~7s) | 2 minutes 42 seconds |
+| Hamza | Slide 6 (60s), Slide 7 (65s), Slide 8 (own reflection ~23s), Slide 9 (own closing ~13s) | 2 minutes 41 seconds |
 
-### Speaker Notes Are in Speakable Language
+All four members have substantial, meaningful speaking time (all between 2:10 and 2:42). No member is marginalised. Distribution is equitable.
 
-The speaker notes throughout are written in first person, natural spoken English:
-- "I knew the team's strengths, so I could delegate work effectively" (Slide 2)
-- "The forward pass calculates earliest start and finish" (Slide 3)
-- "This was genuine disagreement — not manufactured for the presentation" (Slide 7)
-- "I assumed that because we all agreed on C initially, the language decision was settled" (Slide 8)
+**Speaker assignments are unambiguous:** Every slide has a single named speaker (or explicitly states "Split across all four" for Slide 9 and lists who says what). No "X or Y" ambiguity.
 
-These are not essay-style written language — they're phrased as sentences a person would actually say. This is professional presentation preparation.
+**TIMING CHECK:**
 
-### Q&A Preparation Is Exceptional (Slide 11)
+*Time allocations:*
+| Slide | Allocated Time |
+|-------|---------------|
+| 1 | 20 seconds |
+| 2 | 55 seconds |
+| 3 | 60 seconds |
+| 4 | 60 seconds |
+| 5 | 80 seconds |
+| 6 | 60 seconds |
+| 7 | 65 seconds |
+| 8 | 150 seconds |
+| 9 | 40 seconds |
+| 10 | 0 seconds |
+| **TOTAL** | **590 seconds = 9 minutes 50 seconds** |
 
-The Q&A preparation guide covers 11 topic areas with:
-- "Must-Know" foundations for each area
-- Specific likely questions with model answers
-- Techniques for handling difficult moments
-- Hard-mode practice questions
+**PASS.** Total is under 10 minutes (10 seconds of buffer).
 
-This depth demonstrates confident preparation for the 5-minute Q&A. The answers connect to theory, reference specific project experiences, and include admission of limitations ("That is outside what we explored, but based on [principle], I would expect...").
+**SLIDE FORMAT CHECK:**
+- All slides (1-10) contain exactly three sections: `# Slide N: Title` (with Speaker and Time), `## On the Slide`, `## Speaker Notes`.
+- No extraneous sections (no "KSBs Signalled", "MUST SAY", "IF TIME", "PRIORITY SENTENCE", "Q&A BACKUP", "PM Connections", "Design Notes", "Evidence Artefacts", "DO NOT", "Time Checkpoint", "Key Rules for Delivery").
+- Slide 11 (Q&A Preparation) is correctly treated as a reference document, not a presentation slide.
+- **PASS.** Format is clean throughout.
 
-### Timing Is Explicitly Managed
+**SPEAKER ASSIGNMENT CHECK:**
+- Every slide has a single, unambiguous speaker assigned.
+- No "X or Y" assignments.
+- All four members (Samuel, Jamie, Cole, Hamza) have at least one slide as primary speaker.
+- **PASS.**
 
-Each slide has an allocated time (30s, 1min, 60-90s, 2min, etc.) totalling approximately 10 minutes. This shows awareness of the time constraint and professional preparation.
-
-### Presentation Technique Guidance
-
-The slides include:
-- "DO NOT" lists (Slide 3: don't explain code, don't debug live)
-- Delivery instructions (Slide 9: "End confidently with eye contact")
-- Failure contingencies (Slide 3: "If demo fails: switch to screenshot immediately")
-- Q&A technique (Slide 11: pause, connect to experience, name the principle)
+**Q&A preparation:**
+- Slide 11 is extensive: 7 topic areas, likely questions with theory anchors, extended detail sections, technique guidance.
+- Demonstrates depth of understanding beyond the 10-minute presentation.
+- Participation check built in: "If any member hasn't answered by minute 3 of Q&A, the next responder says 'I'd like [Name] to add their perspective'" (Slide 11).
 
 ## What Holds the Mark Back
 
-### Cannot Fully Assess "Engaging" From Slides Alone
+**SPEAKABILITY CHECK — ISSUES IDENTIFIED:**
 
-The A+ descriptor requires "clear, engaging, professional." Clarity and professionalism are evident in the slide structure and speaker notes. However, "engaging" depends on delivery — vocal variety, eye contact, audience interaction, pacing — which cannot be assessed from written slides. The slides are well-structured for engagement (visual variety, timeline diagrams, tables), but actual engagement is a live performance metric.
+| Slide | Allocated Time | Word Count (Speaker Notes) | Words Allowed at 150 wpm | Status |
+|-------|---------------|---------------------------|--------------------------|--------|
+| 1 | 20s | ~47 | 50 | OK |
+| 2 | 55s | ~145 | 137 | Marginal (+6%) |
+| 3 | 60s | ~145 | 150 | OK |
+| 4 | 60s | ~155 | 150 | Marginal (+3%) |
+| 5 | 80s | ~200 | 200 | OK |
+| 6 | 60s | ~165 | 150 | Over (+10%) |
+| 7 | 65s | ~175 | 162 | Over (+8%) |
+| **8** | **150s** | **~435** | **375** | **Over (+16%)** |
+| 9 | 40s | ~115 | 100 | Over (+15%) |
 
-### Cannot Assess Response to Feedback
+**Slide 8 is the primary concern:** 435 words in 150 seconds requires 2 minutes 54 seconds at 150 wpm, but only 2 minutes 30 seconds is allocated. This is 24 seconds over — meaningful for a presentation with only 10 seconds of total buffer.
 
-The A+ descriptor requires "responds to feedback confidently and thoughtfully." The Q&A preparation (Slide 11) shows preparation for confident responses, but the actual response to panel questions is a live performance that cannot be assessed from slides. The preparation is outstanding — but preparation and performance are not equivalent.
+**Cumulative overage:** Slides 6, 7, 8, and 9 collectively exceed their allocations by approximately 35 seconds. Combined with the 10-second buffer, this would push the presentation to approximately 10 minutes 25 seconds — exceeding the 10-minute limit.
 
-### TODO Items Indicate Incomplete Preparation (Slides 4, 7)
+**This is a significant issue** but not catastrophic because:
+- 150 wpm is conservative; experienced presenters can reach 160-170 wpm.
+- The buffer could be created by speaking slightly faster on well-rehearsed content.
+- However, the presentation as scripted would likely overrun if delivered exactly as written.
 
-Slide 4: "TODO: Add at least 2 of these as small visuals on this slide: commit log, screenshot of test, group chat message."
-Slide 7: "TODO: Add at least 1 of these: group chat screenshot, meeting notes, any record of the decision."
+**Other issues:**
 
-These TODO items suggest the slides are not yet in their final submitted form. For a professional presentation, evidence artefacts should be included to support claims. The presence of TODOs in what should be submission-ready slides reduces the "professional" quality assessment.
+1. **Slide 9's "Before/After" content is On the Slide but dense:** The comparison table and feedback log make this a text-heavy slide for 40 seconds. The audience would need more time to read it than the speaker gives them.
 
-### Limited References (Slide 10)
+2. **No explicit reference to Slide 8 timing being split across 5 speakers:** The slide says "2 minutes 30 seconds" but has Jamie delivering introduction, capstone, AND his own reflection, plus three other speakers. Transitions between speakers consume time — realistic delivery time is likely 2:45-3:00 with handoffs.
 
-Only 4 references are listed:
-1. Belbin (2010)
-2. Kelley and Walker (1959)
-3. Tuckman (1965)
-4. Wilemon and Thamhain (1983)
-
-Given that the slides reference Iron Triangle, PERT, estimation principles, McClelland, Greenleaf (servant leadership), WBS, Kanban, and CHAOS Report, the reference list is incomplete. A professional submission should cite all sources used. Missing references include:
-- McGregor (Theory X/Y)
-- Schwaber & Sutherland (2020) for Scrum/stand-ups
-- Highsmith (2002) for Agile leadership
-- Larkowski (2003) for CHAOS Report
-- PMI/APM BOK
-
-### Slide Visual Design Not Assessable
-
-The slides are in Markdown format — tables, headers, bullet points — but the actual visual design (colours, fonts, layout, graphics) cannot be assessed. The format suggests these are content drafts rather than designed PowerPoint/Google Slides presentations.
+3. **Summary slide (Slide 9) is rushed:** 40 seconds for four speakers (Samuel, Jamie, Cole, Hamza each delivering a closing point) means ~10 seconds per person including transitions. This risks feeling hurried rather than conclusive.
 
 ## Actionable Improvements
 
-1. **Slides 4 and 7 — Complete TODO items before submission:** Add at least one concrete evidence artefact per slide. A commit log screenshot showing parallel development (Slide 4) and a group chat screenshot showing the C language debate (Slide 7) would provide verifiable evidence and visual variety.
+1. **Slide 8 Speaker Notes:** Cut approximately 60 words. Specific cuts:
+   - Jamie's capstone: remove "Same root across all four: we decomposed work but not understanding. Next time, a knowledge map alongside our WBS." (already stated in On the Slide content — the audience can read it). Save ~25 words.
+   - Samuel's reflection: compress "That real-time shift from 'this is hard' to 'I don't understand what correct looks like' is Schön's reflection-in-action" to "That shift is Schön's reflection-in-action." Save ~15 words.
+   - Jamie's introduction: compress "Peer feedback pushed us from description to challenged assumptions" to "Feedback pushed us to challenge assumptions." Save ~5 words.
+   - Cole's reflection: compress "That's Wilemon and Thamhain's 'Communication Problems' through artefacts, not words" to "Communication failure through artefacts, not words (Wilemon and Thamhain)." Save ~5 words.
+   - Total savings: ~50-60 words, bringing Slide 8 to ~375 words.
 
-2. **Slide 10 — Complete the reference list:** Add all sources cited in speaker notes and on-slide content. At minimum, add: Schwaber & Sutherland (2020), Highsmith (2002), Larkowski (2003), McGregor (1960), PMI (2021). The Harvard referencing style requires every in-text citation to appear in the reference list.
+2. **Slide 6 Speaker Notes:** Cut ~15 words. Remove "Week 4's hierarchy: analogous first, parametric, PERT, then expert judgement as fallback" (the hierarchy is demonstrated by the example — stating it explicitly is redundant when time is tight).
 
-3. **Visual design — Convert to PowerPoint/Google Slides:** If not already done, the Markdown content needs to be rendered in a professional slide tool with consistent fonts, colour scheme, and visual hierarchy. Use the university or module slide template if available.
+3. **Slide 9:** Increase time allocation from 40 seconds to 50 seconds (take 10 seconds from Slide 2, which has slight buffer). This gives each speaker ~12 seconds, which is more realistic with transitions.
 
-4. **Slide 3 — Ensure live demo contingency is tested:** The backup plan ("pre-recorded screen capture if live demo fails") is excellent preparation. Ensure the screen capture exists and is accessible without internet connectivity.
-
-5. **Add engagement hooks:** Consider adding one question to the audience (e.g., "Before I explain — looking at this output, can anyone spot which activities are critical and why?") or a brief pause for the panel to digest the demonstration output. This would strengthen the "engaging" dimension.
+4. **Slide 8:** Add a note in the time allocation: "(includes 15 seconds for speaker transitions)" to account for the reality of five people speaking in sequence.
 
 ## Conclusion
 
-The presentation structure is clear, professional, and well-organised. All four members have substantive speaking roles. Speaker notes are written in natural spoken language, and the Q&A preparation is exceptional in depth and coverage. The mark sits at 75% (15/20) — solidly in the A band — because the presentation is clearly excellent in structure and preparation, but three factors prevent A+ assessment: (1) engagement and feedback response are live performance metrics that cannot be confirmed from slides alone, (2) TODO items indicate the slides are not yet in final submitted form, and (3) the reference list is incomplete relative to the sources actually cited. Completing the TODOs, finalising the reference list, and delivering the well-prepared content confidently would likely push this into A+ territory in live assessment.
+The presentation is outstanding in structure, format, and professionalism. Feedback response is explicitly documented with before/after evidence showing genuine improvement (code-talk → PM-talk, description → critical evaluation). All four members participate actively with equitable speaking time. The format is clean throughout — no extraneous sections. The mark sits at 16/20 (80%) rather than higher because the speakability check reveals Slide 8 is significantly overstuffed (+16% over word budget), and the cumulative overage across Slides 6-9 would likely push the presentation past the 10-minute limit if delivered exactly as scripted. The 10-second timing buffer is insufficient to absorb this. Reducing Slide 8 by ~60 words and making minor cuts to Slides 6-7 would resolve this and potentially raise the mark to 17-18/20.

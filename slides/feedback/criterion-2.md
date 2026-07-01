@@ -1,119 +1,91 @@
 # Criterion 2: Teamwork and Collaboration (30%)
 
-## Mark Awarded: 23 / 30
+## Mark Awarded: 25 / 30
 
-## Band: A (70-79)
+## Band: A+ (80-100)
 
 ## Rubric Band Placement
 
-**Band above — A+ (80-100):**
+**Band above (N/A — this is the highest band):** N/A
+
+**Band awarded — A+ (80-100):**
 > "Exceptional collaboration and leadership; clear role allocation; team supported each other; challenges handled proactively. The approaches put in place to manage team dynamics are effective, and there is clear evidence of not only learning that informs future team working environments, but also critical analysis of why such strategies were effective in this context."
 
-**Band awarded — A (70-79):**
+**Band below — A (70-79):**
 > "Excellent collaboration and leadership; roles clear; minor challenges managed. The approaches put in place to manage team dynamics are effective, and there is clear evidence of learning that informs future team working environments."
-
-**Band below — B (60-69):**
-> "Good collaboration; some role clarity issues; evidence of leadership and moderate handling of challenges. The approaches put in place to manage team dynamics are effective and well-thought-out."
 
 ## What Earns the Mark
 
-### Clear Role Allocation (Slide 2)
+**Exceptional collaboration AND leadership:**
+- Servant leadership explicitly adopted and justified: "My role was servant leadership — facilitating, not directing. That fit because all four were self-motivated — directive leadership would have undermined ownership" (Slide 2 Speaker Notes).
+- Leadership style shifted contextually: transformational during C debate, transactional for role allocation (referenced in Q&A prep, Slide 11). This shows leadership as adaptive, not fixed.
+- Collaboration evidenced through specific actions: pair-programming (Jamie + Samuel, 45 minutes on malloc patterns — Slide 7), scope absorption (Cole took testing tasks when ahead — Slide 2), emotional support (Jamie noticed Samuel's quietness and messaged privately — Slide 7).
 
-Role allocation is explicit, justified, and mapped to theory:
+**Clear role allocation:**
+- RACI matrix on Slide 2 maps all four members across all five WBS packages with R, A, C, I designations.
+- Belbin roles identified for each member with justification (Co-ordinator, Specialist, Implementer, Monitor Evaluator — Slide 2).
+- WBS package ownership (Slide 4) assigns clear primary responsibility per module.
+- Belbin gap identified and addressed: "No Completer Finisher → identified Day 2 PM → Hamza shifted to Completer Finisher mode" (Slide 2).
 
-| Name | Role | Justification | Belbin Role |
-|------|------|---------------|-------------|
-| Samuel | Dev + Scrum Master | "Knowledge of team member strengths, able to delegate effectively" | Co-ordinator |
-| Jamie | Dev + Product Owner | "Strong understanding of CPM from additional research" | Specialist |
-| Cole | Dev + UI | "Prior RayLib experience, UX seminar attendance" | Implementer |
-| Hamza | Dev + QA | "Critical views on projects, experienced at finding issues" | Monitor Evaluator |
+**Evidence team SUPPORTED each other:**
+- Jamie pair-programmed Samuel's malloc patterns for 45 minutes when parser was the bottleneck (Slide 7 Speaker Notes).
+- Cole absorbed testing scope when Samuel's parser took 3× estimate: "Cole absorbed some testing scope Day 2 — keeping workload equitable" (Slide 2 Speaker Notes).
+- Jamie noticed Samuel was quieter and "messaged privately — surfacing frustration he hadn't voiced" (Slide 7 Speaker Notes). This goes beyond task support to emotional/relational support.
+- Float capacity structurally enabled support: "That support wasn't accidental — the WBS gave some packages slack. If everything sat on the critical path, nobody could have helped" (Slide 4 Speaker Notes).
 
-The speaker notes add: "These map to Belbin's team roles — Co-ordinator, Specialist, Implementer, and Monitor Evaluator — which we discovered after the fact, not by planning around the theory." This is honest and credible — the Belbin mapping is retrospective, not forced.
+**Challenges handled PROACTIVELY:**
+- Pre-agreed escalation rule established Day 1 morning, before any conflict arose: "any decision unresolved after 15 mins → structured round-robin" (Slide 7).
+- Shared struct definition (30 minutes, Day 1) "prevented integration conflicts" — proactive prevention of Wilemon & Thamhain's Role Conflicts barrier (Slide 7).
+- JSON vs CSV spike (20 minutes) "saved ~2-3 hrs rework" — proactive technical de-risking (Slide 7).
+- Stand-up format adapted after first attempt: "First stand-up ran 25 mins → restructured to 3-question format → cut to 12 mins" (Slide 7) — proactive process improvement.
 
-### Evidence Team Supported Each Other (Slides 4, 7, 8)
+**Team dynamics strategies that are EFFECTIVE:**
+- Team contract with 6 evolving agreements, including one added Day 2 based on experience: "Cross-module testing before integration (added Day 2)" (Slide 2).
+- Kanban board with WIP limit = 1, justified: "Continuous flow beat fixed-length sprints" for a 2-day timeline (Q&A prep, Slide 11).
+- Stand-ups adapted through use — evidence of treating processes as "living tools, not fixed" (Slide 11).
+- Escalation rule tested and proven effective during C debate (Slide 7).
 
-Multiple specific instances of mutual support:
+**Learning that informs FUTURE team working:**
+- Knowledge map alongside WBS: "we decomposed work but not knowledge — WBS needs a knowledge map alongside it" (Slide 8).
+- Devil's Advocate role: "Countermeasure: a Devil's Advocate role for irreversible decisions" (Slide 8 Speaker Notes).
+- Spike discipline: "spike before committing when reversibility is low" (Slide 8).
+- Process portability acknowledged: "processes transfer but the trust enabling them does not. That's our next challenge: rebuilding relational foundations in new teams" (Slide 8 Speaker Notes).
+- Professional transfer evidence in Q&A prep (Slide 11): Jamie applied spike discipline at work, Samuel asks for pessimistic estimates, Cole added automated screenshots to CI, Hamza reviews interface contracts pre-development.
 
-1. **Cole's visual output provided immediate feedback to Jamie:** "My visual output also gave Jamie immediate feedback on whether the CPM calculation was correct — the rendering became an extra test surface." (Slide 4) — One member's work directly supported another's quality.
+**CRITICAL ANALYSIS of WHY strategies were effective in this context:**
+- Round-robin analysed: "time limit created urgency, turn-taking prevented dominance, structure lowered emotional temperature. But only because a shared failure in a previous module taught us that blame destroys speed — that trust provided psychological safety" (Slide 7 Speaker Notes). This identifies both structural AND relational enablers, and names the pre-condition (trust from prior shared failure).
+- Strengths-based allocation analysed: "Each person working where they'd succeed — McClelland's achievement motivation. It worked because our 2-day timeline made speed essential, but nobody stretches. Longer projects need rotation for growth" (Slide 2 Speaker Notes). Identifies the temporal context that made it effective.
+- Servant leadership contextualised: "That fit because all four were self-motivated — directive leadership would have undermined ownership" (Slide 2 Speaker Notes). Names the condition under which it works.
+- Stand-ups contextualised: "Stand-ups worked because our modular task split meant blockers cascaded within hours... In independent work, stand-ups would be wasted time" (Q&A prep, Slide 11). Identifies the structural pre-condition.
+- Support capacity analysed structurally: "That support wasn't accidental — the WBS gave some packages slack" (Slide 4 Speaker Notes). Explains WHY help was possible, not just that it happened.
+- Verbal contract contextualised: "verbal for 4 people who already knew each other in same room. For eight people or remote, you'd need written documentation" (Q&A prep, Slide 11).
 
-2. **Samuel's tests caught an edge case, fixed as a team:** "My tests caught an edge case with duration values that would have broken the calculation. We fixed it together as a team." (Slide 4) — Support through collective problem-solving.
-
-3. **Hamza flagged type mismatch before integration:** "I spotted that Jamie's CPM implementation was using different types to Cole's rendering engine. I flagged this before it caused integration bugs." (Slide 4) — Proactive support preventing problems.
-
-4. **C language resolution:** "We reached a mutual understanding: stick with C, but delegate specific refactors to team members who could handle them fastest." (Slide 7) — Support through redistribution based on capability.
-
-### Challenges Handled Proactively (Slides 4, 7)
-
-The rubric requires challenges handled *proactively* (not reactively) for A+. The evidence is:
-
-- **Proactive:** Hamza's type mismatch catch — "flagged this before it caused integration bugs" (Slide 4). This IS proactive — the problem was identified before it manifested.
-- **Proactive:** Samuel's edge-case test — tests were "built into the process" not "bolted on" (Slide 4). Proactive quality management.
-- **Partially reactive:** The C language debate (Slide 7) — friction emerged DURING implementation, and the resolution came AFTER the problem surfaced. The slide acknowledges: "Further into implementation, Hamza and Samuel found that C was slowing us down." This is reactive conflict resolution (good, but not proactive).
-
-### Team Dynamics Strategies (Slides 2, 4, 7, 8)
-
-Strategies identified:
-- Strengths-based role allocation (Slide 2)
-- Kanban with pull-based task selection (referenced in Q&A prep, Slide 11)
-- Pair-programming as default response to blockers (Q&A prep)
-- 15-minute check-ins at start and end of day (Q&A prep)
-- Structured discussion for conflict resolution — "everyone got equal airtime" (Slide 7)
-
-These strategies appear effective — the team delivered a working application with all members contributing.
-
-### Learning That Informs Future Team Working (Slide 8)
-
-Each reflection ends with a specific, actionable future behaviour:
-- Jamie: "I would push for a short spike or prototype before committing the whole team to a technology choice."
-- Samuel: "I would schedule a 15-minute knowledge-sharing session before testing begins."
-- Cole: "I would build visual feedback earlier in the development cycle."
-- Hamza: "I would schedule a mid-sprint alignment check specifically for cross-module type consistency."
-
-These are specific enough to be implementable in a future team context.
+**Evidence quality:**
+- Teams conversation transcript (Slide 7): real quotes from team discussion about C language.
+- Commit log evidence (Slide 4): timestamped commits showing parallel work.
+- Teams message (Slide 4): Hamza's type mismatch identification with timestamp.
+- Specific time/duration details throughout (25-min stand-up, 45-min pair-programming, 20-min JSON spike).
 
 ## What Holds the Mark Back
 
-### Critical Analysis of WHY Strategies Were Effective — Insufficient for A+
+1. **Critical analysis of WHY partially lives in Q&A prep (Slide 11) rather than presented slides:** The strongest "why it worked in this context" analysis for stand-ups and the verbal contract appears in the Q&A preparation document, which is a reference doc, not presented material. The panel may or may not ask these questions. To reach 90+, this contextual analysis should be in the presented slides (Slides 2, 4, or 7 Speaker Notes).
 
-This is the distinguishing criterion between A and A+. The rubric requires "critical analysis of why such strategies were effective in this context."
+2. **Wilemon & Thamhain barrier mapping is stated but not deeply analysed in main presentation:** Slide 7 lists "proactively prevented Role Conflicts (RACI), Communication Problems (stand-ups); encountered Differing Outlooks (C debate)" — this is mapping, not analysis. The deeper analysis ("managed 5 of 11... Remaining 6 not applicable in self-selecting academic peers but would need Day-1 attention in industry") appears only in Q&A prep (Slide 11). To reach 90+, the slide would explain WHY these specific barriers were the relevant ones for this team composition.
 
-**What's present:** The slides explain WHAT strategies were used and WHAT was learned. The reflections analyse what went wrong and what would be done differently.
+3. **Leadership evolution is implicit rather than explicitly traced:** The shift from transactional (role allocation) to transformational (C debate) to servant (ongoing facilitation) is a strong narrative, but it's distributed across slides without being explicitly named as a leadership evolution. To reach 90+, one slide or speaker note would explicitly trace: "Our leadership style evolved through Tuckman stages — transactional at Forming, transformational during Storming, servant by Norming."
 
-**What's missing:** A meta-level analysis of WHY the specific strategies (strengths-based allocation, Kanban, pair-programming as blocker response) worked in THIS particular context. For example:
-
-- Why did strengths-based allocation work here but might not elsewhere? The slides don't analyse: "Strengths-based allocation worked because our two-day timeline made learning curves unacceptable — there was no time for anyone to develop a new skill. In a longer project, rotation-based allocation might build broader team capability at the cost of initial velocity."
-- Why did Kanban work over Scrum in this context? The Q&A prep has this reasoning, but it doesn't appear in the main presentation slides.
-- Why did the structured discussion resolve the C language conflict? The slides describe the process ("everyone got equal airtime") but don't critically analyse WHY equal airtime produced consensus — was it because the dissenting members felt heard, or because the data (proximity to completion) was compelling, or both?
-
-To reach A+, the slides would need explicit statements connecting strategy effectiveness to contextual factors.
-
-### Some Evidence Is in Q&A Prep Rather Than Presentation (Slide 11)
-
-Several strong teamwork examples (team contract, McClelland's needs, Wilemon & Thamhain barriers) are thoroughly prepared in Q&A but not presented in the main slides. The Q&A preparation is exemplary, but the marker can only credit what is presented.
-
-### TODO Items Suggest Incomplete Evidence (Slides 4, 7)
-
-Slide 4: "TODO: Add at least 2 of these as small visuals" (commit log, test screenshot, group chat message).
-Slide 7: "TODO: Add at least 1 of these" (group chat screenshot, meeting notes).
-
-These artefacts would provide concrete evidence of collaboration beyond verbal claims. Their absence weakens the evidence base.
-
-### Servant Leadership Not Explicitly Named in Main Slides
-
-The Q&A preparation references servant leadership (Greenleaf), but the main slides don't explicitly name the leadership model adopted. Slide 2 shows a Co-ordinator role, but doesn't connect this to a leadership theory beyond Belbin.
+4. **No explicit discussion of what DIDN'T work in team dynamics beyond the C debate:** The slides are strong on successes but the only significant challenge discussed is the C debate and the parser overrun. To reach 90+, there would be at least one additional example of a team dynamics approach that failed or was abandoned (beyond stand-up length adjustment).
 
 ## Actionable Improvements
 
-1. **Slide 7 or 8 — Add critical analysis of WHY strategies worked:** After describing the structured discussion resolution, add: "This worked because our two-day timeline meant there was no 'next sprint' to defer the decision to — the constraint forced immediate resolution. Wilemon & Thamhain's recommendation to 'discover conflicting differences early' was effective precisely because our project lifecycle was so compressed that 'early' and 'late' were separated by hours, not weeks. In a longer project, the same conflict might have been deferred and festered."
+1. **Slide 7 Speaker Notes:** Move the stand-up contextualisation from Q&A prep into the main presentation: add "Stand-ups worked here because our modular split meant a block on parsing could stall everything downstream by next morning — in independent work, they'd be wasted overhead."
 
-2. **Slide 2 — Add WHY strengths-based allocation was effective here:** Add to speaker notes: "Strengths-based allocation (Belbin, 2010) was effective in our context because our 2-day timeline eliminated the option of learning on the job. In a longer project, rotation-based allocation might build broader capability — our approach traded team development for immediate velocity, which was the right trade-off given time constraints."
+2. **Slide 7 or Slide 2:** Add one sentence explicitly analysing WHY Wilemon & Thamhain's barriers were selectively relevant: "Role Conflicts and Communication Problems were our highest-probability barriers because four developers coding in parallel on interdependent modules creates natural ambiguity — barriers like Lack of Senior Management Support don't apply to self-selecting academic peers."
 
-3. **Slides 4 and 7 — Complete the TODO items:** Add at least one concrete artefact (commit log, chat screenshot, or meeting notes) per slide to provide verifiable evidence of collaboration claims.
+3. **Slide 2 Speaker Notes:** Add explicit leadership evolution statement: "Leadership shifted to match what the team needed — directive structure at Forming, transformational challenge during Storming, servant facilitation once the team self-organised at Norming."
 
-4. **Slide 4 or 7 — Name leadership model explicitly:** Add one sentence: "Our approach maps to Servant Leadership (Greenleaf) — each domain lead served others by removing their blockers rather than directing their work."
-
-5. **Slide 7 — Analyse WHY equal airtime produced resolution:** Add to speaker notes: "The structured discussion worked because it addressed what Wilemon & Thamhain (1983) identify as the root of 'Differing Outlooks' — each member had different information (Cole and Jamie knew progress was near-complete; Hamza and Samuel knew difficulty was mounting). Equal airtime surfaced this asymmetric information, making the decision data-driven rather than personality-driven."
+4. **Slide 7:** Add one brief example of a team strategy that was less effective: e.g., "Our Kanban WIP limit of 1 worked for individual packages but didn't capture cross-module dependencies — Hamza's integration was blocked by two people simultaneously without the board surfacing that."
 
 ## Conclusion
 
-The slides demonstrate excellent collaboration with clear role allocation, multiple specific instances of mutual support, and some genuinely proactive challenge management. The learning that informs future work is specific and actionable. The mark sits at 77% (23/30) — solidly in the A band — because the work clearly demonstrates effective team dynamics and learning, but stops short of the critical meta-analysis required for A+. The distinguishing gap is explicit reasoning about WHY particular strategies were effective in THIS two-day sprint context as opposed to other contexts. The Q&A preparation shows this depth of thinking exists within the team; it simply needs to be surfaced in the presented slides.
+The work demonstrates exceptional collaboration with clear evidence of mutual support (pair-programming, scope absorption, emotional check-ins), proactive challenge management (pre-agreed processes, structural prevention), and critically analysed team strategies. The critical analysis of WHY strategies worked is present and strong — identifying both structural enablers (float capacity, modular split) and relational pre-conditions (prior shared failure building trust). The mark sits at 25/30 (83%) rather than higher because some of the deepest contextual analysis lives in Q&A preparation rather than the presented slides, and the Wilemon & Thamhain barrier mapping could go deeper in explaining why those specific barriers were the relevant risks for this team configuration.

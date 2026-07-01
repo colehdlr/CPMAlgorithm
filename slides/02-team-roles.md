@@ -1,6 +1,6 @@
 # Slide 2: Team Roles / Introductions
 
-**Speaker:** Samuel | **Time:** 1 minute
+**Speaker:** Samuel | **Time:** 55 seconds
 
 ---
 
@@ -13,28 +13,39 @@
 | Cole | Dev + UI | Prior RayLib experience, UX seminar attendance | Implementer |
 | Hamza | Dev + QA | Critical views on projects, experienced at finding issues | Monitor Evaluator |
 
+**RACI Matrix — WBS Packages:**
+
+| WBS Package | Samuel | Jamie | Cole | Hamza |
+|-------------|--------|-------|------|-------|
+| Parser | R, A | C | I | I |
+| Algorithm | C | R, A | I | C |
+| Tests | R, A | C | C | C |
+| Visualisation | I | I | R, A | C |
+| Integration | I | C | C | R, A |
+
+*(R = Responsible, A = Accountable, C = Consulted, I = Informed)*
+
+**Team Contract (Day 1 verbal → documented retrospectively):**
+
+| # | Agreement | Status by Day 2 |
+|---|-----------|-----------------|
+| 1 | Shared Activity struct before coding | Worked silently |
+| 2 | 15-min stand-ups (3-question format) | Adapted (25 min → 12 min) |
+| 3 | Kanban board, WIP limit = 1 | Worked silently |
+| 4 | Pair-programming as default blocker response | Tested |
+| 5 | 15-min escalation rule → round-robin | Tested |
+| 6 | Cross-module testing before integration (added Day 2) | New |
+
+**Belbin Gap:** No Completer Finisher → identified Day 2 PM → Hamza shifted to Completer Finisher mode, running full integration test suite.
+
 ---
 
 ## Speaker Notes
 
-- "We allocated roles based on individual strengths — matching what each person was already good at to where they'd have the most impact."
-- Explain WHY you took each role, not just what it is
-- Samuel: "I knew the team's strengths, so I could delegate work effectively — that's why I took Scrum Master. My role was about facilitation and removing blockers, not directing people's work — closer to servant leadership (Greenleaf) than command-and-control."
-- Jamie: "I'd done extra research into CPM before we started, so I owned the core algorithm as Product Owner."
-- Cole: "I'd built projects in RayLib before and attended UX seminars, so UI was a natural fit."
-- Hamza: "I'm critical when reviewing work and good at spotting issues, so QA made sense."
-- Connect to Belbin in one sentence: "These map to Belbin's team roles — Co-ordinator, Specialist, Implementer, and Monitor Evaluator — which we discovered after the fact, not by planning around the theory."
-- WHY this allocation worked here: "Strengths-based allocation worked because our 2-day timeline eliminated learning curves as an option — nobody had time to pick up an unfamiliar skill. In a longer project, we might rotate roles to build broader capability, but here we traded team development for immediate velocity. That was the right call given the time constraint."
+We allocated by strengths — I took Scrum Master knowing the team, Jamie owned the algorithm from his CPM research, Cole brought RayLib experience, Hamza was strongest at spotting cross-module issues.
 
----
+Each person working where they'd succeed — McClelland's achievement motivation. It worked because our 2-day timeline made speed essential, but nobody stretches. Longer projects need rotation for growth.
 
-## PM Connection
+My role was servant leadership — facilitating, not directing. That fit because all four were self-motivated — directive leadership would have undermined ownership. The RACI formalised accountability: Integration had three Consulted because cross-module risk sat there.
 
-Strengths-based role allocation (Belbin, 2010) — we matched people to roles where they had existing capability, reducing ramp-up time in a short sprint. Leadership model: distributed servant leadership (Greenleaf) — each domain lead served others by removing blockers rather than directing work.
-
----
-
-## KSBs Signalled
-
-- **K8** — how teams work effectively (deliberate role allocation)
-- **B2** — capable of both independent and team working
+When Samuel's parser took 3× estimate, Cole absorbed some testing scope Day 2 — keeping workload equitable. And once we spotted our missing Completer Finisher, Hamza shifted to running full integration rather than just type checks.

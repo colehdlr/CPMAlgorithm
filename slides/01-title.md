@@ -1,6 +1,6 @@
 # Slide 1: Title
 
-**Speaker:** Samuel | **Time:** 30 seconds
+**Speaker:** Samuel | **Time:** 20 seconds
 
 ---
 
@@ -14,7 +14,4 @@
 
 ## Speaker Notes
 
-- State the project title and module
-- Introduce each team member by name
-- One sentence on what the app does: "A C application that identifies the critical path from a set of project activities and visualises it."
-- Move on quickly — this is setup, not content
+Good morning. We're Samuel, Jamie, Cole, and Hamza, and this is our Critical Path Method application — a C program that identifies the critical path from a set of project activities and visualises it. I'll start by introducing our team and how we structured our roles.

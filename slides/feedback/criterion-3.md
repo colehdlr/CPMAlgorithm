@@ -1,13 +1,12 @@
 # Criterion 3: Reflection on Team Dynamics and Development (20%)
 
-## Mark Awarded: 16 / 20
+## Mark Awarded: 17 / 20
 
 ## Band: A+ (80-100)
 
 ## Rubric Band Placement
 
-**Band above (n/a — this is the highest band):**
-> N/A — A+ is the ceiling.
+**Band above (N/A — this is the highest band):** N/A
 
 **Band awarded — A+ (80-100):**
 > "Insightful, critically evaluative reflection; demonstrates high self- and team-awareness; lessons learned are clearly articulated."
@@ -17,97 +16,86 @@
 
 ## What Earns the Mark
 
-### Reflections Are Critically Evaluative, Not Merely Descriptive or Analytical
+**Insightful reflection:**
+- Each reflection reveals a non-obvious insight about the reflector's own cognitive patterns:
+  - Jamie: "I assumed consensus meant the decision was settled" — insight that group agreement can mask unresolved capability gaps (Slide 8).
+  - Samuel: "The frustration wasn't just syntax — it was feeling incompetent at something I owned" — distinguishes technical difficulty from identity threat (Slide 8).
+  - Cole: "My confidence comes from UI work where 'looks right' usually is right — CPM exposed that limit" — identifies the domain boundary of an otherwise valid heuristic (Slide 8).
+  - Hamza: "I nearly didn't flag the type mismatch because it felt like criticising their work" — distinguishes technical critique from interpersonal judgement (Slide 8).
+- Team-level insight goes beyond individual learning: "we decomposed work but not knowledge — WBS needs a knowledge map alongside it" (Slide 8).
 
-Each reflection in Slide 8 follows the five-part structure: assumption → event → learning → theory → future action. This is the hallmark of critically evaluative reflection because it interrogates prior assumptions rather than merely describing events.
+**Critically evaluative (not descriptive or merely analytical):**
 
-**Demonstration using the descriptive → analytical → critically evaluative spectrum:**
+Evidence of progression from descriptive → analytical → critically evaluative:
 
-- **Descriptive (caps at C):** "We used C for our project."
-- **Analytical (B range):** "Using C slowed us down because not everyone knew it well."
-- **Critically evaluative (A/A+ — what Jamie actually writes):** "I assumed that because we all agreed on C initially, the language decision was settled. In practice, Hamza and Samuel found C significantly slowed their implementation — what seemed like consensus was actually untested assumption. I learned that agreement at the start doesn't mean the decision was thorough. We estimated based on enthusiasm, not effort."
+| Level | Example from slides |
+|-------|-------------------|
+| Descriptive (would cap at C) | NOT present — the slides avoid simple description |
+| Analytical (B range) | NOT the primary mode — goes beyond "X helped Y" |
+| Critically evaluative (A/A+) | "I assumed consensus meant the decision was settled. We had ADKAR's Awareness and Desire for C, but not Knowledge or Ability. As Product Owner, my implicit authority delayed Samuel's pushback — he deferred to me more after, and I only noticed when he stopped challenging testing scope." (Slide 8) |
 
-Jamie's reflection explicitly identifies and challenges a prior assumption ("consensus = thoroughness"), identifies the mechanism of failure ("untested assumption"), and derives a transferable principle about estimation. This IS critical evaluation.
+The critically evaluative nature is demonstrated by:
+1. **Challenged assumptions** as the organising principle — each reflection starts with what was believed, not what happened.
+2. **Theory used to explain, not just label:** Samuel doesn't just name Schön — he critiques it: "But Schön assumes I can reframe alone — I could only do it because Jamie validated my new understanding. Without that, reflection-in-action risks confident misunderstanding" (Slide 8). This is evaluating the theory itself.
+3. **Power dynamics identified:** Jamie acknowledges "my implicit authority delayed Samuel's pushback" — recognising structural influence on team behaviour (Slide 8).
+4. **Groupthink identified at meta-level:** "we chose C unanimously but all underestimated it — groupthink at Forming stage, prioritising affiliation (McClelland) over critical evaluation" (Slide 8 Speaker Notes). This reflects on the team's collective cognitive failure.
 
-**Samuel's reflection similarly:**
-- Challenges assumption: "I assumed that writing tests independently of the algorithm would be straightforward"
-- Identifies why it failed: "I couldn't write meaningful test assertions without understanding how the backward pass updates LF values"
-- Derives insight: "Separating code modules doesn't separate knowledge dependencies — the tester needs to understand the algorithm's logic, not just its outputs"
-- Connects to theory with specificity: "This connects to Wilemon & Thamhain's 'Communication Problems' barrier — not a lack of talking, but a lack of shared technical understanding."
+**HIGH self-awareness AND team-awareness:**
 
-The distinction Samuel draws — "not a lack of talking, but a lack of shared technical understanding" — demonstrates genuine critical analysis. It reinterprets the theory for the specific context rather than simply citing it.
+Self-awareness examples:
+- Jamie recognises his positional power affected others' behaviour: "he deferred to me more after, and I only noticed when he stopped challenging testing scope" (Slide 8).
+- Samuel identifies the emotional layer beneath the technical: "feeling incompetent at something I owned" (Slide 8).
+- Cole identifies the domain-specificity of his judgement: "my confidence comes from UI work" (Slide 8).
+- Hamza identifies social pressure overriding professional duty: "it felt like criticising their work" (Slide 8).
 
-### High Self-Awareness (Slide 8)
+Team-awareness examples:
+- Collective insight: "Same root across all four: we decomposed work but not understanding" (Slide 8 Speaker Notes).
+- Tuckman stage tracking: "mine during Storming, Samuel's at the Storming-Norming transition, Cole's during Norming, Hamza's throughout" (Slide 8 Speaker Notes).
+- Recognition that Norming wasn't monolithic: "we Normed on process by Day 1 afternoon and didn't Norm on knowledge until Day 2" (Q&A prep, Slide 11).
 
-Each team member identifies their own incorrect assumption and owns it in first person:
+**Lessons learned CLEARLY ARTICULATED:**
 
-- Jamie: "I assumed... what seemed like consensus was actually untested assumption" — owns the failure to verify the decision
-- Samuel: "I assumed... I had to interrupt Jamie for an explanation" — acknowledges dependency he didn't foresee
-- Cole: "I assumed my role was just to render the output" — challenges his own narrow framing of his contribution
-- Hamza: "I assumed that if everyone followed the same spec, integration would be straightforward" — identifies naive faith in documentation
+Each lesson is specific, actionable, and contextualised:
 
-No member deflects blame or presents themselves as having been correct all along. Each identifies what THEY got wrong.
+| Member | Lesson | Specificity |
+|--------|--------|-------------|
+| Jamie | "Spike before committing when reversibility is low" | Names the condition (reversibility) and the action (spike) |
+| Samuel | "15-minute knowledge-sharing session before testing" | Names the duration, timing, and purpose |
+| Cole | "Pair visual feedback with automated tests" | Names both the current approach and the supplement |
+| Hamza | "Assign interface ownership separately from module ownership" | Names the structural intervention |
+| Team | "Knowledge map alongside WBS" + "Devil's Advocate role for irreversible decisions" | Names the artefact and the trigger condition |
 
-### High Team-Awareness (Slides 4, 7, 8)
+**Theory integration is genuine, not decorative:**
+- ADKAR applied to the C debate: "had Awareness and Desire but not Knowledge or Ability" — this is a genuine application of the model to diagnose what went wrong, not a name-drop (Slide 8).
+- Schön (1983) reflection-in-action: applied to Samuel's real-time cognitive shift, THEN CRITIQUED for its assumption of solo reframing (Slide 8).
+- Wilemon & Thamhain's Communication Problems: Cole's reflection reframes communication problems as happening through artefacts, not just words — extending the theory (Slide 8).
+- Edmondson's psychological safety: applied to explain Hamza's threshold behaviour — "spoke up only because existing trust overrode that discomfort" — and named as non-binary (Slide 8).
+- McClelland's affiliation need: used to explain groupthink at Forming stage (Slide 8 Speaker Notes).
 
-The reflections show understanding of how individual actions affected team dynamics:
-
-- Samuel recognises interrupting Jamie was a team-level problem (knowledge silos affecting workflow)
-- Cole recognises his work served a team function he hadn't planned (visualisation as validation)
-- Hamza recognises that cross-module oversight was a team need, not just his personal contribution
-- Jamie recognises his assumption affected the whole team's velocity (the C language choice)
-
-### Lessons Learned Clearly Articulated (Slide 8)
-
-Each lesson is:
-1. **Specific** (not "communicate better" but "schedule a 15-minute knowledge-sharing session before testing begins")
-2. **Actionable** (contains a concrete action: "push for a short spike", "schedule a mid-sprint alignment check")
-3. **Transferable** (applies to future projects, not just this one)
-4. **Theoretically grounded** (connected to a course concept)
-
-Examples:
-- Jamie: "In future, I would push for a short spike or prototype before committing the whole team to a technology choice." — Specific, actionable, transferable.
-- Samuel: "I would schedule a 15-minute knowledge-sharing session before testing begins, so everyone understands the data flow." — Specific duration, specific timing, specific purpose.
-- Hamza: "I would schedule a mid-sprint alignment check specifically for cross-module type consistency." — Specific timing, specific focus, directly addresses the root cause.
-
-### Theory Connected to Experience (Not Name-Dropped)
-
-- Samuel connects to Wilemon & Thamhain (1983) with a reinterpretation: "'Communication Problems' barrier — not a lack of talking, but a lack of shared technical understanding." This APPLIES the theory, not merely cites it.
-- Jamie connects to estimation principles (K15) by identifying that three-point estimation should have been applied to the language decision itself — a creative application of the concept.
-- Slide 7 connects the conflict to Tuckman's Storming and the resolution process to Wilemon & Thamhain's recommendation for equal airtime.
+**Reflection structure follows assumption → event → learning → theory → future action:**
+- Each of the four individual reflections follows this pattern clearly.
+- The capstone synthesis (Jamie) adds a meta-level pattern recognition across all four.
 
 ## What Holds the Mark Back
 
-### Cole's Reflection Is Less Critically Evaluative Than Others (Slide 8)
+1. **Counter-arguments to future actions appear only in Q&A prep, not in presented reflections:** Slide 11 contains "Counter-arguments on future actions" — e.g., "spiking only makes sense when stakes are high and knowledge is uncertain," "the transfer still depends on the tester knowing enough to ask good questions." These demonstrate the critical evaluation of one's OWN solutions, which would strengthen the main reflection significantly. To reach 90+, each future action in Slide 8 would include a one-sentence boundary condition: "This works when [X]; it wouldn't help when [Y]."
 
-Cole's reflection: "I learned that visual output has disproportionate value in catching errors — it's a form of verification that complements automated testing. This connects to quality management — building multiple verification methods into the process rather than relying on a single approach."
+2. **Professional transfer evidence is in Q&A prep, not the main presentation:** The strongest evidence that lessons were genuinely internalised — Jamie applying spike discipline at work, Samuel asking for pessimistic estimates in workplace stand-ups — appears in Slide 11, not Slide 8. To reach 90+, one or two of these would appear in the main reflections as evidence that learning transferred beyond the module.
 
-The theory connection ("quality management") is vaguer than the specific citations in Jamie's (estimation principles, K15) and Samuel's (Wilemon & Thamhain, 'Communication Problems'). "Quality management" is a broad area, not a specific framework. To reach the same depth as the other reflections, Cole would need to connect to a specific quality principle — e.g., "This connects to the 'build quality in' principle from lean manufacturing — visual management boards (Ohno, 1988) serve the same function as my graph visualisation: making problems visible immediately rather than waiting for formal inspection."
+3. **The "Knowledge Map" concept is stated but not demonstrated in depth:** Slide 8 includes a knowledge map example table but the Speaker Notes don't explain what would be different if the team had used it from Day 1. To reach 90+, the reflection would trace a specific failure back to the missing knowledge map: "If we'd built this Day 1, Samuel would have seen he needed LF update logic before writing test assertions — cutting a day of frustration."
 
-### Hamza's Theory Connection Could Be Deeper (Slide 8)
-
-Hamza: "This connects to integration risk management — proactive checking reduces the probability of integration failure, which is a mitigation strategy rather than avoidance."
-
-This is competent but the theory reference ("integration risk management") is generic — it's a description of what he did, not a named framework. A stronger connection would be: "This connects to Wilemon & Thamhain's barrier of 'Role Conflicts' — the ambiguity wasn't in who owned which module, but in who owned the INTERFACE between modules. My mid-sprint check functioned as what Highsmith (2002) calls an 'integration ceremony' — a deliberate synchronisation point."
-
-### No Explicit Reference to Tuckman Stage in Reflections (Slide 8)
-
-The reflections describe team dynamics events but don't explicitly place them within the Tuckman model. For example, Samuel's knowledge-silo problem could be framed as a Norming-stage breakdown: "I assumed we had fully Normed — shared processes established — but our Norming was incomplete because it covered workflow (who does what) without covering knowledge (who knows what). True Norming requires both."
-
-### Reflections Could Interrogate Whether "In Future I Would..." Is Always Correct
-
-The reflections end with confident future actions, but don't question whether those actions might have trade-offs. For example, Jamie's "push for a short spike before committing" — what's the cost? A spike in a 2-day timeline might consume 25% of available time. The most sophisticated reflection would acknowledge this tension: "A spike would cost half a day in our timeline — but the cost of NOT spiking was higher (half a day of rework). The break-even point depends on project duration and reversibility."
+4. **Adjourning reflection is brief:** The Tuckman Adjourning stage insight ("processes transfer but trust does not") is powerful but compressed into one sentence of the capstone (Slide 8) and one sentence by Hamza in Slide 9. Given its importance for future team working, it deserves deeper exploration in the main reflection: what specifically would they do to rebuild trust in a new team?
 
 ## Actionable Improvements
 
-1. **Slide 8 (Cole) — Strengthen theory connection:** Replace "This connects to quality management" with a specific citation: "This connects to the principle of 'visual management' from lean thinking — making work and problems visible in real-time rather than waiting for formal inspection stages. Our graph served the same function as a build radiator in continuous integration."
+1. **Slide 8, each individual reflection:** Add one sentence of boundary condition to each future action. For example, Jamie's should end: "Spike before committing when reversibility is low — but for low-stakes, easily reversible choices, speed beats thoroughness."
 
-2. **Slide 8 (Hamza) — Name a specific framework:** Replace "integration risk management" with: "This connects to Wilemon & Thamhain's 'Role Conflicts' barrier — the ambiguity wasn't in who owned which module, but in who owned the interface between modules. In future teams, I would explicitly assign interface ownership as a separate responsibility from module ownership."
+2. **Slide 8, Jamie's capstone or Samuel's reflection:** Add one sentence of professional transfer: "Samuel now asks 'what's the pessimistic estimate?' in workplace stand-ups — the lesson survived the module boundary."
 
-3. **Slide 8 (Any member) — Add Tuckman staging to one reflection:** E.g., Samuel could add: "This revealed that our Norming was incomplete — we'd agreed on workflow ('who does what') but not on knowledge flow ('who needs to understand what'). Tuckman's model treats Norming as uniform, but in practice our team Normed at different layers at different speeds."
+3. **Slide 8, team insight section:** Replace or supplement the Knowledge Map table with a counterfactual: "Had we built this Day 1, Samuel would have known he needed to understand backward-pass LF updates before writing assertions — preventing the 'I don't know what correct looks like' frustration entirely."
 
-4. **Slide 8 (Jamie) — Acknowledge trade-off in future action:** Add: "A spike costs time — in a 2-day sprint, half a day is 25% of our budget. But the cost of NOT spiking (half a day of rework plus team friction) was higher. The lesson isn't 'always spike' but 'spike when reversibility is low and the team will be locked in.'"
+4. **Slide 8 or Slide 9:** Expand the Adjourning insight by one sentence: "In our next team, we'd invest the first hour in a shared-failure story — not process setup — because our trust came from mutual vulnerability in a prior module, and that can be deliberately cultivated."
 
 ## Conclusion
 
-The reflections are genuinely insightful and critically evaluative — they interrogate assumptions, identify mechanisms of failure, connect to course theory with application (not just citation), and articulate specific, actionable lessons. The mark sits at 80% (16/20) — the lower boundary of A+ — because the strongest reflections (Jamie's, Samuel's) clearly meet the "insightful, critically evaluative" descriptor, while Cole's and Hamza's, though good, have vaguer theory connections. The self-awareness and team-awareness are consistently high across all four members. The primary gap to higher A+ is the absence of meta-reflection on trade-offs in the proposed future actions, and the opportunity to situate the reflections within Tuckman's developmental stages explicitly.
+The reflections are genuinely critically evaluative — they challenge assumptions, critique theory (not just apply it), identify power dynamics, and articulate specific actionable lessons. The organising structure (challenged assumption → theory → future action) is consistently applied across all four members, with a meta-level capstone synthesis. Self-awareness and team-awareness are both high: individual cognitive patterns are named, and collective failures (groupthink, knowledge decomposition gap) are identified. The mark sits at 17/20 (85%) rather than higher because the deepest critical evaluation of the future actions themselves (boundary conditions, counter-arguments) and professional transfer evidence lives in Q&A preparation rather than the main presented material, and the Adjourning insight — one of the most mature observations — is compressed rather than developed.

@@ -1,59 +1,46 @@
 # Slide 5: CPM Walkthrough
 
-**Speaker:** Jamie | **Time:** 2 minutes
+**Speaker:** Jamie | **Time:** 1 minute 20 seconds
 
 ---
 
 ## On the Slide
 
 - Diagram showing forward pass → backward pass → float calculation
+- **Worked example — Forward pass (convergence):** Activity F: ES = max(EF_E, EF_D) = max(15, 13) = **15**
+- **Worked example — Backward pass (divergence):** Activity A: LF = min(LS_B, LS_C) = min(5, 3) = **3**
 - The PERT formula: **Expected time = (O + 4M + P) / 6**
-- Brief table showing one activity's values as example
+- Standard deviation: **σ = (P − O) / 6** (assumes beta distribution)
+- Key insight: PERT project duration = 23.8 days vs 22 deterministic
+- 95% confidence interval: [20.2, 27.4] days
+
+**PERT Comparison Table — All 7 Activities:**
+
+| Activity | Deterministic | O | M | P | PERT Expected | σ |
+|----------|:---:|:---:|:---:|:---:|:---:|:---:|
+| A (Requirements) | 3 | 2 | 3 | 5 | 3.2 | 0.50 |
+| B (Design) | 4 | 3 | 4 | 7 | 4.3 | 0.67 |
+| C (Database Setup) | 5 | 4 | 5 | 9 | 5.5 | 0.83 |
+| D (Frontend Dev) | 6 | 4 | 6 | 10 | 6.3 | 1.00 |
+| E (Backend Dev) | 7 | 5 | 7 | 12 | 7.5 | 1.17 |
+| F (Integration) | 3 | 2 | 3 | 6 | 3.3 | 0.67 |
+| G (Testing) | 4 | 3 | 4 | 7 | 4.3 | 0.67 |
+
+**PERT Critical Path:** A(3.2) + C(5.5) + E(7.5) + F(3.3) + G(4.3) = **23.8 days**
+**Critical Path Variance:** 0.25 + 0.69 + 1.37 + 0.45 + 0.45 = 3.21 | σ = 1.79 days
 
 ---
 
 ## Speaker Notes
 
-### The Algorithm
+Peer feedback said we explained code not concepts, so we rebuilt this section.
 
-- "I started by identifying the input — activities from the parser — and the output needed for the rendering engine."
-- **Forward pass (first for loop):**
-  - "Iterates through activities in dependency order"
-  - "Calculates Earliest Start (ES) and Earliest Finish (EF) for each task"
-  - "ES = maximum EF of all predecessors (at convergence points, take the MAX)"
-  - "EF = ES + duration"
-  - "Project duration is set at the end of this loop — it's the largest EF value"
-- **Backward pass (second for loop):**
-  - "Works backwards through activities"
-  - "Latest Finish (LF) = looks at successor tasks and takes the minimum Latest Start"
-  - "Latest Start (LS) = LF - duration"
-  - "Initialises all LF to project duration, then walks backwards"
-- **Float calculation (final forward pass):**
-  - "Free Float = earliest ES of successors - EF of current activity"
-  - "In plain English: how much can I delay finishing without affecting the next task?"
-  - "Total Float = LS - ES"
-  - "In plain English: how much can I delay starting without affecting the project deadline?"
-  - "Zero total float = critical activity"
+Forward pass: earliest start and finish — at convergence points, take the maximum. Activity F depends on both E and D. ES of F equals max of EF_E and EF_D — max of 15 and 13 is 15. D finishes early but F waits for E.
 
-### PM Connection
+Backward pass reverses it. Activity A feeds both B and C. LF of A equals min of LS_B and LS_C — min of 5 and 3 is 3. The tightest successor constrains you. Float equals latest start minus earliest start. Zero float means critical. Free float — delay without affecting the next task, not just the project end.
 
-- "Float is what makes CPM useful to a project manager — it shows where there's flexibility. Activities with zero float are the ones that will delay the entire project if they slip."
-- "B and D have 2 days of float — a PM could reallocate those resources to critical activities, or absorb a 2-day delay on those tasks without consequence."
+Standard deviation for each activity: σ equals P minus O divided by 6. Assumes a beta distribution.
 
-### PERT Extension
+PERT mode: Activity E — optimistic 5, most likely 7, pessimistic 12, expected 7.5 days. Critical path variance sums to 3.21, giving a 95% range of 20.2 to 27.4 days. A PM commits at 25, not 22. That's PERT's value: a range instead of false precision.
 
-- "Our application supports both deterministic durations and PERT three-point estimation. The user can provide optimistic, most likely, and pessimistic values, and the system calculates the expected duration using:"
-- **Expected time = (O + 4M + P) / 6**
-  - O = Optimistic duration
-  - M = Most likely duration
-  - P = Pessimistic duration
-- "Take our Backend Dev activity (E) as an example. If we estimated: Optimistic = 5 days, Most Likely = 7 days, Pessimistic = 12 days. Then Expected = (5 + 28 + 12) / 6 = 7.5 days, with standard deviation σ = (12 - 5) / 6 = 1.17 days."
-- "Our deterministic estimate was 7 days — slightly optimistic. That pattern played out in our actual sprint too: the parser took roughly 3x longer than our single-point estimate. Three-point estimation would have flagged that risk."
-- "This is the difference between CPM (deterministic) and PERT (probabilistic). We implemented both so the user can see how uncertainty changes the critical path and project duration."
-
----
-
-## KSBs Signalled
-
-- **K15** — directly demonstrates understanding of estimation principles (three-point estimation, float, scheduling)
-- **S5** — applying standard PM techniques (CPM/PERT) in a digital solution
+One limitation from our sprint: Samuel's parser struggle correlated with his testing confidence — violating PERT's independence assumption.

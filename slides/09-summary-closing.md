@@ -1,44 +1,41 @@
 # Slide 9: Summary & Closing
 
-**Speaker:** Split across all four members | **Time:** 45 seconds
+**Speaker:** Split across all four members | **Time:** 40 seconds
 
 ---
 
 ## On the Slide
 
-- One line: what we built
-- One line: what we learned
-- "Thank you. We welcome your questions."
+- **Samuel:** What we learned about planning and feedback
+- **Jamie:** What PERT taught us
+- **Cole:** What building a PM tool — and peer feedback — taught us
+- **Hamza:** Closing and invitation for questions
+
+**Feedback Incorporated:**
+
+| Change | Source | Impact |
+|--------|--------|--------|
+| CPM section rewritten: code-talk → PM-talk | Day 3 peer feedback | Slide 5 is now version 3 |
+| Reflections restructured: description → challenged assumptions | Peer feedback | Slide 8 format |
+| PERT comparison applied to own sprint | Dr. Peiris's Week 5 intervention | Slide 6 estimation table |
+| Delivery pace slowed, engagement questions added | Day 4 practice | Slides 5 & 6 panel questions |
+
+**Before/After Examples:**
+
+| | Before (Day 3) | After (Day 4) |
+|---|---|---|
+| Slide 5 opening | "The forward pass iterates through a topologically sorted adjacency list" | "The forward pass calculates the earliest each task can start" |
+| Reflection style | "We used daily stand-ups and they helped us identify blockers" | "I assumed stand-ups would suffice for coordination, but they failed to surface deeper knowledge misalignment" |
+| Reflection structure | "We found the C debate challenging but resolved it through discussion" | "I assumed consensus meant the decision was settled — we had Awareness and Desire but not Knowledge or Ability (ADKAR)" |
 
 ---
 
-## Speaker Notes (one sentence each)
+## Speaker Notes
 
-**Samuel:** "We built a CPM application in C that performs forward and backward passes, calculates float, identifies the critical path, and visualises it as an interactive network diagram."
+**Samuel:** You can plan the work but not the understanding — WBS needs a knowledge map. In Day 4 practice, I answered a resource levelling question using our sprint as evidence — cross-team knowledge landed.
 
-**Jamie:** "Our implementation uses deterministic durations, but we've shown how three-point estimation — Expected time equals O plus 4M plus P over 6 — extends CPM into PERT for real-world uncertainty."
+**Jamie:** PERT taught us single-point estimates are always optimistic — including our estimate of our own abilities.
 
-**Cole:** "More importantly, building a project management tool taught us project management — the scheduling, estimation, and team coordination we applied in our sprint are the same concepts our application automates."
+**Cole:** Building a PM tool taught us project management. Hearing 'your CPM section sounds like a code review' stung — but accuracy for the wrong audience is still a miss.
 
-**Hamza:** "Thank you. We welcome your questions."
-
----
-
-## Key Points
-
-- Do NOT introduce new content
-- Do NOT rush
-- End confidently with eye contact
-- The meta-insight (building a PM tool taught us PM) is the strongest closer
-- Jamie's PERT sentence links to broader methodologies as requested
-- Hamza's closing is clean and confident — no trailing off
-
----
-
-## After Q&A Ends
-
-1. Make eye contact with the panel
-2. Say: "Thank you for your questions."
-3. Sit down
-
-Do NOT linger. Do NOT ask "any more questions?" Do NOT apologise for anything.
+**Hamza:** Thank you. We've documented our processes so a future team can adopt the structure without our trust — that's Adjourning. We welcome your questions.

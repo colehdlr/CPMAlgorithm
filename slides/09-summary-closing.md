@@ -6,20 +6,9 @@
 
 ## On the Slide
 
-**Feedback Incorporated:**
-
-| Change | Source |
-|--------|--------|
-| CPM section rewritten: code-talk → PM-talk | Day 3 peer feedback |
-| Reflections restructured: description → challenged assumptions | Peer feedback |
-| PERT comparison applied to own sprint | Dr. Peiris's Week 5 intervention |
-| Delivery pace slowed | Day 4 practice |
-
-**Closing:**
-
 - **Samuel:** WBS needs a knowledge map — you can plan work but not understanding
 - **Jamie:** Single-point estimates are always optimistic — including our estimate of our own abilities
-- **Cole:** Accuracy for the wrong audience is still a miss
+- **Cole:** Building a PM tool taught us PM — not just the theory
 - **Hamza:** We welcome your questions
 
 ---
@@ -30,6 +19,6 @@
 
 **Jamie:** PERT taught us single-point estimates are always optimistic — including our estimate of our own abilities.
 
-**Cole:** Building a PM tool taught us project management. Hearing 'your CPM section sounds like a code review' stung — but accuracy for the wrong audience is still a miss.
+**Cole:** Building a PM tool taught us project management — accuracy for the wrong audience is still a miss.
 
 **Hamza:** Thank you. We've documented our processes so a future team can adopt the structure without our trust — that's Adjourning. We welcome your questions.

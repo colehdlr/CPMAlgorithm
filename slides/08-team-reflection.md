@@ -19,7 +19,7 @@
 
 ## Speaker Notes
 
-**Jamie (introduction):** Peer feedback pushed us from description to challenged assumptions. Each of us identified a specific mistake we made and what it cost the team.
+**Jamie (introduction):** Each of us identified a specific mistake we made and what it cost the team.
 
 **Jamie:** I assumed consensus meant the decision was settled. We had ADKAR's Awareness and Desire for C, but not Knowledge or Ability. My mistake: as Product Owner, my implicit authority delayed Samuel's pushback — he deferred to me, and I only noticed when he stopped challenging testing scope. That cost us a day of mounting frustration that could have been surfaced in hour one. In future, spike before committing when reversibility is low.
 

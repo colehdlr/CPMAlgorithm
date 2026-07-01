@@ -17,8 +17,6 @@
 
 ## Speaker Notes
 
-Peer feedback said we explained code not concepts, so we rebuilt this section.
-
 Forward pass: earliest start and finish — at convergence points, take the maximum. Activity F depends on both E and D. ES of F equals max of EF_E and EF_D — max of 15 and 13 is 15. D finishes early but F waits for E.
 
 Backward pass reverses it. Activity A feeds both B and C. LF of A equals min of LS_B and LS_C — min of 5 and 3 is 3. The tightest successor constrains you. Float equals latest start minus earliest start. Zero float means critical.

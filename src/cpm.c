@@ -2,90 +2,100 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
-bool cpm_compute(Graph *graph) {
-    if (!graph || graph->count <= 0 || !graph->topo_order) return false;
-    int count = graph->count;
+/* Kahn's algorithm. Returns malloc'd order array (caller frees), NULL on cycle/OOM. */
+static int *topological_sort(const Activity *activities, int count) {
+    int *order = malloc((size_t)count * sizeof(int));
+    if (!order) return NULL;
 
-    /* Forward pass: ES/EF in topological order. */
-    int project_duration = 0;
-    for (int i = 0; i < count; ++i) {
-        Activity *activity = &graph->items[graph->topo_order[i]];
-        int earliest_start = 0;
-        for (int k = 0; k < activity->num_deps; ++k) {
-            int pred_finish = graph->items[activity->deps[k]].ef;
-            if (pred_finish > earliest_start) earliest_start = pred_finish;
+    int in_degree[count];
+    for (int i = 0; i < count; ++i) in_degree[i] = activities[i].dep_count;
+
+    int produced = 0;
+    while (produced < count) {
+        int picked = -1;
+        for (int i = 0; i < count; ++i) {
+            if (in_degree[i] == 0) { picked = i; break; }
         }
-        activity->es = earliest_start;
-        activity->ef = earliest_start + activity->duration;
-        if (activity->ef > project_duration) project_duration = activity->ef;
-    }
-    graph->project_duration = project_duration;
-
-    /* Backward pass: initialise lf to project_duration, then walk reverse
-     * topological order and push each node's ls into its predecessors' lf
-     * as a min. Sinks keep project_duration; every other node is updated
-     * before it is read because its successors are processed first. This
-     * avoids materialising a successor adjacency. */
-    for (int i = 0; i < count; ++i) graph->items[i].lf = project_duration;
-    for (int i = count - 1; i >= 0; --i) {
-        Activity *activity = &graph->items[graph->topo_order[i]];
-        activity->ls = activity->lf - activity->duration;
-        activity->total_float = activity->ls - activity->es;
-        activity->is_critical = (activity->total_float == 0);
-        for (int k = 0; k < activity->num_deps; ++k) {
-            Activity *predecessor = &graph->items[activity->deps[k]];
-            if (activity->ls < predecessor->lf) predecessor->lf = activity->ls;
+        if (picked < 0) {
+            fprintf(stderr, "cpm: cycle in dependency graph\n");
+            free(order);
+            return NULL;
         }
-    }
-
-    /* Free float: how far an activity can slip without delaying any
-     * successor's earliest start (tighter than total float, which only
-     * guards the project deadline). Sinks compare against project_duration
-     * since they have no successor to constrain them. */
-    for (int i = 0; i < count; ++i) {
-        int min_successor_es = project_duration;
+        in_degree[picked] = -1;
+        order[produced++] = picked;
         for (int j = 0; j < count; ++j) {
-            for (int k = 0; k < graph->items[j].num_deps; ++k) {
-                if (graph->items[j].deps[k] == i && graph->items[j].es < min_successor_es) {
-                    min_successor_es = graph->items[j].es;
-                }
+            for (int k = 0; k < activities[j].dep_count; ++k) {
+                if (activities[j].deps[k] == picked) { in_degree[j]--; break; }
             }
         }
-        graph->items[i].free_float = min_successor_es - graph->items[i].ef;
     }
 
-    return true;
+    return order;
 }
 
-void cpm_print_table(const Graph *graph) {
-    if (!graph || graph->count <= 0) { printf("(empty graph)\n"); return; }
+CPMResult *cpm_compute(const Activity *activities, int count) {
+    if (count <= 0) return NULL;
 
-    int id_width = 2, name_width = 4;
-    for (int i = 0; i < graph->count; ++i) {
-        int id_len   = (int)strlen(graph->items[i].id);
-        int name_len = (int)strlen(graph->items[i].name);
-        if (id_len   > id_width)   id_width   = id_len;
-        if (name_len > name_width) name_width = name_len;
+    int *order = topological_sort(activities, count);
+    if (!order) return NULL;
+
+    CPMResult *results = calloc((size_t)count, sizeof(CPMResult));
+    if (!results) { free(order); return NULL; }
+
+    /* Forward pass: ES/EF in topological order. */
+    for (int pos = 0; pos < count; ++pos) {
+        int idx = order[pos];
+        const Activity *a = &activities[idx];
+        int es = 0;
+        for (int k = 0; k < a->dep_count; ++k) {
+            int ef = results[a->deps[k]].earliest_finish;
+            if (ef > es) es = ef;
+        }
+        results[idx].earliest_start  = es;
+        results[idx].earliest_finish = es + a->duration;
     }
 
-    printf("\n%-*s  %-*s  %5s  %4s  %4s  %4s  %4s  %5s  %5s  %s\n",
-           id_width, "ID", name_width, "Name", "Dur", "ES", "EF", "LS", "LF", "TF", "FF", "Crit");
-    int dash_len = id_width + name_width + 42;
-    for (int i = 0; i < dash_len; ++i) putchar('-');
-    putchar('\n');
-
-    for (int i = 0; i < graph->count; ++i) {
-        int index = graph->topo_order ? graph->topo_order[i] : i;
-        const Activity *activity = &graph->items[index];
-        printf("%-*s  %-*s  %5d  %4d  %4d  %4d  %4d  %5d  %5d  %s\n",
-               id_width, activity->id, name_width, activity->name,
-               activity->duration, activity->es, activity->ef,
-               activity->ls, activity->lf, activity->total_float, activity->free_float,
-               activity->is_critical ? "*" : "");
+    int project_duration = 0;
+    for (int i = 0; i < count; ++i) {
+        if (results[i].earliest_finish > project_duration) {
+            project_duration = results[i].earliest_finish;
+        }
     }
-    printf("\nProject duration: %d\n\n", graph->project_duration);
+    /* Backward pass: reverse topo order, push each node's LS into preds' LF as a min. */
+    for (int i = 0; i < count; ++i) results[i].latest_finish = project_duration;
+    for (int pos = count - 1; pos >= 0; --pos) {
+        int idx = order[pos];
+        const Activity *a = &activities[idx];
+        results[idx].latest_start = results[idx].latest_finish - a->duration;
+        results[idx].total_float  = results[idx].latest_start - results[idx].earliest_start;
+        for (int k = 0; k < a->dep_count; ++k) {
+            CPMResult *pr = &results[a->deps[k]];
+            if (results[idx].latest_start < pr->latest_finish) {
+                pr->latest_finish = results[idx].latest_start;
+            }
+        }
+    }
+
+    /* Free float: min(ES of successors) - EF. Tail activities default to
+     * project_duration - EF, which equals their total float. */
+    for (int i = 0; i < count; ++i) {
+        results[i].free_float = project_duration - results[i].earliest_finish;
+    }
+    for (int i = 0; i < count; ++i) {
+        const Activity *a = &activities[i];
+        for (int k = 0; k < a->dep_count; ++k) {
+            int p = a->deps[k];
+            int candidate = results[i].earliest_start - results[p].earliest_finish;
+            if (candidate < results[p].free_float) {
+                results[p].free_float = candidate;
+            }
+        }
+    }
+
+    free(order);
+    return results;
 }
 
 void pert_compute(Graph *graph) {

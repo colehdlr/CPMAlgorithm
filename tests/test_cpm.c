@@ -1,177 +1,106 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "parse.h"
 #include "cpm.h"
 
-/*
- * Minimal self-contained test driver for parse + cpm.
- *
- * Builds a small graph in memory (no JSON), runs validation / topological sort
- * / CPM, and asserts the expected ES/EF/LS/LF/total_float/free_float/critical
- * values.
- *
- * Run with `make test`.
- */
+#define COUNT(a) ((int)(sizeof(a) / sizeof((a)[0])))
 
-static int add_activity(Graph *g, const char *id, const char *name, int duration,
-                        const int *deps, int num_deps) {
-    /* grow capacity by hand, mirroring parse.c's ensure_capacity */
-    if (g->capacity <= g->count) {
-        int new_cap = g->capacity ? g->capacity * 2 : 8;
-        Activity *p = (Activity *)realloc(g->items, (size_t)new_cap * sizeof(Activity));
-        if (!p) { fprintf(stderr, "oom\n"); exit(1); }
-        g->items = p;
-        g->capacity = new_cap;
+static int max_ef(const CPMResult *r, int count) {
+    int m = 0;
+    for (int i = 0; i < count; ++i) {
+        if (r[i].earliest_finish > m) m = r[i].earliest_finish;
     }
-    Activity *a = &g->items[g->count];
-    memset(a, 0, sizeof(*a));
-    snprintf(a->id, sizeof(a->id), "%s", id);
-    snprintf(a->name, sizeof(a->name), "%s", name);
-    a->duration = duration;
-    a->num_deps = num_deps;
-    for (int i = 0; i < num_deps; ++i) a->deps[i] = deps[i];
-    return g->count++;
+    return m;
 }
 
-static void test_textbook_network(void) {
-    /* Same shape as data/activities.json so the test mirrors the demo. */
-    Graph g; graph_init(&g);
-    int A = add_activity(&g, "A", "Requirements",   3, NULL, 0);
-    (void)A;
-    int B = add_activity(&g, "B", "Design",         4, (int[]){0}, 1);
-    int C = add_activity(&g, "C", "Database",       5, (int[]){0}, 1);
-    int D = add_activity(&g, "D", "Frontend",       6, (int[]){B}, 1);
-    int E = add_activity(&g, "E", "Backend",        7, (int[]){C}, 1);
-    int F = add_activity(&g, "F", "Integration",    3, (int[]){D, E}, 2);
-    int G = add_activity(&g, "G", "Testing",        4, (int[]){F}, 1);
-    (void)G;
-
-    assert(graph_validate(&g));
-    assert(graph_topological_sort(&g));
-    assert(cpm_compute(&g));
-
-    assert(g.project_duration == 22);
-
-    /* Spot-check each activity. Free float is tighter than total float for
-     * B and D: both can slip 2 days without blowing the deadline (total
-     * float), but D feeds F on its own, so D's own float (2) is genuine
-     * free float, while B feeds only D, so any slip in B immediately
-     * delays D's earliest start (free float 0). */
-    struct { const char *id; int es, ef, ls, lf, total_float, free_float; int crit; } expected[] = {
-        { "A", 0,  3,  0,  3, 0, 0, 1 },
-        { "B", 3,  7,  5,  9, 2, 0, 0 },
-        { "C", 3,  8,  3,  8, 0, 0, 1 },
-        { "D", 7, 13,  9, 15, 2, 2, 0 },
-        { "E", 8, 15,  8, 15, 0, 0, 1 },
-        { "F",15, 18, 15, 18, 0, 0, 1 },
-        { "G",18, 22, 18, 22, 0, 0, 1 },
+static void test_textbook(void) {
+    Activity activities[] = {
+        { .id='A', .name="Requirements", .duration=3 },
+        { .id='B', .name="Design",       .duration=4, .dep_count=1, .deps={0} },
+        { .id='C', .name="Database",     .duration=5, .dep_count=1, .deps={0} },
+        { .id='D', .name="Frontend",     .duration=6, .dep_count=1, .deps={1} },
+        { .id='E', .name="Backend",      .duration=7, .dep_count=1, .deps={2} },
+        { .id='F', .name="Integration",  .duration=3, .dep_count=2, .deps={3,4} },
+        { .id='G', .name="Testing",      .duration=4, .dep_count=1, .deps={5} },
     };
-    for (size_t i = 0; i < sizeof(expected)/sizeof(expected[0]); ++i) {
-        int idx = graph_find_id(&g, expected[i].id);
-        assert(idx >= 0);
-        const Activity *a = &g.items[idx];
-        if (a->es != expected[i].es || a->ef != expected[i].ef
-            || a->ls != expected[i].ls || a->lf != expected[i].lf
-            || a->total_float != expected[i].total_float
-            || a->free_float != expected[i].free_float
-            || a->is_critical != (bool)expected[i].crit) {
-            fprintf(stderr,
-                "mismatch on %s: got ES=%d EF=%d LS=%d LF=%d TF=%d FF=%d crit=%d\n"
-                "           want ES=%d EF=%d LS=%d LF=%d TF=%d FF=%d crit=%d\n",
-                a->id, a->es, a->ef, a->ls, a->lf, a->total_float, a->free_float, (int)a->is_critical,
-                expected[i].es, expected[i].ef, expected[i].ls, expected[i].lf,
-                expected[i].total_float, expected[i].free_float, expected[i].crit);
-            abort();
-        }
+    int count = COUNT(activities);
+
+    CPMResult *r = cpm_compute(activities, count);
+    assert(r);
+    assert(max_ef(r, count) == 22);
+
+    struct { int es, ef, ls, lf, tf, ff; } want[] = {
+        { 0,  3,  0,  3, 0, 0 },
+        { 3,  7,  5,  9, 2, 0 },
+        { 3,  8,  3,  8, 0, 0 },
+        { 7, 13,  9, 15, 2, 2 },
+        { 8, 15,  8, 15, 0, 0 },
+        {15, 18, 15, 18, 0, 0 },
+        {18, 22, 18, 22, 0, 0 },
+    };
+    for (int i = 0; i < count; ++i) {
+        assert(r[i].earliest_start  == want[i].es);
+        assert(r[i].earliest_finish == want[i].ef);
+        assert(r[i].latest_start    == want[i].ls);
+        assert(r[i].latest_finish   == want[i].lf);
+        assert(r[i].total_float     == want[i].tf);
+        assert(r[i].free_float      == want[i].ff);
     }
-    graph_free(&g);
-    printf("  ok  textbook_network\n");
+
+    free(r);
+    printf("  ok  textbook\n");
 }
 
-static void test_single_activity(void) {
-    Graph g; graph_init(&g);
-    add_activity(&g, "X", "Only",  5, NULL, 0);
-
-    assert(graph_validate(&g));
-    assert(graph_topological_sort(&g));
-    assert(cpm_compute(&g));
-
-    assert(g.project_duration == 5);
-    assert(g.items[0].es == 0 && g.items[0].ef == 5);
-    assert(g.items[0].ls == 0 && g.items[0].lf == 5);
-    assert(g.items[0].total_float == 0);
-    assert(g.items[0].free_float == 0);
-    assert(g.items[0].is_critical);
-
-    graph_free(&g);
-    printf("  ok  single_activity\n");
+static void test_single(void) {
+    Activity activities[] = { { .id='X', .name="Only", .duration=5 } };
+    CPMResult *r = cpm_compute(activities, 1);
+    assert(r);
+    assert(r[0].earliest_start == 0 && r[0].earliest_finish == 5);
+    assert(r[0].latest_start   == 0 && r[0].latest_finish   == 5);
+    assert(r[0].total_float == 0);
+    assert(r[0].free_float  == 0);
+    free(r);
+    printf("  ok  single\n");
 }
 
-static void test_parallel_paths(void) {
-    /* Two parallel chains from S to T:
-     *     S(2) -> A(5) -> T(1)        path = 8 (critical)
-     *     S(2) -> B(3) -> T(1)        path = 6
-     *
-     * A is critical, B is not (total float 2). B's only successor is T, and
-     * T's ES is already pinned by A, so B can also slip its full 2 days
-     * without moving T's ES: free float equals total float here.
-     */
-    Graph g; graph_init(&g);
-    int S = add_activity(&g, "S", "Start", 2, NULL, 0);
-    int A = add_activity(&g, "A", "A",     5, (int[]){S}, 1);
-    int B = add_activity(&g, "B", "B",     3, (int[]){S}, 1);
-    int T = add_activity(&g, "T", "End",   1, (int[]){A, B}, 2);
-    (void)T;
+static void test_parallel(void) {
+    /* Two parallel chains: S->A->T = 8 (critical), S->B->T = 6. */
+    Activity activities[] = {
+        { .id='S', .name="Start", .duration=2 },
+        { .id='A', .name="A",     .duration=5, .dep_count=1, .deps={0} },
+        { .id='B', .name="B",     .duration=3, .dep_count=1, .deps={0} },
+        { .id='T', .name="End",   .duration=1, .dep_count=2, .deps={1,2} },
+    };
+    int count = COUNT(activities);
 
-    assert(graph_validate(&g));
-    assert(graph_topological_sort(&g));
-    assert(cpm_compute(&g));
+    CPMResult *r = cpm_compute(activities, count);
+    assert(r);
+    assert(max_ef(r, count) == 8);
+    assert(r[1].total_float == 0);  /* A on critical path */
+    assert(r[2].total_float == 2);
+    assert(r[2].free_float  == 2);
 
-    assert(g.project_duration == 8);
-    assert(g.items[graph_find_id(&g, "A")].is_critical);
-    assert(!g.items[graph_find_id(&g, "B")].is_critical);
-    assert(g.items[graph_find_id(&g, "B")].total_float == 2);
-    assert(g.items[graph_find_id(&g, "B")].free_float == 2);
-
-    graph_free(&g);
-    printf("  ok  parallel_paths\n");
+    free(r);
+    printf("  ok  parallel\n");
 }
 
-static void test_cycle_rejected(void) {
-    /* A -> B -> A is a cycle; topological sort must fail. */
-    Graph g; graph_init(&g);
-    int A = add_activity(&g, "A", "A", 1, (int[]){1}, 1);   /* will reference B */
-    int B = add_activity(&g, "B", "B", 1, (int[]){A}, 1);
-    (void)B;
-
-    assert(graph_validate(&g));               /* validate doesn't check cycles */
-    assert(!graph_topological_sort(&g));      /* cycle should be detected      */
-
-    graph_free(&g);
-    printf("  ok  cycle_rejected\n");
-}
-
-static void test_duplicate_ids_rejected(void) {
-    Graph g; graph_init(&g);
-    add_activity(&g, "X", "first", 1, NULL, 0);
-    add_activity(&g, "X", "again", 1, NULL, 0);
-
-    assert(!graph_validate(&g));
-
-    graph_free(&g);
-    printf("  ok  duplicate_ids_rejected\n");
+static void test_cycle(void) {
+    /* A -> B -> A. cpm_compute must reject it. */
+    Activity activities[] = {
+        { .id='A', .name="A", .duration=1, .dep_count=1, .deps={1} },
+        { .id='B', .name="B", .duration=1, .dep_count=1, .deps={0} },
+    };
+    assert(cpm_compute(activities, COUNT(activities)) == NULL);
+    printf("  ok  cycle\n");
 }
 
 int main(void) {
     printf("running cpm tests:\n");
-    test_textbook_network();
-    test_single_activity();
-    test_parallel_paths();
-    test_cycle_rejected();
-    test_duplicate_ids_rejected();
+    test_textbook();
+    test_single();
+    test_parallel();
+    test_cycle();
     printf("all tests passed.\n");
     return 0;
 }

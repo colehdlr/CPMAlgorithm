@@ -1,64 +1,104 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "parse.h"
 #include "cpm.h"
 #include "render.h"
 
-static void print_usage(const char *prog) {
-    fprintf(stderr,
-        "Usage: %s [options] [activities.json]\n"
-        "\n"
-        "Loads a project network, runs the Critical Path Method on it, prints\n"
-        "the result table, and opens a window visualising the graph.\n"
-        "\n"
-        "Options:\n"
-        "  --no-render     Print the table only; don't open the window.\n"
-        "  -h, --help      Show this message.\n"
-        "\n"
-        "If no path is given, 'data/activities.json' is used.\n",
-        prog);
+static int find_id(const Activity *a, int count, char id) {
+    for (int i = 0; i < count; ++i) if (a[i].id == id) return i;
+    return -1;
 }
 
-int main(int argc, char **argv) {
-    const char *path = "data/activities.json";
-    bool show_window = true;
+/* Load activities from a whitespace-separated text file. Each non-blank line:
+ *     ID NAME DURATION [DEP_ID ...]
+ * Returns a malloc'd array (caller frees), writes count to *out_count.
+ * Returns NULL and prints a message to stderr on error. */
+static Activity *parse_load(const char *path, int *out_count) {
+    FILE *f = fopen(path, "r");
+    if (!f) { fprintf(stderr, "parse: cannot open '%s'\n", path); return NULL; }
 
-    for (int i = 1; i < argc; ++i) {
-        const char *arg = argv[i];
-        if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0) {
-            print_usage(argv[0]);
-            return 0;
+    Activity *activities = NULL;
+    char line[512];
+    int count = 0, line_num = 0;
+
+    /* Pass 1: count non-blank lines. */
+    while (fgets(line, sizeof(line), f)) {
+        char *t = line;
+        while (*t == ' ' || *t == '\t') t++;
+        if (*t != '\n' && *t != '\r' && *t != '\0') count++;
+    }
+    if (count == 0) {
+        fprintf(stderr, "parse: no activities in '%s'\n", path);
+        goto fail;
+    }
+    rewind(f);
+
+    activities = calloc((size_t)count, sizeof(Activity));
+    if (!activities) goto fail;
+
+    /* Pass 2: tokenize each line. */
+    int i = 0;
+    while (fgets(line, sizeof(line), f) && i < count) {
+        line_num++;
+        char *id_tok = strtok(line, " \t\r\n");
+        if (!id_tok) continue;
+        char *name_tok = strtok(NULL, " \t\r\n");
+        char *dur_tok  = strtok(NULL, " \t\r\n");
+        if (strlen(id_tok) != 1 || !name_tok || !dur_tok
+            || find_id(activities, i, id_tok[0]) >= 0) goto parse_err;
+        activities[i].id = id_tok[0];
+        snprintf(activities[i].name, sizeof(activities[i].name), "%s", name_tok);
+        char *end;
+        long dur = strtol(dur_tok, &end, 10);
+        if (*end != '\0' || dur < 0) goto parse_err;
+        activities[i].duration = (int)dur;
+        /* Deps stored as raw char ids; resolved to indices after pass 2. */
+        char *tok;
+        while ((tok = strtok(NULL, " \t\r\n")) != NULL) {
+            if (strlen(tok) != 1 || activities[i].dep_count >= MAX_DEPS) goto parse_err;
+            activities[i].deps[activities[i].dep_count++] = (unsigned char)tok[0];
         }
-        if (strcmp(arg, "--no-render") == 0) {
-            show_window = false;
-        } else if (arg[0] == '-') {
-            fprintf(stderr, "unknown option: %s\n", arg);
-            print_usage(argv[0]);
-            return 2;
-        } else {
-            path = arg;
+        i++;
+    }
+    fclose(f);
+
+    for (int j = 0; j < count; ++j) {
+        for (int k = 0; k < activities[j].dep_count; ++k) {
+            int dep = find_id(activities, count, (char)activities[j].deps[k]);
+            if (dep < 0 || dep == j) {
+                fprintf(stderr, "parse: bad dependency on activity '%c'\n", activities[j].id);
+                free(activities);
+                return NULL;
+            }
+            activities[j].deps[k] = dep;
         }
     }
 
-    Graph graph;
-    graph_init(&graph);
+    *out_count = count;
+    return activities;
 
-    int exit_code = 1;
-    if (!graph_load_from_json(path, &graph)) goto done;
-    if (!graph_validate(&graph)) goto done;
-    if (!graph_topological_sort(&graph)) goto done;
-    if (!cpm_compute(&graph)) { fprintf(stderr, "cpm: failed to compute schedule\n"); goto done; }
-    pert_compute(&graph);
+parse_err:
+    fprintf(stderr, "parse: error at line %d in '%s'\n", line_num, path);
+fail:
+    free(activities);
+    fclose(f);
+    return NULL;
+}
 
-    cpm_print_table(&graph);
-    pert_print_table(&graph);
-    if (show_window) render_run(&graph);
-    exit_code = 0;
+int main(int argc, char **argv) {
+    const char *path = (argc > 1) ? argv[1] : "data/activities.txt";
 
-done:
-    graph_free(&graph);
-    return exit_code;
+    int count = 0;
+    Activity *activities = parse_load(path, &count);
+    if (!activities) return 1;
+
+    CPMResult *results = cpm_compute(activities, count);
+    if (!results) { free(activities); return 1; }
+
+    render_run(activities, count, results);
+
+    free(results);
+    free(activities);
+    return 0;
 }

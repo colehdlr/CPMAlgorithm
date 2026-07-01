@@ -6,9 +6,9 @@
 #include "raylib.h"
 
 #define NODE_W       180.0f
-#define NODE_H       110.0f
+#define NODE_H       132.0f
 #define COL_SPACING  260.0f
-#define ROW_SPACING  150.0f
+#define ROW_SPACING  172.0f
 #define MARGIN       80.0f
 #define WINDOW_W     1200
 #define WINDOW_H     750
@@ -43,9 +43,12 @@ static void draw_node(const Activity *a, const CPMResult *r, Vector2 center) {
     snprintf(buf, sizeof(buf), "TF %-3d FF %-3d%s", r->total_float, r->free_float, critical ? "  *" : "");
     DrawText(buf, x, (int)(rect.y + 86), 13,
              critical ? (Color){ 180, 30, 30, 255 } : text);
+    snprintf(buf, sizeof(buf), "O%d M%d P%d  E %.1f", a->optimistic, a->most_likely,
+             a->pessimistic, r->pert_expected);
+    DrawText(buf, x, (int)(rect.y + 106), 12, (Color){ 70, 80, 96, 255 });
 }
 
-void render_run(const Activity *activities, int count, const CPMResult *results) {
+void render_run(const Activity *activities, int count, const CPMResult *results, PERTSummary pert) {
     if (count <= 0) return;
 
     /* Layout: longest-path rank by relaxation, then assign columns/rows. */
@@ -140,10 +143,15 @@ void render_run(const Activity *activities, int count, const CPMResult *results)
         }
         EndMode2D();
 
-        char hud[64];
+        char hud[64], pert_hud[128];
+        double low  = pert.project_pert_duration - 1.96 * pert.project_stddev;
+        double high = pert.project_pert_duration + 1.96 * pert.project_stddev;
         snprintf(hud, sizeof(hud), "Project duration: %d", project_duration);
-        DrawRectangle(0, 0, GetScreenWidth(), 34, (Color){ 30, 36, 48, 230 });
+        snprintf(pert_hud, sizeof(pert_hud), "PERT expected: %.1fd   95%% CI: [%.1f, %.1f]",
+                 pert.project_pert_duration, low, high);
+        DrawRectangle(0, 0, GetScreenWidth(), 54, (Color){ 30, 36, 48, 230 });
         DrawText(hud, 12, 8, 20, RAYWHITE);
+        DrawText(pert_hud, 12, 30, 16, (Color){ 180, 210, 255, 255 });
 
         EndDrawing();
     }

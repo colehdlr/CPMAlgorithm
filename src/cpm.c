@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* Kahn's algorithm. Returns malloc'd order array (caller frees), NULL on cycle/OOM. */
 static int *topological_sort(const Activity *activities, int count) {
@@ -98,42 +99,42 @@ CPMResult *cpm_compute(const Activity *activities, int count) {
     return results;
 }
 
-void pert_compute(Graph *graph) {
-    if (!graph || graph->count <= 0) return;
+PERTSummary pert_compute(const Activity *activities, CPMResult *results, int count) {
+    PERTSummary summary = { 0 };
+    if (count <= 0) return summary;
 
-    for (int i = 0; i < graph->count; ++i) {
-        Activity *activity = &graph->items[i];
-        double spread = (activity->pessimistic - activity->optimistic) / 6.0;
-        activity->pert_expected = (activity->optimistic + 4.0 * activity->most_likely
-                                   + activity->pessimistic) / 6.0;
-        activity->pert_variance = spread * spread;
-        activity->pert_stddev   = sqrt(activity->pert_variance);
+    for (int i = 0; i < count; ++i) {
+        const Activity *a = &activities[i];
+        CPMResult *r = &results[i];
+        double spread = (a->pessimistic - a->optimistic) / 6.0;
+        r->pert_expected = (a->optimistic + 4.0 * a->most_likely + a->pessimistic) / 6.0;
+        r->pert_variance = spread * spread;
+        r->pert_stddev   = sqrt(r->pert_variance);
     }
 
     /* Expected duration and variance of the whole project are the sum of
      * the per-activity values along the critical path (variances of
      * independent activities add; standard deviations don't). */
     double expected = 0.0, variance = 0.0;
-    for (int i = 0; i < graph->count; ++i) {
-        const Activity *activity = &graph->items[i];
-        if (!activity->is_critical) continue;
-        expected += activity->pert_expected;
-        variance += activity->pert_variance;
+    for (int i = 0; i < count; ++i) {
+        if (results[i].total_float != 0) continue;
+        expected += results[i].pert_expected;
+        variance += results[i].pert_variance;
     }
 
-    graph->project_pert_duration = expected;
-    graph->project_variance = variance;
-    graph->project_stddev = sqrt(variance);
+    summary.project_pert_duration = expected;
+    summary.project_variance = variance;
+    summary.project_stddev = sqrt(variance);
+    return summary;
 }
 
-void pert_print_table(const Graph *graph) {
-    if (!graph || graph->count <= 0) { printf("(empty graph)\n"); return; }
+void pert_print_table(const Activity *activities, const CPMResult *results,
+                       int count, PERTSummary summary) {
+    if (count <= 0) { printf("(empty graph)\n"); return; }
 
     int id_width = 2, name_width = 4;
-    for (int i = 0; i < graph->count; ++i) {
-        int id_len   = (int)strlen(graph->items[i].id);
-        int name_len = (int)strlen(graph->items[i].name);
-        if (id_len   > id_width)   id_width   = id_len;
+    for (int i = 0; i < count; ++i) {
+        int name_len = (int)strlen(activities[i].name);
         if (name_len > name_width) name_width = name_len;
     }
 
@@ -143,20 +144,20 @@ void pert_print_table(const Graph *graph) {
     for (int i = 0; i < dash_len; ++i) putchar('-');
     putchar('\n');
 
-    for (int i = 0; i < graph->count; ++i) {
-        int index = graph->topo_order ? graph->topo_order[i] : i;
-        const Activity *activity = &graph->items[index];
-        printf("%-*s  %-*s  %4d  %4d  %4d  %8.2f  %6.2f  %s\n",
-               id_width, activity->id, name_width, activity->name,
-               activity->optimistic, activity->most_likely, activity->pessimistic,
-               activity->pert_expected, activity->pert_stddev,
-               activity->is_critical ? "*" : "");
+    for (int i = 0; i < count; ++i) {
+        const Activity  *a = &activities[i];
+        const CPMResult *r = &results[i];
+        printf("%-*c  %-*s  %4d  %4d  %4d  %8.2f  %6.2f  %s\n",
+               id_width, a->id, name_width, a->name,
+               a->optimistic, a->most_likely, a->pessimistic,
+               r->pert_expected, r->pert_stddev,
+               r->total_float == 0 ? "*" : "");
     }
 
-    double low  = graph->project_pert_duration - 1.96 * graph->project_stddev;
-    double high = graph->project_pert_duration + 1.96 * graph->project_stddev;
+    double low  = summary.project_pert_duration - 1.96 * summary.project_stddev;
+    double high = summary.project_pert_duration + 1.96 * summary.project_stddev;
     printf("\nPERT expected duration: %.2f  (variance %.2f, stddev %.2f)\n"
            "95%% confidence interval: [%.2f, %.2f]\n\n",
-           graph->project_pert_duration, graph->project_variance, graph->project_stddev,
+           summary.project_pert_duration, summary.project_variance, summary.project_stddev,
            low, high);
 }

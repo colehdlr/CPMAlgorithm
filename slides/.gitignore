@@ -1,1 +1,4 @@
 .prompts-resolved/
+iterations/
+feedback/
+feedback_loop.log

@@ -1894,6 +1894,7 @@ const editor = new InlineEditor();
 const notes = new NotesPanel(presentation);
 
 // Hook into slide changes to update notes
+let presenterMode = null;
 const origShowSlide = presentation.showSlide.bind(presentation);
 presentation.showSlide = function(index) {
     origShowSlide(index);
@@ -2001,7 +2002,7 @@ class PresenterMode {
     }
 }
 
-const presenterMode = new PresenterMode();
+presenterMode = new PresenterMode();
 </script>
 </body>
 </html>

@@ -12,10 +12,6 @@
 - **Gap:** No spike on C — we were all excited about it so nobody questioned whether we could actually do it
 - **Beyond task:** Jamie noticed Samuel was quieter — unprompted check surfaced unvoiced frustration
 
-> **Evidence — Teams (Day 1, 15:47):**
-> Hamza: *"C is taking way longer than we expected, should we switch?"*
-> Samuel: *"the parser is brutal with all the malloc/free, python would be 10 lines."*
-> Jamie: *"Let's stop and talk this through properly."*
 
 ---
 

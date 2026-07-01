@@ -7,13 +7,12 @@
 typedef struct {
     char id;                  /* single-char identifier ('A', 'B', ...) */
     char name[MAX_NAME_LEN];
-    int  duration;
     int  dep_count;
     int  deps[MAX_DEPS];      /* indices into the activities array */
 
-    /* Three-point (PERT) estimates. Default to `duration` for all three
-     * when the input doesn't supply them, which collapses pert_expected
-     * to `duration` and pert_variance to 0. */
+    /* Three-point (PERT) estimates. cpm_compute() schedules each activity
+     * using round((optimistic + 4*most_likely + pessimistic) / 6) as its
+     * duration, so there is no separate plain-duration field. */
     int  optimistic, most_likely, pessimistic;
 } Activity;
 

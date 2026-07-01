@@ -36,6 +36,12 @@ static int *topological_sort(const Activity *activities, int count) {
     return order;
 }
 
+/* Rounded PERT expected duration, used as the activity's scheduling length. */
+static int expected_duration(const Activity *a) {
+    double e = (a->optimistic + 4.0 * a->most_likely + a->pessimistic) / 6.0;
+    return (int)lround(e);
+}
+
 CPMResult *cpm_compute(const Activity *activities, int count) {
     if (count <= 0) return NULL;
 
@@ -55,7 +61,7 @@ CPMResult *cpm_compute(const Activity *activities, int count) {
             if (ef > es) es = ef;
         }
         results[idx].earliest_start  = es;
-        results[idx].earliest_finish = es + a->duration;
+        results[idx].earliest_finish = es + expected_duration(a);
     }
 
     int project_duration = 0;
@@ -69,7 +75,7 @@ CPMResult *cpm_compute(const Activity *activities, int count) {
     for (int pos = count - 1; pos >= 0; --pos) {
         int idx = order[pos];
         const Activity *a = &activities[idx];
-        results[idx].latest_start = results[idx].latest_finish - a->duration;
+        results[idx].latest_start = results[idx].latest_finish - expected_duration(a);
         results[idx].total_float  = results[idx].latest_start - results[idx].earliest_start;
         for (int k = 0; k < a->dep_count; ++k) {
             CPMResult *pr = &results[a->deps[k]];

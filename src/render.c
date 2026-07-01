@@ -1,5 +1,6 @@
 #include "render.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -33,7 +34,7 @@ static void draw_node(const Activity *a, const CPMResult *r, Vector2 center) {
 
     char buf[64];
     int x = (int)(rect.x + 10);
-    snprintf(buf, sizeof(buf), "%c  (%dd)", a->id, a->duration);
+    snprintf(buf, sizeof(buf), "%c  (%dd)", a->id, (int)lround(r->pert_expected));
     DrawText(buf, x, (int)(rect.y +  8), 18, text);
     DrawText(a->name, x, (int)(rect.y + 30), 14, text);
     snprintf(buf, sizeof(buf), "ES %-3d  EF %-3d", r->earliest_start, r->earliest_finish);

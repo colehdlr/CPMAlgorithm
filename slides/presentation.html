@@ -1038,7 +1038,7 @@ body.notes-open .progress-bar {
                     <p>RACI matrix &mdash; each WBS package has one R/A owner; Integration had three Consulted (cross-module risk)</p>
                 </div>
                 <div class="reveal" style="display: flex; gap: 24px; margin-top: 16px; align-items: baseline;">
-                    <span class="mono-tag" style="opacity: 0.6;">Tuckman: entered sprint at Norming &mdash; C debate (Slide 7) = Storming episode</span>
+                    <span class="mono-tag" style="opacity: 0.6;">Tuckman: entered sprint at Norming &mdash; C debate (Slide 8) = Storming episode</span>
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
@@ -1224,67 +1224,33 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="5">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">Float gave us rescue capacity</span>
-                    <span class="mono-tag">WBS + sprint schedule</span>
+                    <span class="headline">Allocated by strength, proven by outcome</span>
+                    <span class="mono-tag">expertise-fit + cross-checking</span>
                 </div>
-                <div class="two-col reveal" style="flex: 1;">
-                    <div>
-                        <div class="micro" style="margin-bottom: 16px;">Work Breakdown Structure</div>
-                        <div class="wbs-tree">
-                            <div style="font-family: var(--font-display); font-size: 22px; margin-bottom: 12px;">CPM Application</div>
-                            <div class="critical-item">&nbsp;&nbsp;├── Parser <span style="opacity:0.5">(Samuel)</span></div>
-                            <div class="critical-item">&nbsp;&nbsp;├── Algorithm <span style="opacity:0.5">(Jamie)</span></div>
-                            <div>&nbsp;&nbsp;├── Visualisation <span style="opacity:0.5">(Cole)</span></div>
-                            <div>&nbsp;&nbsp;├── Tests <span style="opacity:0.5">(Samuel)</span></div>
-                            <div class="critical-item">&nbsp;&nbsp;└── Integration <span style="opacity:0.5">(Hamza)</span></div>
-                        </div>
-                        <div class="insight-box" style="margin-top: 24px;">
-                            <p>Critical Path: Parser &rarr; Algorithm &rarr; Integration = 10h sequential</p>
-                        </div>
+                <div class="reflection-grid reveal">
+                    <div class="reflection-card">
+                        <div class="card-name">Cole &mdash; RayLib UI / Rendering</div>
+                        <div class="card-assumption">Why: prior RayLib projects</div>
+                        <div class="card-theory">Early feedback loop &mdash; visual output as a test surface</div>
+                        <div class="card-action">Outcome: fast UI build gave Jamie&rsquo;s CPM logic a visual check, catching mistakes text output alone would have missed</div>
                     </div>
-                    <div>
-                        <div class="micro" style="margin-bottom: 16px;">Sprint Schedule (2 Days)</div>
-                        <div class="gantt">
-                            <div class="gantt-header">
-                                <div></div>
-                                <div class="gantt-time-labels">
-                                    <span>D1 AM</span>
-                                    <span>D1 PM</span>
-                                    <span>D2 AM</span>
-                                    <span>D2 PM</span>
-                                </div>
-                            </div>
-                            <div class="gantt-row">
-                                <div class="gantt-label">Parser (Samuel)</div>
-                                <div class="gantt-bar-container">
-                                    <div class="gantt-bar critical" style="left: 0%; width: 50%;"></div>
-                                </div>
-                            </div>
-                            <div class="gantt-row">
-                                <div class="gantt-label">Algorithm (Jamie)</div>
-                                <div class="gantt-bar-container">
-                                    <div class="gantt-bar critical" style="left: 0%; width: 62%;"></div>
-                                </div>
-                            </div>
-                            <div class="gantt-row">
-                                <div class="gantt-label">Tests (Samuel)</div>
-                                <div class="gantt-bar-container">
-                                    <div class="gantt-bar" style="left: 50%; width: 38%;"></div>
-                                </div>
-                            </div>
-                            <div class="gantt-row">
-                                <div class="gantt-label">Visualisation (Cole)</div>
-                                <div class="gantt-bar-container">
-                                    <div class="gantt-bar" style="left: 0%; width: 80%;"></div>
-                                </div>
-                            </div>
-                            <div class="gantt-row">
-                                <div class="gantt-label">Integration (Hamza)</div>
-                                <div class="gantt-bar-container">
-                                    <div class="gantt-bar critical" style="left: 50%; width: 50%;"></div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="reflection-card">
+                        <div class="card-name">Jamie &mdash; CPM Implementation</div>
+                        <div class="card-assumption">Why: prior CPM research</div>
+                        <div class="card-theory">MoSCoW &mdash; input UI marked Won&rsquo;t</div>
+                        <div class="card-action">Outcome: flagged input UI as MVP scope creep, argued against consensus, held the team to a minimal MVP</div>
+                    </div>
+                    <div class="reflection-card">
+                        <div class="card-name">Samuel &mdash; Parsing + Tests</div>
+                        <div class="card-assumption">Why: experience writing unit tests</div>
+                        <div class="card-theory">Defect discovery as a quality gate</div>
+                        <div class="card-action">Outcome: tests caught a duration-value edge case; fixed as a team before it reached integration</div>
+                    </div>
+                    <div class="reflection-card">
+                        <div class="card-name">Hamza &mdash; Orchestration</div>
+                        <div class="card-assumption">Why: broad technical understanding suits QA</div>
+                        <div class="card-theory">Cross-module integration check</div>
+                        <div class="card-action">Outcome: spotted Jamie&rsquo;s CPM types diverging from Cole&rsquo;s rendering types, unifying the codebase before it broke</div>
                     </div>
                 </div>
             </div>
@@ -1298,93 +1264,36 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="6">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">Fixed time meant scope had to flex</span>
-                    <span class="mono-tag">iron triangle + MoSCoW</span>
+                    <span class="headline">Three decisions that shaped the team</span>
+                    <span class="mono-tag">decision-making + teamwork evidence</span>
                 </div>
-                <div class="two-col reveal" style="flex: 1;">
-                    <div>
-                        <table class="data-table" style="font-size: 15px;">
-                            <thead>
-                                <tr>
-                                    <th>Decision</th>
-                                    <th>What We Did</th>
-                                    <th>PM Justification</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="serif" style="font-size: 18px;">Language</td>
-                                    <td>C over Python &amp; JS</td>
-                                    <td style="font-size: 15px;">Iron Triangle: accepted higher time for deeper understanding</td>
-                                </tr>
-                                <tr>
-                                    <td class="serif" style="font-size: 18px;">Scope</td>
-                                    <td>MoSCoW prioritisation</td>
-                                    <td style="font-size: 15px;">Fixed time &rarr; scope must flex</td>
-                                </tr>
-                                <tr>
-                                    <td class="serif" style="font-size: 18px;">Estimation</td>
-                                    <td>Expert judgement + bottom-up</td>
-                                    <td style="font-size: 15px;">Each person estimated their own WBS package</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="moscow-visual" style="margin-top: 24px;">
-                            <div class="moscow-item must">Must: CPM + Parser</div>
-                            <div class="moscow-item should">Should: Visualisation</div>
-                            <div class="moscow-item could">Could: PERT &mdash; delivered</div>
-                            <div class="moscow-item wont">Won't: GUI Input</div>
-                        </div>
-                        <div class="mono-tag" style="opacity: 0.6; margin-top: 16px;">CHAOS Report: 66% of projects fail; 43% avg cost overrun (Standish Group, 2003)</div>
-                    </div>
-                    <div>
-                        <div class="micro" style="margin-bottom: 16px;">Estimation vs Reality</div>
-                        <!-- Parser -->
-                        <div style="margin-bottom: 28px;">
-                            <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-                                <span class="mono-tag">Parser (Samuel)</span>
-                                <span style="font-family: var(--font-display); font-size: 48px; font-weight: 400; color: var(--ink);">+200%</span>
-                            </div>
-                            <div style="position: relative; height: 20px; width: 100%; background: var(--ink-grid);">
-                                <div style="position: absolute; left: 0; top: 0; height: 100%; width: 75%; background: var(--ink);"></div>
-                                <div style="position: absolute; left: 25%; top: -4px; bottom: -4px; width: 2px; background: var(--paper); box-shadow: 0 0 0 1px var(--ink);"></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
-                                <span class="mono-chrome">est: 1h</span>
-                                <span class="mono-chrome">actual: 3h</span>
-                            </div>
-                        </div>
-                        <!-- Algorithm -->
-                        <div style="margin-bottom: 28px;">
-                            <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-                                <span class="mono-tag">Algorithm (Jamie)</span>
-                                <span style="font-family: var(--font-display); font-size: 48px; font-weight: 400; color: var(--ink);">+33%</span>
-                            </div>
-                            <div style="position: relative; height: 20px; width: 100%; background: var(--ink-grid);">
-                                <div style="position: absolute; left: 0; top: 0; height: 100%; width: 100%; background: var(--ink);"></div>
-                                <div style="position: absolute; left: 75%; top: -4px; bottom: -4px; width: 2px; background: var(--paper); box-shadow: 0 0 0 1px var(--ink);"></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
-                                <span class="mono-chrome">est: 3h</span>
-                                <span class="mono-chrome">actual: 4h</span>
-                            </div>
-                        </div>
-                        <!-- Visualisation -->
-                        <div>
-                            <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-                                <span class="mono-tag">Visualisation (Cole)</span>
-                                <span style="font-family: var(--font-display); font-size: 48px; font-weight: 400; color: var(--ink);">+25%</span>
-                            </div>
-                            <div style="position: relative; height: 20px; width: 100%; background: var(--ink-grid);">
-                                <div style="position: absolute; left: 0; top: 0; height: 100%; width: 63%; background: var(--ink);"></div>
-                                <div style="position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: var(--paper); box-shadow: 0 0 0 1px var(--ink);"></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
-                                <span class="mono-chrome">est: 2h</span>
-                                <span class="mono-chrome">actual: 2.5h</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="reveal">
+                    <table class="data-table" style="font-size: 15px;">
+                        <thead>
+                            <tr>
+                                <th>Decision</th>
+                                <th>What We Did</th>
+                                <th>Why It Mattered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="serif" style="font-size: 18px;">Struct design</td>
+                                <td>Split <code>Activity</code> into input and output structs before the CPM pass: <code>Activity</code> &rarr; <code>Activity</code> + <code>CPMResult</code></td>
+                                <td style="font-size: 15px;">Made early, before Jamie and Cole's work could drift apart &mdash; proactive risk management instead of an integration fix later</td>
+                            </tr>
+                            <tr>
+                                <td class="serif" style="font-size: 18px;">File format</td>
+                                <td>Chose raw TXT over JSON</td>
+                                <td style="font-size: 15px;">Weighed flexibility against schedule risk and picked the option that protected the deadline &mdash; simplicity over a nice-to-have</td>
+                            </tr>
+                            <tr>
+                                <td class="serif" style="font-size: 18px;">Language</td>
+                                <td>Stuck with C, despite recognising in hindsight we wouldn&rsquo;t choose it again</td>
+                                <td style="font-size: 15px;">A conscious, team-owned sunk-cost call &mdash; we named the cost openly rather than letting it go unspoken, and committed to it together</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
@@ -1392,9 +1301,31 @@ body.notes-open .progress-bar {
         </section>
 
         <!-- ===========================
-             SLIDE 7: CHALLENGES
+             SLIDE 7: PROOF OF WORK
              =========================== -->
         <section class="slide" data-slide="7">
+            <div class="slide-frame">
+                <div class="topbar reveal">
+                    <span class="headline">Proof of work</span>
+                    <span class="mono-tag">commits &bull; kanban &bull; PRs</span>
+                </div>
+
+                <div class="reveal" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;">
+                    <img src="../screenshots/commits.png" alt="Commit history" style="display: block; width: auto; height: 420px; max-width: 100%; border: 1.5px solid var(--ink);">
+                    <div style="display: flex; gap: 24px; align-items: flex-start; justify-content: center;">
+                        <img src="../screenshots/kanban.png" alt="Kanban board" style="display: block; width: auto; height: 320px; max-width: 100%; border: 1.5px solid var(--ink);">
+                        <img src="../screenshots/pr_merged.png" alt="Merged pull request" style="display: block; width: auto; height: 320px; max-width: 100%; border: 1.5px solid var(--ink);">
+                    </div>
+                </div>
+            </div>
+            <div class="slide-bottom-rule"></div>
+            <span class="pagenum">007</span>
+        </section>
+
+        <!-- ===========================
+             SLIDE 8: CHALLENGES
+             =========================== -->
+        <section class="slide" data-slide="8">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">Trust let us resolve conflict</span>
@@ -1409,8 +1340,8 @@ body.notes-open .progress-bar {
                                 &rarr; Prevented integration conflicts entirely
                             </div>
                             <div class="body-lede" style="line-height: 1.7; margin-top: 12px;">
-                                <strong>JSON vs CSV spike</strong> (20 mins)<br>
-                                &rarr; Saved ~2&ndash;3 hours rework
+                                <strong>TXT vs JSON spike</strong> (20 mins)<br>
+                                &rarr; Simpler parser, saved ~2&ndash;3 hours rework
                             </div>
                         </div>
                         <div>
@@ -1450,13 +1381,13 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">007</span>
+            <span class="pagenum">008</span>
         </section>
 
         <!-- ===========================
-             SLIDE 8: TEAM REFLECTION
+             SLIDE 9: TEAM REFLECTION
              =========================== -->
-        <section class="slide" data-slide="8">
+        <section class="slide" data-slide="9">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">We split the work but not the knowledge</span>
@@ -1493,13 +1424,13 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">008</span>
+            <span class="pagenum">009</span>
         </section>
 
         <!-- ===========================
-             SLIDE 9: SUMMARY & CLOSING
+             SLIDE 10: SUMMARY & CLOSING
              =========================== -->
-        <section class="slide" data-slide="9">
+        <section class="slide" data-slide="10">
             <div class="slide-frame" style="justify-content: center;">
                 <div class="reveal">
                     <div class="micro" style="margin-bottom: 32px;">Summary</div>
@@ -1536,13 +1467,13 @@ body.notes-open .progress-bar {
                 <div class="pixel-glitch-bar" style="top: 940px; width: 200px; height: 70px;"></div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">009</span>
+            <span class="pagenum">010</span>
         </section>
 
         <!-- ===========================
-             SLIDE 10: REFERENCES
+             SLIDE 11: REFERENCES
              =========================== -->
-        <section class="slide" data-slide="10">
+        <section class="slide" data-slide="11">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">References</span>
@@ -1562,13 +1493,13 @@ body.notes-open .progress-bar {
                 </ol>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">010</span>
+            <span class="pagenum">011</span>
         </section>
 
         <!-- ===========================
-             SLIDE 11: Q&A PREPARATION
+             SLIDE 12: Q&A PREPARATION
              =========================== -->
-        <section class="slide" data-slide="11">
+        <section class="slide" data-slide="12">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">Q&amp;A Preparation</span>
@@ -1622,7 +1553,7 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">011</span>
+            <span class="pagenum">012</span>
         </section>
 
     </main>
@@ -1827,7 +1758,7 @@ const speakerNotes = [
     },
     {
         speaker: "Samuel | 55 seconds",
-        notes: "We picked roles based on strengths — Jamie knew CPM, Cole had RayLib experience, Hamza was sharp at cross-module issues, and I knew the team well enough to coordinate. The RACI made ownership explicit, especially integration where three people were Consulted.\n\nIn Tuckman's terms, we entered the sprint at Norming — we'd already formed in a previous module and trust was established. The C debate you'll see on Slide 7 was our Storming moment, which actually strengthened agreements.\n\nWhen my parser overran, Cole picked up testing because his float allowed it. The Belbin roles are retrospective — but what mattered was adapting: first stand-up ran 25 minutes, so we halved it. Hamza shifted to cover integration testing once we spotted nobody naturally filled that quality-checking role."
+        notes: "We picked roles based on strengths — Jamie knew CPM, Cole had RayLib experience, Hamza was sharp at cross-module issues, and I knew the team well enough to coordinate. The RACI made ownership explicit, especially integration where three people were Consulted.\n\nIn Tuckman's terms, we entered the sprint at Norming — we'd already formed in a previous module and trust was established. The C debate you'll see on Slide 8 was our Storming moment, which actually strengthened agreements.\n\nWhen my parser overran, Cole picked up testing because his float allowed it. The Belbin roles are retrospective — but what mattered was adapting: first stand-up ran 25 minutes, so we halved it. Hamza shifted to cover integration testing once we spotted nobody naturally filled that quality-checking role."
     },
     {
         speaker: "Jamie | 1 minute",
@@ -1839,11 +1770,15 @@ const speakerNotes = [
     },
     {
         speaker: "Cole | 45 seconds",
-        notes: "We split work using a responsibility-based WBS — chosen because our challenge was four people coding in parallel. As you can see on the schedule, Parser starts Day 1 morning, Algorithm spans Day 1 into Day 2 morning, and Integration fills Day 2. Critical path: Parser, Algorithm, Integration — 10 hours sequential. Visualisation ran in parallel with float — it finishes before integration needs it.\n\nThat float created support capacity. I picked up some of Samuel's edge-case testing because my track was ahead. When Samuel struggled, Jamie pair-programmed on the parser. If everything sat on the critical path, nobody could have helped."
+        notes: "We split work by existing strength, not by drawing straws. I took RayLib UI because I'd built with it before — that speed meant I could give Jamie visual feedback on the CPM logic almost as soon as he had numbers to show, which caught mistakes a text dump wouldn't have.\n\nJamie owned the CPM implementation and used that ownership to push back on us — he flagged input UI as scope creep and argued, against the room, to keep the MVP minimal. That's MoSCoW in practice: input UI got marked Won't.\n\nSamuel's testing experience caught a duration-value edge case before it reached integration. And Hamza, orchestrating across all of our code, spotted that Jamie's CPM types and my rendering types had quietly diverged — he unified them before it became a merge conflict none of us could untangle."
     },
     {
         speaker: "Hamza | 1 minute",
-        notes: "Three decisions to highlight. Language: we chose C over Python — an Iron Triangle trade-off. Fixed time meant scope had to flex, and we accepted higher time cost for deeper understanding. Estimation: each person estimated their own package using expert judgement and bottom-up decomposition.\n\nWe estimated the parser at one hour. Actual: three — 200% overrun. The CHAOS report shows 66% of projects fail, often from exactly this kind of estimation error. When it overran, we re-estimated using PERT three-point estimates. That told us visualisation was achievable and, once the core was stable, PERT mode was too — so MoSCoW did what it's meant to: protect the Musts first, then pull the Could back in once there was room.\n\nBy Day 1 end we were clearly behind. We protected CPM and Parser, confirmed Visualisation was still achievable, and by Day 2 had float enough to land PERT mode as well."
+        notes: "Three decisions shaped the codebase. First, struct design: we split Activity into an input struct and a CPMResult output struct before the CPM pass even ran, so the parser and the renderer could change independently without touching each other's data.\n\nSecond, file format: we chose raw TXT over JSON. That simplified the parsing module significantly and cut out a whole category of malformed-structure bugs — less code in C means fewer places for it to go wrong.\n\nThird, language: we stuck with C, and we'll say plainly — in hindsight, we wouldn't choose it again. But by the point that became clear, too much of the codebase was already built on it to justify a rewrite, so we made that call consciously and delegated refactors to whoever had capacity. All three were group decisions, not one person's call, and that's the teamwork evidence for this slide."
+    },
+    {
+        speaker: "None | Not narrated",
+        notes: "This slide is not narrated. It exists as evidence of process — commit history, kanban board, and a merged PR — supporting the decisions and workflow described on the surrounding slides."
     },
     {
         speaker: "Hamza | 1 minute 5 seconds",

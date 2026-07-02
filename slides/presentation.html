@@ -1393,34 +1393,27 @@ body.notes-open .progress-bar {
                     <span class="headline">Team Reflection</span>
                     <span class="mono-tag">assumptions challenged</span>
                 </div>
-                <div class="reflection-grid reveal" style="grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px;">
-                    <div class="reflection-card" style="padding: 20px;">
+                <div class="reflection-grid reveal" style="grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 32px;">
+                    <div class="reflection-card" style="padding: 24px; display: flex; flex-direction: column; justify-content: center;">
                         <div class="card-name" style="font-size: 16px;">What happened?</div>
-                        <div class="card-action" style="margin-top: 10px; font-size: 17px; line-height: 1.45;">We collaborated on a cross-functional product that implemented critical path and duration analysis using the PERT and CPM models &mdash; our focus was on managing the project effectively, not just building software.</div>
+                        <div class="card-action" style="margin-top: 12px; font-size: 20px; line-height: 1.4;">We collaborated on a cross-functional product that implemented critical path and duration analysis by using the PERT and CPM models. We focused on managing the project effectively.</div>
                     </div>
-                    <div class="reflection-card" style="padding: 20px;">
+                    <div class="reflection-card" style="padding: 24px; display: flex; flex-direction: column; justify-content: center;">
                         <div class="card-name" style="font-size: 16px;">What did we do well?</div>
-                        <div class="card-action" style="margin-top: 10px; font-size: 17px; line-height: 1.45;">We developed an MVP quickly and avoided scope creep, despite new features being brainstormed throughout.</div>
+                        <div class="card-action" style="margin-top: 12px; font-size: 20px; line-height: 1.4;">Developed an MVP quickly and avoided scope creep, despite new features being brainstormed.</div>
                     </div>
-                    <div class="reflection-card" style="padding: 20px;">
-                        <div class="card-name" style="font-size: 16px;">What will we do differently? Why?</div>
-                        <div class="card-action" style="margin-top: 10px; font-size: 17px; line-height: 1.45;">Make key decisions early, before they can lag the timeline in later development stages &mdash; a technical choice made under time pressure cost us more time later than the decision itself would have taken up front.</div>
+                    <div class="reflection-card" style="padding: 24px; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="card-name" style="font-size: 16px;">What will we do differently next time?</div>
+                        <div class="card-action" style="margin-top: 12px; font-size: 20px; line-height: 1.4;">Make key decisions early so the timeline doesn&rsquo;t lag behind in the later development stages.</div>
                     </div>
-                    <div class="reflection-card" style="padding: 20px;">
-                        <div class="card-name" style="font-size: 16px;">What will we improve? (SMART)</div>
-                        <div class="card-action" style="margin-top: 10px; font-size: 17px; line-height: 1.45;">Specific: assess team-wide familiarity with any proposed language or tool, not just its technical merits. Measurable: track PR review turnaround time, target under 24 hours. Achievable: a 15-min team skills poll before locking in the decision. Time-bound: applied from the first technical decision of the next project.</div>
-                    </div>
-                    <div class="reflection-card" style="padding: 20px;">
-                        <div class="card-name" style="font-size: 16px;">What did we learn?</div>
-                        <div class="card-action" style="margin-top: 10px; font-size: 17px; line-height: 1.45;">Splitting the work isn&rsquo;t splitting the understanding. Our WBS decomposed cleanly by task, but knowledge stayed siloed with whoever built each piece &mdash; a gap a shared spec never closed on its own.</div>
-                    </div>
-                    <div class="reflection-card" style="padding: 20px;">
+                    <div class="reflection-card" style="padding: 24px; display: flex; flex-direction: column; justify-content: center;">
                         <div class="card-name" style="font-size: 16px;">Did our assumptions change?</div>
-                        <div class="card-action" style="margin-top: 10px; font-size: 17px; line-height: 1.45;">Yes &mdash; we assumed technical decisions were secondary to managing the project, not decisions in their own right. That oversight led us to a language not everyone knew, which slowed code review for the rest of the sprint.</div>
+                        <div class="card-action" style="margin-top: 12px; font-size: 20px; line-height: 1.4;">We assumed the technical decisions were not significant due to our focus on managing the project instead, but this oversight led us to using a language that not everyone was familiar with that slowed down the code review process.</div>
                     </div>
-                </div>
-                <div class="insight-box reveal" style="margin-top: 16px;">
-                    <p><strong>Cole:</strong> Building a PM tool taught us PM &mdash; not just the theory, but how it breaks down in practice</p>
+                    <div class="reflection-card" style="padding: 24px; display: flex; flex-direction: column; justify-content: center; grid-column: 1 / -1;">
+                        <div class="card-name" style="font-size: 16px;">SMART Goal?</div>
+                        <div class="card-action" style="margin-top: 12px; font-size: 20px; line-height: 1.4;">Starting next project, run a 15-min team skills poll before locking in any language or tool, to keep PR review turnaround under 24 hours.</div>
+                    </div>
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
@@ -1760,7 +1753,7 @@ const speakerNotes = [
     },
     {
         speaker: "Jamie (intro), then each member | 2 minutes 50 seconds",
-        notes: "<strong>Jamie (introduction):</strong> We're structuring this reflection around six questions, each answered with something specific that actually happened, not a generic lesson.\n\n<strong>What happened:</strong> we shipped a working CPM tool in C on schedule, but hit real friction along the way — a language debate, a type mismatch, a late-surfacing test edge case. All caught before the final build.\n\n<strong>What we did well:</strong> strength-based allocation worked. Cole's RayLib background gave Jamie visual feedback almost in real time; Samuel's testing instincts caught a duration edge case; Hamza's cross-module view caught a type mismatch before integration broke.\n\n<strong>What we'd do differently, and why:</strong> we spiked file format and the shared struct proactively — both paid off — but never spiked the C language decision, which is exactly where the real risk turned out to be. Reversibility should decide what gets spiked, not comfort.\n\n<strong>What we'll improve, measured:</strong> cross-module interface visibility. Specific and measurable — interface ownership assigned separately from module ownership, every struct change reviewed by its owner within 24 hours, enforced from sprint one.\n\n<strong>What we learned:</strong> splitting the work isn't splitting the understanding. The WBS decomposed cleanly by task, but knowledge stayed siloed with whoever built each piece.\n\n<strong>Did our assumptions change:</strong> yes — the same one, four times over. Jamie assumed consensus meant the decision was settled (ADKAR: we had Awareness and Desire but not Knowledge or Ability). Samuel assumed tests only needed I/O specs (Schön's reflection-in-action — he didn't know what 'correct' meant for the backward pass until Jamie explained the logic). Cole assumed looking right meant being right (Wilemon & Thamhain's communication problems — Activity D rendered wrong and nearly sent Jamie chasing a phantom bug). Hamza assumed a shared spec meant shared understanding, and sat on a type mismatch for 20 minutes before flagging it — McClelland's affiliation need prioritising belonging over the information the team needed.\n\n<strong>Cole (closing):</strong> Building a PM tool taught us PM — not just the theory, but how it breaks down in practice. Thank you — we welcome your questions."
+        notes: "<strong>Jamie (introduction):</strong> We're structuring this reflection around five questions, each answered with something specific that actually happened, not a generic lesson.\n\n<strong>What happened:</strong> we collaborated on a cross-functional product implementing critical path and duration analysis using PERT and CPM — our focus was on managing the project effectively, not just writing code.\n\n<strong>What we did well:</strong> we developed an MVP quickly and avoided scope creep, despite new features being brainstormed throughout.\n\n<strong>What we'd do differently next time:</strong> make key decisions early, so the timeline doesn't lag behind in the later development stages — a technical choice made under time pressure cost us more time later than the decision itself would have taken up front.\n\n<strong>Did our assumptions change:</strong> yes — we assumed the technical decisions were not significant due to our focus on managing the project instead, but this oversight led us to using a language not everyone was familiar with, which slowed down the code review process.\n\n<strong>SMART goal:</strong> Specific — assess team-wide familiarity with any proposed language or tool, not just its technical merits. Measurable — track PR review turnaround time, target under 24 hours. Achievable — a 15-minute team skills poll before locking in the decision. Time-bound — applied from the first technical decision of the next project, not retrofitted after review lag shows up.\n\n<strong>Cole (closing):</strong> Building a PM tool taught us PM — not just the theory, but how it breaks down in practice. Thank you — we welcome your questions."
     },
     {
         speaker: "None | Not narrated",

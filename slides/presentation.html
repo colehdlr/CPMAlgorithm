@@ -1739,8 +1739,8 @@ const speakerNotes = [
         notes: "This is the algorithm, end to end. PERT first: each activity gets an optimistic, most likely, and pessimistic estimate, and expected duration is (O + 4M + P) / 6 — that's the number CPM actually schedules against.\n\nThen three passes. Forward pass: Earliest Start is the Earliest Finish of whatever comes before it, Earliest Finish is Earliest Start plus duration. Backward pass reverses it: Latest Finish is the lowest Latest Start among an activity's successors, Latest Start is Latest Finish minus duration.\n\nOne more forward pass gives us float, and this is the part people usually get wrong: free float is the lowest Earliest Start among successors minus this activity's Earliest Finish — how much you can slip before you delay the next activity's start. Total float is Latest Start minus Earliest Start — how much you can slip before you blow the whole project deadline. They're not the same number, and the gap between them is exactly the rescue capacity we used later when Samuel's parser overran.\n\nCritical path is simply every activity where both are zero — no slack anywhere, in either sense."
     },
     {
-        speaker: "None | Not narrated",
-        notes: "This slide is not narrated. It shows the two ends of the pipeline: the plain-text activity file we feed in, and the CPM diagram `make run` produces from it."
+        speaker: "Cole | 1 minute",
+        notes: "We have an activities.txt input file. This can contains the node ID, name, its optimistic, expected and pessimistic values, and the dependent nodes. We created a Makefile to improve developer experience, allowing us to run this command to compile and run our program. Our program displays the critical path, the earliest start and finish, latest start and finish, and float values."
     },
     {
         speaker: "Cole | 45 seconds",

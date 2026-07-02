@@ -995,7 +995,7 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="2">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">We allocated by strengths for speed</span>
+                    <span class="headline">Team Roles &amp; Introductions</span>
                     <span class="mono-tag">strengths-based allocation</span>
                 </div>
                 <table class="data-table reveal">
@@ -1051,7 +1051,7 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="3">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">How the algorithm works</span>
+                    <span class="headline">CPM Walkthrough</span>
                     <span class="mono-tag">PERT &bull; CPM</span>
                 </div>
 
@@ -1194,7 +1194,7 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="4">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">Running the program</span>
+                    <span class="headline">Demonstration</span>
                     <span class="mono-tag">Input &bull; Output</span>
                 </div>
 
@@ -1224,7 +1224,7 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="5">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">Allocated by strength, proven by outcome</span>
+                    <span class="headline">Programming Allocation</span>
                     <span class="mono-tag">expertise-fit + cross-checking</span>
                 </div>
                 <div class="reflection-grid reveal">
@@ -1264,7 +1264,7 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="6">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">Three decisions that shaped the team</span>
+                    <span class="headline">Key Decisions</span>
                     <span class="mono-tag">decision-making + teamwork evidence</span>
                 </div>
                 <div class="reveal">
@@ -1306,7 +1306,7 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="7">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">Proof of work</span>
+                    <span class="headline">Collaboration</span>
                     <span class="mono-tag">commits &bull; kanban &bull; PRs</span>
                 </div>
 
@@ -1328,7 +1328,7 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="8">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">Trust let us resolve conflict</span>
+                    <span class="headline">Challenges &amp; Conflict Resolution</span>
                     <span class="mono-tag">proactive + reactive</span>
                 </div>
                 <div class="two-col reveal" style="flex: 1;">
@@ -1390,37 +1390,38 @@ body.notes-open .progress-bar {
         <section class="slide" data-slide="9">
             <div class="slide-frame">
                 <div class="topbar reveal">
-                    <span class="headline">We split the work but not the knowledge</span>
+                    <span class="headline">Team Reflection</span>
                     <span class="mono-tag">assumptions challenged</span>
                 </div>
                 <div class="reflection-grid reveal">
                     <div class="reflection-card">
                         <div class="card-name">Jamie</div>
-                        <div class="card-assumption">Consensus = rigour</div>
-                        <div class="card-theory">ADKAR (Hiatt, 2006)</div>
-                        <div class="card-action">Spike before committing when reversibility is low</div>
+                        <div class="card-assumption">Consensus meant the decision was settled</div>
+                        <div class="card-theory">ADKAR (Hiatt, 2006) &mdash; Awareness + Desire without Knowledge or Ability</div>
+                        <div class="card-action">Nobody actually knew C well enough to judge the risk, but agreement felt like enough. Learned: my authority as Product Owner made dissent feel costly, so silence read as agreement. Differently: mandatory 30-min spike before any low-reversibility call, and I ask the quietest person directly what they&rsquo;d change.</div>
                     </div>
                     <div class="reflection-card">
                         <div class="card-name">Samuel</div>
-                        <div class="card-assumption">Tests only need I/O specs</div>
-                        <div class="card-theory">Sch&ouml;n (1983) reflection-in-action</div>
-                        <div class="card-action">15-min knowledge-sharing session before testing</div>
+                        <div class="card-assumption">Tests only need input/output specs</div>
+                        <div class="card-theory">Sch&ouml;n (1983) &mdash; reflection-in-action</div>
+                        <div class="card-action">I thought I was stuck on syntax, but I didn&rsquo;t understand what &ldquo;correct&rdquo; meant for the backward pass &mdash; only clear once Jamie explained the logic, not the code. Differently: before testing someone else&rsquo;s algorithm, I ask for a 15-min logic walkthrough first, so I&rsquo;m testing correctness, not shape.</div>
                     </div>
                     <div class="reflection-card">
                         <div class="card-name">Cole</div>
-                        <div class="card-assumption">Looks right = is correct</div>
-                        <div class="card-theory">Wilemon &amp; Thamhain: Communication Problems</div>
-                        <div class="card-action">Pair visual feedback with automated tests</div>
+                        <div class="card-assumption">If it looks right, it is right</div>
+                        <div class="card-theory">Wilemon &amp; Thamhain (1983) &mdash; Communication Problems</div>
+                        <div class="card-action">Activity D rendered wrong and nearly sent Jamie chasing a phantom bug in his logic &mdash; my UI was communicating something false with total confidence. Differently: every new render ships with a numeric assertion test before I call it done, measured as 100% of rendering PRs including a matching test.</div>
                     </div>
                     <div class="reflection-card">
                         <div class="card-name">Hamza</div>
-                        <div class="card-assumption">Shared spec &ne; shared understanding</div>
-                        <div class="card-theory">McClelland (1961) affiliation need + Edmondson (1999)</div>
-                        <div class="card-action">Assign interface ownership separately</div>
+                        <div class="card-assumption">A shared spec means shared understanding</div>
+                        <div class="card-theory">McClelland (1961) affiliation need + Edmondson (1999) psychological safety</div>
+                        <div class="card-action">I sat on a type mismatch for 20 minutes because flagging it felt like a personal callout, not a job. Differently: own interface contracts explicitly, separate from module ownership, so raising a mismatch is just the role &mdash; and review any struct change within 24 hours of it landing.</div>
                     </div>
                 </div>
                 <div class="insight-box reveal" style="margin-top: 20px;">
                     <p>We decomposed work but not knowledge &mdash; WBS needs a knowledge map alongside it. Collective gap: McClelland&rsquo;s affiliation need meant nobody challenged C &rarr; assign a Devil&rsquo;s Advocate for irreversible decisions</p>
+                    <p style="margin-top: 12px;"><strong>Cole:</strong> Building a PM tool taught us PM &mdash; not just the theory, but how it breaks down in practice</p>
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
@@ -1428,52 +1429,9 @@ body.notes-open .progress-bar {
         </section>
 
         <!-- ===========================
-             SLIDE 10: SUMMARY & CLOSING
+             SLIDE 10: REFERENCES
              =========================== -->
         <section class="slide" data-slide="10">
-            <div class="slide-frame" style="justify-content: center;">
-                <div class="reveal">
-                    <div class="micro" style="margin-bottom: 32px;">Summary</div>
-                    <div class="closing-grid">
-                        <div class="closing-item">
-                            <div class="who">Samuel</div>
-                            <div class="what">WBS needs a knowledge map &mdash; you can plan work but not understanding</div>
-                        </div>
-                        <div class="closing-item">
-                            <div class="who">Jamie</div>
-                            <div class="what">Single-point estimates are always optimistic &mdash; including our estimate of our own abilities</div>
-                        </div>
-                        <div class="closing-item">
-                            <div class="who">Cole</div>
-                            <div class="what">Building a PM tool taught us PM &mdash; not just the theory, but how it breaks down in practice</div>
-                        </div>
-                        <div class="closing-item">
-                            <div class="who">Hamza</div>
-                            <div class="what">Thank you &mdash; we welcome your questions</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Pixel glitch on left side (colophon mirror) -->
-            <div class="pixel-glitch" style="left: 0; right: auto;">
-                <div class="pixel-glitch-bar" style="top: 100px; width: 180px; height: 70px;"></div>
-                <div class="pixel-glitch-bar" style="top: 200px; width: 220px; height: 80px;"></div>
-                <div class="pixel-glitch-bar" style="top: 310px; width: 160px; height: 60px;"></div>
-                <div class="pixel-glitch-bar" style="top: 400px; width: 240px; height: 90px;"></div>
-                <div class="pixel-glitch-bar" style="top: 520px; width: 190px; height: 70px;"></div>
-                <div class="pixel-glitch-bar" style="top: 620px; width: 210px; height: 80px;"></div>
-                <div class="pixel-glitch-bar" style="top: 730px; width: 170px; height: 60px;"></div>
-                <div class="pixel-glitch-bar" style="top: 820px; width: 230px; height: 90px;"></div>
-                <div class="pixel-glitch-bar" style="top: 940px; width: 200px; height: 70px;"></div>
-            </div>
-            <div class="slide-bottom-rule"></div>
-            <span class="pagenum">010</span>
-        </section>
-
-        <!-- ===========================
-             SLIDE 11: REFERENCES
-             =========================== -->
-        <section class="slide" data-slide="11">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">References</span>
@@ -1493,13 +1451,13 @@ body.notes-open .progress-bar {
                 </ol>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">011</span>
+            <span class="pagenum">010</span>
         </section>
 
         <!-- ===========================
-             SLIDE 12: Q&A PREPARATION
+             SLIDE 11: Q&A PREPARATION
              =========================== -->
-        <section class="slide" data-slide="12">
+        <section class="slide" data-slide="11">
             <div class="slide-frame">
                 <div class="topbar reveal">
                     <span class="headline">Q&amp;A Preparation</span>
@@ -1553,7 +1511,7 @@ body.notes-open .progress-bar {
                 </div>
             </div>
             <div class="slide-bottom-rule"></div>
-            <span class="pagenum">012</span>
+            <span class="pagenum">011</span>
         </section>
 
     </main>
@@ -1786,11 +1744,7 @@ const speakerNotes = [
     },
     {
         speaker: "Jamie (intro), then each member | 2 minutes 50 seconds",
-        notes: "<strong>Jamie (introduction):</strong> Each of us identified a specific mistake we made and what it cost the team.\n\n<strong>Jamie:</strong> I assumed consensus meant the decision was settled. We had ADKAR's Awareness and Desire for C, but not Knowledge or Ability. My mistake: my implicit authority as Product Owner delayed Samuel's pushback. I only noticed when he stopped challenging testing scope. In future, spike before committing when reversibility is low.\n\n<strong>Samuel:</strong> I assumed I could write tests from inputs and outputs alone. My mistake: I didn't ask for help early enough because I felt incompetent at something I owned. I thought I was stuck on syntax, but actually I didn't understand what correct looks like for the backward pass. Jamie explaining the logic — not the code — unlocked me. That's Schön's reflection-in-action: reframing the problem while you're in it. In future, a 15-minute knowledge-sharing before testing begins.\n\n<strong>Cole:</strong> I assumed my visualisation was correct because it looked right. My mistake: Activity D rendered wrong, and I nearly sent Jamie chasing a phantom bug. That's Wilemon and Thamhain's 'Communication Problems' — through artefacts, not words. I'm used to UI work where if it looks right, it is right. CPM is maths — looking right means nothing if the numbers are wrong. In future, pair visual output with automated verification.\n\n<strong>Hamza:</strong> I nearly didn't flag the type mismatch — McClelland's affiliation need made me prioritise belonging over the team's information need. My mistake: I hesitated 20 minutes before saying anything — time the team could have used. I spoke up only because existing trust overrode my discomfort. In future, assign interface ownership separately from module ownership so flagging mismatches is a role responsibility, not a personal confrontation.\n\n<strong>Jamie (capstone):</strong> Common thread: we split up the work but not the understanding. Next time, a knowledge map alongside the WBS. One collective gap: we chose C unanimously — McClelland's affiliation need meant nobody risked group harmony to challenge it. In future, assign a Devil's Advocate for irreversible decisions."
-    },
-    {
-        speaker: "All four members | 45 seconds",
-        notes: "<strong>Samuel:</strong> You can plan the work but not the understanding — WBS needs a knowledge map.\n\n<strong>Jamie:</strong> PERT taught us single-point estimates are always optimistic — including our estimate of our own abilities.\n\n<strong>Cole:</strong> Building a PM tool taught us project management — not just the theory, but how it breaks down in practice.\n\n<strong>Hamza:</strong> Thank you. We welcome your questions."
+        notes: "<strong>Jamie (introduction):</strong> Each of us identified a specific mistake we made and what it cost the team.\n\n<strong>Jamie:</strong> I assumed consensus meant the decision was settled. We had ADKAR's Awareness and Desire for C, but not Knowledge or Ability. My mistake: my implicit authority as Product Owner delayed Samuel's pushback. I only noticed when he stopped challenging testing scope. In future, spike before committing when reversibility is low.\n\n<strong>Samuel:</strong> I assumed I could write tests from inputs and outputs alone. My mistake: I didn't ask for help early enough because I felt incompetent at something I owned. I thought I was stuck on syntax, but actually I didn't understand what correct looks like for the backward pass. Jamie explaining the logic — not the code — unlocked me. That's Schön's reflection-in-action: reframing the problem while you're in it. In future, a 15-minute knowledge-sharing before testing begins.\n\n<strong>Cole:</strong> I assumed my visualisation was correct because it looked right. My mistake: Activity D rendered wrong, and I nearly sent Jamie chasing a phantom bug. That's Wilemon and Thamhain's 'Communication Problems' — through artefacts, not words. I'm used to UI work where if it looks right, it is right. CPM is maths — looking right means nothing if the numbers are wrong. In future, pair visual output with automated verification.\n\n<strong>Hamza:</strong> I nearly didn't flag the type mismatch — McClelland's affiliation need made me prioritise belonging over the team's information need. My mistake: I hesitated 20 minutes before saying anything — time the team could have used. I spoke up only because existing trust overrode my discomfort. In future, assign interface ownership separately from module ownership so flagging mismatches is a role responsibility, not a personal confrontation.\n\n<strong>Jamie (capstone):</strong> Common thread: we split up the work but not the understanding. Next time, a knowledge map alongside the WBS. One collective gap: we chose C unanimously — McClelland's affiliation need meant nobody risked group harmony to challenge it. In future, assign a Devil's Advocate for irreversible decisions.\n\n<strong>Cole (closing):</strong> Building a PM tool taught us PM — not just the theory, but how it breaks down in practice. Thank you — we welcome your questions."
     },
     {
         speaker: "None | Not narrated",
